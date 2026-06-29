@@ -48,15 +48,12 @@
     
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Transição suave do Carrossel */
     .carousel-bg { transition: background-image 0.8s ease-in-out, opacity 0.8s ease-in-out; }
-    
     .lucide { stroke-width: 1.75; }
   </style>
 </head>
 <body class="bg-dark-950 text-neutral-100 font-sans select-none overflow-x-hidden min-h-screen pb-24 md:pb-12">
 
-  <!-- TOAST DE AVISOS -->
   <div id="toast" class="fixed top-5 right-5 z-[9999] transform translate-x-80 transition-all duration-300 ease-out bg-dark-800 border-l-4 border-brand-500 text-neutral-100 p-4 rounded-xl shadow-2xl flex items-center gap-3 max-w-sm pointer-events-none opacity-0">
     <i data-lucide="info" class="text-brand-500 w-6 h-6 shrink-0"></i>
     <div>
@@ -65,7 +62,6 @@
     </div>
   </div>
 
-  <!-- HEADER -->
   <header class="sticky top-0 z-40 backdrop-blur-xl bg-dark-950/80 border-b border-neutral-800/50 px-4 md:px-12 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
     <div class="flex items-center gap-2 cursor-pointer" onclick="navigateToTab('home')">
       <div class="bg-gradient-to-br from-brand-500 to-brand-600 p-2 rounded-xl text-dark-950 shadow-lg shadow-brand-500/20">
@@ -87,8 +83,6 @@
 
   <!-- ==================== ABA: INÍCIO ==================== -->
   <main id="tab-home" class="tab-section active">
-    
-    <!-- CARROSSEL DESTAQUES -->
     <section id="hero-section" class="relative h-[60vh] w-full bg-dark-900 flex flex-col justify-end overflow-hidden">
       <div id="hero-bg" class="absolute inset-0 bg-cover bg-center carousel-bg scale-105 filter brightness-[0.35]"></div>
       <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/50 to-transparent fade-mask"></div>
@@ -108,16 +102,11 @@
           <i data-lucide="play-circle" class="w-5 h-5 fill-dark-950"></i> ASSISTIR
         </button>
 
-        <!-- Dots do Carrossel -->
-        <div id="hero-dots" class="flex items-center justify-center gap-2 mt-8">
-           <!-- Injetado via JS -->
-        </div>
+        <div id="hero-dots" class="flex items-center justify-center gap-2 mt-8"></div>
       </div>
     </section>
 
-    <!-- LISTAS DE CONTEÚDO -->
     <div class="space-y-12 px-4 md:px-12 py-10">
-      
       <section>
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes em Atualização <span class="text-[10px] bg-brand-500 text-dark-950 px-2 py-0.5 rounded ml-1 font-bold">NOVOS</span></h2>
         <div class="relative group"><div id="row-releasing" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
@@ -152,7 +141,6 @@
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Filmes de Anime</h2>
         <div class="relative group"><div id="row-movies" class="flex gap-4 sm:gap-5 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
       </section>
-
     </div>
   </main>
 
@@ -198,76 +186,52 @@
     <div id="watchlist-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
   </main>
 
-  <!-- ==================== ABA: PERFIL & HISTÓRICO ==================== -->
+  <!-- ==================== ABA: PERFIL & SOBRE (COMPLETA) ==================== -->
   <main id="tab-profile" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
+    
+    <!-- Cartão de Usuário -->
     <div class="flex items-center gap-5 mb-8 bg-dark-900/50 p-6 sm:p-8 rounded-3xl border border-neutral-800/50 backdrop-blur-sm relative">
       <button onclick="editProfile()" class="absolute top-4 right-4 text-neutral-400 hover:text-brand-500"><i data-lucide="edit-3" class="w-5 h-5"></i></button>
-      <div id="profile-avatar" class="w-20 h-20 bg-gradient-to-tr from-brand-600 to-brand-400 rounded-full flex items-center justify-center text-dark-950 font-black text-3xl shadow-lg shadow-brand-500/20 uppercase">
-        U
-      </div>
+      <div id="profile-avatar" class="w-20 h-20 bg-gradient-to-tr from-brand-600 to-brand-400 rounded-full flex items-center justify-center text-dark-950 font-black text-3xl shadow-lg shadow-brand-500/20 uppercase">U</div>
       <div>
         <h2 id="profile-name" class="text-2xl font-bold text-neutral-50">Usuário Otaku</h2>
         <p class="text-sm text-neutral-400 mt-1 flex items-center gap-1"><i data-lucide="smartphone" class="w-4 h-4"></i> Conta Local</p>
       </div>
     </div>
 
-    <!-- Botões de Ação Perfil -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-      <button onclick="navigateToTab('historyFull')" class="bg-dark-900 border border-neutral-800 hover:border-brand-500 p-4 rounded-2xl flex items-center justify-between group transition">
-        <div class="flex items-center gap-3"><i data-lucide="clock" class="text-brand-500 w-5 h-5"></i> <span class="font-bold">Histórico Completo</span></div>
-        <i data-lucide="chevron-right" class="text-neutral-500 group-hover:text-brand-500 transition"></i>
-      </button>
-      <button onclick="navigateToTab('about')" class="bg-dark-900 border border-neutral-800 hover:border-brand-500 p-4 rounded-2xl flex items-center justify-between group transition">
-        <div class="flex items-center gap-3"><i data-lucide="info" class="text-brand-500 w-5 h-5"></i> <span class="font-bold">Sobre o App</span></div>
-        <i data-lucide="chevron-right" class="text-neutral-500 group-hover:text-brand-500 transition"></i>
-      </button>
+    <!-- Seção Continuar Assistindo -->
+    <div class="mb-10 bg-dark-900/30 p-6 rounded-3xl border border-neutral-800/40">
+      <div class="flex items-center justify-between mb-4 border-b border-neutral-800/60 pb-4">
+        <h2 class="text-xl font-bold text-neutral-50 pl-2 border-l-4 border-brand-500">Continuar Assistindo</h2>
+        <button onclick="navigateToTab('historyFull')" class="bg-brand-500/10 text-brand-500 border border-brand-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-brand-500 hover:text-dark-950 transition">Ver Tudo <i data-lucide="chevron-right" class="inline w-3 h-3 ml-1"></i></button>
+      </div>
+      <div class="relative group"><div id="row-history" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
+    </div>
+
+    <!-- Seção Sobre (Créditos) -->
+    <div class="bg-dark-900/50 p-6 sm:p-8 rounded-3xl border border-neutral-800/60 flex flex-col sm:flex-row items-center gap-6">
+      <div class="bg-brand-500 w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20 shrink-0">
+        <i data-lucide="play" class="w-10 h-10 fill-dark-950 stroke-dark-950"></i>
+      </div>
+      <div class="w-full text-sm text-neutral-400 space-y-3">
+        <h3 class="text-2xl font-black tracking-widest text-neutral-50 mb-2">OTAKU<span class="text-brand-500">FLOW</span></h3>
+        <div class="flex justify-between border-b border-neutral-800/60 pb-2"><span>Criador:</span> <span class="font-bold text-brand-500 text-base">Vtzin x</span></div>
+        <div class="flex justify-between border-b border-neutral-800/60 pb-2"><span>Lançamento Oficial:</span> <span class="font-bold text-neutral-200">29 de Junho de 2026</span></div>
+        <div class="flex justify-between border-b border-neutral-800/60 pb-2"><span>Última Atualização:</span> <span class="font-bold text-neutral-200">29 de Junho de 2026</span></div>
+        <div class="flex justify-between"><span>Versão do Sistema:</span> <span class="font-bold text-neutral-200">2.1.0 Beta</span></div>
+      </div>
     </div>
   </main>
 
   <!-- SUB-ABA: HISTÓRICO COMPLETO -->
   <main id="tab-historyFull" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
     <div class="flex items-center justify-between mb-8 border-b border-neutral-800/60 pb-4">
-      <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500 mr-4"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-      <h2 class="text-2xl font-bold text-neutral-50 flex-1">Continuar Assistindo</h2>
+      <button onclick="navigateToTab('profile')" class="text-neutral-400 hover:text-brand-500 mr-4"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+      <h2 class="text-2xl font-bold text-neutral-50 flex-1">Todos os Assistidos</h2>
       <button onclick="clearHistory()" class="text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20 transition">Limpar Tudo</button>
     </div>
     <div id="history-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
   </main>
-
-  <!-- SUB-ABA: SOBRE -->
-  <main id="tab-about" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
-    <div class="flex items-center gap-4 mb-8 border-b border-neutral-800/60 pb-4">
-      <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-      <h2 class="text-2xl font-bold text-neutral-50">Sobre o Aplicativo</h2>
-    </div>
-    <div class="bg-dark-900 p-8 rounded-3xl border border-neutral-800/60 text-center max-w-xl mx-auto">
-      <div class="bg-brand-500 w-16 h-16 mx-auto rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-brand-500/20">
-        <i data-lucide="play" class="w-8 h-8 fill-dark-950 stroke-dark-950"></i>
-      </div>
-      <h2 class="text-3xl font-black tracking-widest text-neutral-50 mb-2">OTAKU<span class="text-brand-500">FLOW</span></h2>
-      <p class="text-neutral-400 text-sm mb-8">A melhor plataforma de streaming do universo otaku.</p>
-      
-      <div class="space-y-4 text-sm text-left">
-        <div class="flex justify-between border-b border-neutral-800 pb-2">
-          <span class="text-neutral-500">Criador/Desenvolvedor</span>
-          <span class="font-bold text-brand-500">Vtzin x</span>
-        </div>
-        <div class="flex justify-between border-b border-neutral-800 pb-2">
-          <span class="text-neutral-500">Lançamento Oficial</span>
-          <span class="font-bold text-neutral-200">29 de Junho de 2026</span>
-        </div>
-        <div class="flex justify-between border-b border-neutral-800 pb-2">
-          <span class="text-neutral-500">Última Atualização</span>
-          <span class="font-bold text-neutral-200">29 de Junho de 2026</span>
-        </div>
-        <div class="flex justify-between pb-2">
-          <span class="text-neutral-500">Versão</span>
-          <span class="font-bold text-neutral-200">2.1.0 Beta</span>
-        </div>
-      </div>
-    </div>
-  </main>
-
 
   <!-- ==================== MODAL DE DETALHES (ANIME) ==================== -->
   <div id="details-modal" class="fixed inset-0 z-50 bg-dark-950/95 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 md:p-8 opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
@@ -281,16 +245,13 @@
 
       <div class="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-y-auto scrollbar-hide relative">
         
-        <!-- Painel Esquerdo -->
         <div class="col-span-1 md:col-span-4 relative h-[45vh] md:h-full min-h-[400px] bg-dark-950 flex flex-col justify-end p-6 md:p-8 overflow-hidden">
           <div id="modal-trailer-container" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-50 hidden"></div>
           <img id="modal-cover" class="absolute inset-0 w-full h-full object-cover filter brightness-[0.35] z-10 transition-opacity duration-[2000ms]" src="" alt="Capa">
           <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/80 to-transparent z-20"></div>
           
           <div class="relative z-30 w-full mt-auto">
-            <span id="modal-score" class="bg-brand-500 text-dark-950 font-bold px-2.5 py-1 rounded-md text-xs inline-flex items-center gap-1.5 mb-3 shadow">
-              <i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> --
-            </span>
+            <span id="modal-score" class="bg-brand-500 text-dark-950 font-bold px-2.5 py-1 rounded-md text-xs inline-flex items-center gap-1.5 mb-3 shadow"><i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> --</span>
             <h3 id="modal-title-alt" class="text-[10px] text-neutral-400 font-semibold tracking-widest block uppercase mb-1.5 truncate">Romaji</h3>
             <h2 id="modal-title" class="text-3xl md:text-4xl font-black text-neutral-50 mb-5 leading-none drop-shadow-lg tracking-tight">Título</h2>
             
@@ -301,10 +262,8 @@
           </div>
         </div>
 
-        <!-- Painel Direito -->
         <div class="col-span-1 md:col-span-8 p-6 md:p-10 flex flex-col justify-start bg-dark-900/50">
           <div class="space-y-8">
-            
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-dark-950/60 p-5 rounded-2xl border border-neutral-800/80 text-xs text-neutral-300 shadow-inner">
               <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Lançamento</span><span id="tech-season" class="font-bold text-neutral-100 text-sm">--</span></div>
               <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Formato</span><span id="tech-format" class="font-bold text-neutral-100 text-sm">--</span></div>
@@ -314,7 +273,6 @@
 
             <div id="modal-genres" class="flex flex-wrap gap-2"></div>
 
-            <!-- SOBRE -->
             <div>
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold text-neutral-100 flex items-center gap-2"><i data-lucide="align-left" class="w-4 h-4 text-brand-500"></i> Sobre</h3>
@@ -323,15 +281,12 @@
               <p id="modal-synopsis" class="text-neutral-400 text-sm leading-relaxed max-h-36 overflow-y-auto scroll-smooth pr-3 font-light select-text">Carregando...</p>
             </div>
 
-            <!-- ACORDEON DE TEMPORADAS -->
             <div id="modal-seasons-container" class="hidden">
               <button onclick="toggleSeasons()" class="w-full bg-dark-950 border border-neutral-800 hover:border-brand-500/50 p-4 rounded-xl flex items-center justify-between group transition">
                 <div class="flex items-center gap-3"><i data-lucide="git-merge" class="text-brand-500 w-5 h-5"></i> <span class="font-bold text-sm">Explorar Temporadas e Filmes</span></div>
                 <i data-lucide="chevron-down" id="seasons-arrow" class="text-neutral-500 group-hover:text-brand-500 transition-transform duration-300"></i>
               </button>
-              <div id="seasons-list" class="hidden flex-col gap-2 mt-2 px-2 overflow-y-auto max-h-60 scrollbar-hide origin-top transition-all duration-300">
-                <!-- Temporadas aqui -->
-              </div>
+              <div id="seasons-list" class="hidden flex-col gap-2 mt-2 px-2 overflow-y-auto max-h-60 scrollbar-hide origin-top transition-all duration-300"></div>
             </div>
 
             <div id="player-container" class="hidden bg-dark-950 border border-neutral-800 rounded-2xl p-8 text-center shadow-inner">
@@ -345,7 +300,6 @@
               </div>
             </div>
 
-            <!-- Episódios -->
             <div id="episodes-container" class="pb-8">
               <div class="flex items-center justify-between mb-4 pb-3 border-b border-neutral-800/50">
                 <h4 class="text-sm font-bold text-neutral-100 flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 text-brand-500"></i> Episódios</h4>
@@ -364,26 +318,14 @@
     </div>
   </div>
 
-  <!-- MENU INFERIOR MOBILE -->
   <nav class="fixed bottom-0 inset-x-0 bg-dark-950/95 border-t border-neutral-900 md:hidden z-40 px-2 sm:px-6 py-2 flex justify-between items-center backdrop-blur-xl">
-    <button onclick="navigateToTab('home')" id="nav-btn-home" class="nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="home" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Início</span>
-    </button>
-    <button onclick="navigateToTab('manga')" id="nav-btn-manga" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="book-open" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Mangá</span>
-    </button>
-    <button onclick="navigateToTab('downloads')" id="nav-btn-downloads" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="download" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Baixados</span>
-    </button>
-    <button onclick="navigateToTab('watchlist')" id="nav-btn-watchlist" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="list" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Lista</span>
-    </button>
-    <button onclick="navigateToTab('profile')" id="nav-btn-profile" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="user" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Perfil</span>
-    </button>
+    <button onclick="navigateToTab('home')" id="nav-btn-home" class="nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Início</span></button>
+    <button onclick="navigateToTab('manga')" id="nav-btn-manga" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="book-open" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Mangá</span></button>
+    <button onclick="navigateToTab('downloads')" id="nav-btn-downloads" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="download" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Baixados</span></button>
+    <button onclick="navigateToTab('watchlist')" id="nav-btn-watchlist" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="list" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Lista</span></button>
+    <button onclick="navigateToTab('profile')" id="nav-btn-profile" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="user" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Perfil</span></button>
   </nav>
 
-  <!-- LÓGICA DO APP -->
   <script>
     lucide.createIcons();
     
@@ -403,24 +345,18 @@
     let currentCarouselIndex = 0;
     let carouselItems = [];
 
-    // ROTEAMENTO (HISTORY API)
+    // BLINDAGEM DO BOTÃO VOLTAR (HISTORY API) CONTRA BLOQUEIO DO NAVEGADOR
     window.addEventListener('popstate', (e) => {
       const modal = document.getElementById('details-modal');
       if (!modal.classList.contains('opacity-0')) {
         closeModal(true);
       } else {
-        // Se estamos em qualquer aba que não seja Home e apertarmos voltar, vamos para Home
-        if (document.getElementById('tab-home').classList.contains('active')) {
-          // Se já tá na home, o comportamento natural fecha o app no celular
-        } else {
-          navigateToTab('home', false);
-        }
+        if (!document.getElementById('tab-home').classList.contains('active')) navigateToTab('home', false);
       }
     });
 
     window.onload = function() {
-      // Injeta Home como raiz do histórico
-      window.history.replaceState({ tab: 'home' }, '', '#home');
+      try { window.history.replaceState({ tab: 'home' }, '', '#home'); } catch(e) {}
       updateProfileUI();
       fetchAniListData();
       renderWatchlist();
@@ -435,17 +371,14 @@
       document.getElementById('toast-message').textContent = message;
       toast.classList.remove('opacity-0', 'translate-x-80');
       toast.classList.add('opacity-100', 'translate-x-0');
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-x-80');
-        toast.classList.remove('opacity-100', 'translate-x-0');
-      }, 3500);
+      setTimeout(() => { toast.classList.add('opacity-0', 'translate-x-80'); toast.classList.remove('opacity-100', 'translate-x-0'); }, 3500);
     }
 
-    // PERFIL
     function updateProfileUI() {
       document.getElementById('profile-name').textContent = userProfile.name;
       document.getElementById('profile-avatar').textContent = userProfile.avatar;
     }
+    
     function editProfile() {
       const newName = prompt("Digite seu nome de usuário:", userProfile.name);
       if (newName && newName.trim() !== "") {
@@ -457,12 +390,9 @@
       }
     }
 
-    // TRADUÇÃO INFINITA VIA MYMEMORY (API GRÁTIS)
     async function translateSynopsis(text, callback) {
       if (!text || text.trim() === "") return callback("Sem informações disponíveis no momento.");
       let cleanText = text.replace(/<[^>]*>/g, '').trim(); 
-      
-      // Fatiador de texto (MyMemory suporta ~500 chars por vez grátis)
       const chunks = cleanText.match(/.{1,450}(?:\s|$)/g) || [cleanText];
       let finalTranslation = "";
       
@@ -475,6 +405,24 @@
         }
         callback(finalTranslation.trim());
       } catch (e) { callback(cleanText); }
+    }
+
+    // CATÁLOGO OFFLINE (SEGURANÇA CONTRA ADBLOCK/BRAVE)
+    const fallbackLocalMock = [
+      { id: 101922, title: { romaji: "Kimetsu no Yaiba", english: "Demon Slayer" }, coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" }, bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920", meanScore: 86, episodes: 26, description: "A API oficial da AniList foi bloqueada pelo seu navegador (possível AdBlock). Estamos exibindo o catálogo offline de segurança.", format: "TV", status: "FINISHED", season: "SPRING", seasonYear: 2019 },
+      { id: 16498, title: { romaji: "Shingeki no Kyojin", english: "Attack on Titan" }, coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" }, bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920", meanScore: 85, episodes: 25, description: "Catálogo Offline em uso.", format: "TV", status: "FINISHED", season: "SPRING", seasonYear: 2013 },
+      { id: 151807, title: { romaji: "Ore dake Level Up na Ken", english: "Solo Leveling" }, coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" }, bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920", meanScore: 83, episodes: 12, description: "Catálogo Offline em uso.", format: "TV", status: "FINISHED", season: "WINTER", seasonYear: 2024 }
+    ];
+
+    function loadFallbackData() {
+        initCarousel(fallbackLocalMock);
+        renderRow('row-releasing', fallbackLocalMock, false);
+        renderRow('row-popular', fallbackLocalMock, false);
+        renderRow('row-isekai', fallbackLocalMock, false);
+        renderRow('row-romance', fallbackLocalMock, false);
+        renderRow('row-adrenaline', fallbackLocalMock, false);
+        renderRow('row-recommended', fallbackLocalMock, false, true);
+        renderRow('row-movies', fallbackLocalMock, false, true);
     }
 
     async function fetchAniListData() {
@@ -495,22 +443,20 @@
         const result = await response.json();
         const data = result.data;
         
-        // Inicia Carrossel
         initCarousel(data.releasing.media); 
-        
         renderRow('row-releasing', data.releasing.media, false);
         renderRow('row-popular', data.popular.media, false);
         renderRow('row-isekai', data.isekai.media, false);
         renderRow('row-romance', data.romance.media, false);
         renderRow('row-adrenaline', data.adrenalina.media, false);
-        
-        // Grandes
         renderRow('row-recommended', data.recommended.media, false, true);
         renderRow('row-movies', data.movies.media, false, true);
-      } catch (e) {}
+      } catch (e) {
+        showToast('Modo de Segurança', 'Navegador bloqueou a conexão. Usando catálogo local.');
+        loadFallbackData();
+      }
     }
 
-    // LÓGICA DO CARROSSEL
     function initCarousel(list) {
       carouselItems = list.filter(a => a.bannerImage).slice(0, 5);
       if(carouselItems.length === 0) carouselItems = list.slice(0, 5);
@@ -541,25 +487,20 @@
       const epCount = anime.episodes || (anime.nextAiringEpisode ? anime.nextAiringEpisode.episode - 1 : '?');
       
       const bgEl = document.getElementById('hero-bg');
-      bgEl.style.opacity = 0; // fade out
-      setTimeout(() => {
-        bgEl.style.backgroundImage = `url('${banner}')`;
-        bgEl.style.opacity = 1; // fade in
-      }, 300);
+      bgEl.style.opacity = 0; 
+      setTimeout(() => { bgEl.style.backgroundImage = `url('${banner}')`; bgEl.style.opacity = 1; }, 300);
 
       document.getElementById('hero-title').textContent = title;
       document.getElementById('hero-score').textContent = score;
       document.getElementById('hero-episodes').textContent = `${epCount} Episódios`;
       document.getElementById('hero-play-btn').onclick = () => openModal(anime);
 
-      // Atualiza dots
       const dots = document.getElementById('hero-dots').children;
       for(let i=0; i<dots.length; i++) {
         dots[i].className = `w-2 h-2 rounded-full transition-all duration-300 ${i === currentCarouselIndex ? 'bg-brand-500 w-6' : 'bg-neutral-600'}`;
       }
     }
 
-    // CARDS
     function createAnimeCard(anime, showBadge = true, isLarge = false) {
       const card = document.createElement('div');
       const wClass = isLarge ? "w-40 sm:w-56 md:w-64" : "w-28 sm:w-36 md:w-40";
@@ -603,16 +544,13 @@
       const container = document.getElementById(containerId);
       if (!container) return;
       container.innerHTML = ''; 
-      if (list.length === 0 && isHistory) {
-        container.innerHTML = `<p class="text-xs text-neutral-500 p-4">Nenhum histórico.</p>`; return;
-      }
+      if (list.length === 0 && isHistory) { container.innerHTML = `<p class="text-xs text-neutral-500 p-4">Você ainda não assistiu nenhum episódio.</p>`; return; }
       list.forEach(anime => { if (anime) container.appendChild(createAnimeCard(anime, !isHistory, isLarge)); });
     }
 
-    // LISTAS LOCAIS
     function toggleWatchlist(anime) {
       const index = watchlist.findIndex(item => item.id === anime.id);
-      if (index > -1) { watchlist.splice(index, 1); showToast('Atualizado', 'Removido.'); } 
+      if (index > -1) { watchlist.splice(index, 1); showToast('Atualizado', 'Removido da lista.'); } 
       else { watchlist.push(anime); showToast('Adicionado', 'Salvo!'); }
       localStorage.setItem('otakuflow_watchlist', JSON.stringify(watchlist));
       updateWatchlistBtnUI(anime); renderWatchlist();
@@ -630,6 +568,7 @@
       else watchlist.forEach(anime => grid.appendChild(createAnimeCard(anime)));
       lucide.createIcons();
     }
+    
     function saveHistory(anime, epNum) {
       watchHistory = watchHistory.filter(h => h.id !== anime.id);
       watchHistory.unshift({ id: anime.id, title: anime.title, coverImage: anime.coverImage, epNum: epNum, timestamp: Date.now() });
@@ -637,8 +576,8 @@
       localStorage.setItem('otakuflow_history', JSON.stringify(watchHistory)); renderHistory();
     }
     function renderHistory() {
-      renderRow('row-history', watchHistory, true); // Aba Perfil
-      const gridFull = document.getElementById('history-grid'); // Sub-aba Histórico
+      renderRow('row-history', watchHistory, true);
+      const gridFull = document.getElementById('history-grid');
       if(gridFull) {
         gridFull.innerHTML = '';
         watchHistory.forEach(anime => gridFull.appendChild(createAnimeCard(anime, false)));
@@ -646,7 +585,6 @@
     }
     function clearHistory() { watchHistory = []; localStorage.setItem('otakuflow_history', JSON.stringify([])); renderHistory(); showToast('Limpo', 'Histórico apagado.'); }
 
-    // BUSCA
     let searchTimeout = null;
     function setupSearch() {
       document.getElementById('global-search-input').addEventListener('input', (e) => {
@@ -688,23 +626,16 @@
       else list.forEach(anime => grid.appendChild(createAnimeCard(anime)));
     }
 
-    // UTILITÁRIOS
     const translateSeason = (season, year) => { const s = { WINTER: "Inverno", SPRING: "Primavera", SUMMER: "Verão", FALL: "Outono" }; return season ? `${s[season] || season} de ${year || ''}` : year || "--"; };
     const translateFormat = (f) => ({ TV: "Série", MOVIE: "Filme", OVA: "OVA", ONA: "Web", TV_SHORT: "Curta", SPECIAL: "Especial" }[f] || f || "--");
     const translateStatus = (s) => ({ FINISHED: "Finalizado", RELEASING: "Lançando", NOT_YET_RELEASED: "Em Breve" }[s] || s || "--");
     const translateRelation = (t) => ({ SEQUEL: "Continuação", PREQUEL: "Anterior", ALTERNATIVE: "Alternativo", SIDE_STORY: "Spin-off", PARENT: "História Base", SUMMARY: "Resumo", SPIN_OFF: "Spin-off" }[t] || "Relacionado");
 
-    // MODAL & ACORDEON DE TEMPORADAS
     function toggleSeasons() {
       const list = document.getElementById('seasons-list');
       const arrow = document.getElementById('seasons-arrow');
-      if (list.classList.contains('hidden')) {
-        list.classList.remove('hidden');
-        arrow.classList.add('rotate-180');
-      } else {
-        list.classList.add('hidden');
-        arrow.classList.remove('rotate-180');
-      }
+      if (list.classList.contains('hidden')) { list.classList.remove('hidden'); arrow.classList.add('rotate-180'); } 
+      else { list.classList.add('hidden'); arrow.classList.remove('rotate-180'); }
     }
 
     function openModal(anime) {
@@ -712,7 +643,9 @@
       currentEpPage = 1; 
       hidePlayer();
       document.body.classList.add('modal-open');
-      window.history.pushState({ modal: 'open' }, '', `#anime_${anime.id}`);
+      
+      // BLINDAGEM DE ROTAS! Evita crash no mobile local.
+      try { window.history.pushState({ modal: 'open' }, '', `#anime_${anime.id}`); } catch(e) {}
 
       const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji || "Sem título";
       document.getElementById('modal-title').textContent = title;
@@ -767,11 +700,10 @@
         span.textContent = g; genresDiv.appendChild(span);
       });
 
-      // CONSTRUÇÃO DE TEMPORADAS (ACORDEON VERTICAL)
       const seasonsContainer = document.getElementById('modal-seasons-container');
       const seasonsList = document.getElementById('modal-seasons-list');
       seasonsList.innerHTML = '';
-      seasonsList.classList.add('hidden'); // Começa fechado
+      seasonsList.classList.add('hidden'); 
       document.getElementById('seasons-arrow').classList.remove('rotate-180');
 
       if (anime.relations && anime.relations.edges && anime.relations.edges.length > 0) {
@@ -824,16 +756,12 @@
       
       const startIndex = (page - 1) * EPS_PER_PAGE + 1;
       const endIndex = Math.min(page * EPS_PER_PAGE, total);
-      // Se não tiver thumbnail real na api, usa a cover
       const fallbackThumb = anime.bannerImage || anime.coverImage?.extraLarge || ""; 
 
       for (let i = startIndex; i <= endIndex; i++) {
-        // Tenta achar o thumbnail REAL do episódio na API streamingEpisodes
         const foundEp = realEpisodesData.find(ep => ep.title.includes(`Episode ${i} `) || ep.title.includes(`Episódio ${i} `)) || realEpisodesData[i-1];
         let epTitleText = `Episódio ${i}`; 
         if (foundEp && foundEp.title) epTitleText = foundEp.title.replace(/Episode \d+ - /, ''); 
-        
-        // Se a Anilist forneceu thumbnail do ep, usa. Senão, capa do anime.
         const thumbnail = (foundEp && foundEp.thumbnail) ? foundEp.thumbnail : fallbackThumb;
 
         const epRow = document.createElement('button');
@@ -871,9 +799,7 @@
         btnNext.onclick = () => renderModalEpisodesList(anime, page + 1);
         btnNext.disabled = (endIndex === total);
         btnNext.className = `flex-1 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2 ${endIndex === total ? 'bg-dark-950 border border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-dark-950 shadow-md'}`;
-      } else {
-        pagControls.classList.add('hidden');
-      }
+      } else { pagControls.classList.add('hidden'); }
       lucide.createIcons();
     }
 
@@ -886,7 +812,9 @@
       clearTimeout(coverTimeout);
       document.getElementById('modal-trailer-container').innerHTML = ''; 
       
-      if (!isPopState && window.history.state?.modal === 'open') { window.history.back(); }
+      if (!isPopState && window.history.state?.modal === 'open') { 
+        try { window.history.back(); } catch(e) {} 
+      }
       updateFocusableElements();
     }
 
@@ -905,20 +833,16 @@
     }
 
     function navigateToTab(tabName, pushHistory = true) {
-      // Regra de Voltar inteligente do celular
       if (pushHistory) {
-        // Se formos para uma tela secundária a partir da home, empilha. Se pular de secundária pra secundária, substitui.
-        if (window.history.state?.tab === 'home') {
-           window.history.pushState({ tab: tabName }, '', `#${tabName}`);
-        } else {
-           window.history.replaceState({ tab: tabName }, '', `#${tabName}`);
-        }
+        try {
+          if (window.history.state?.tab === 'home') { window.history.pushState({ tab: tabName }, '', `#${tabName}`); } 
+          else { window.history.replaceState({ tab: tabName }, '', `#${tabName}`); }
+        } catch(e) {}
       }
 
-      // Atualiza botões
       const btns = document.querySelectorAll('nav .nav-btn');
       btns.forEach(b => { b.className = "nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"; });
-      const activeBtn = document.getElementById(`nav-btn-${tabName === 'historyFull' || tabName === 'about' ? 'profile' : tabName}`);
+      const activeBtn = document.getElementById(`nav-btn-${tabName === 'historyFull' ? 'profile' : tabName}`);
       if(activeBtn) activeBtn.className = "nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1";
 
       document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
