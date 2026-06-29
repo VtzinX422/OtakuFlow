@@ -37,8 +37,8 @@
     }
     
     .fade-mask {
-      mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%);
     }
 
     body.modal-open { overflow: hidden !important; touch-action: none; }
@@ -48,7 +48,9 @@
     
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Ícones mais finos e modernos */
+    /* Transição suave do Carrossel */
+    .carousel-bg { transition: background-image 0.8s ease-in-out, opacity 0.8s ease-in-out; }
+    
     .lucide { stroke-width: 1.75; }
   </style>
 </head>
@@ -63,7 +65,7 @@
     </div>
   </div>
 
-  <!-- HEADER GERAL -->
+  <!-- HEADER -->
   <header class="sticky top-0 z-40 backdrop-blur-xl bg-dark-950/80 border-b border-neutral-800/50 px-4 md:px-12 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
     <div class="flex items-center gap-2 cursor-pointer" onclick="navigateToTab('home')">
       <div class="bg-gradient-to-br from-brand-500 to-brand-600 p-2 rounded-xl text-dark-950 shadow-lg shadow-brand-500/20">
@@ -85,29 +87,30 @@
 
   <!-- ==================== ABA: INÍCIO ==================== -->
   <main id="tab-home" class="tab-section active">
-    <!-- HERO BANNER -->
-    <section id="hero-section" class="relative h-[60vh] w-full bg-dark-900 flex items-end overflow-hidden">
-      <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-1000 scale-105 filter brightness-[0.35]"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/40 to-transparent fade-mask"></div>
+    
+    <!-- CARROSSEL DESTAQUES -->
+    <section id="hero-section" class="relative h-[60vh] w-full bg-dark-900 flex flex-col justify-end overflow-hidden">
+      <div id="hero-bg" class="absolute inset-0 bg-cover bg-center carousel-bg scale-105 filter brightness-[0.35]"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/50 to-transparent fade-mask"></div>
       
-      <div class="relative z-10 w-full px-6 md:px-12 pb-10 max-w-5xl">
-        <div class="flex items-center gap-3 mb-3 flex-wrap">
+      <div class="relative z-10 w-full px-6 md:px-12 pb-6 max-w-5xl flex flex-col items-center text-center">
+        <div class="flex items-center gap-2 mb-3 justify-center">
           <span class="bg-brand-500/10 text-brand-500 font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-brand-500/30">Destaque do Dia</span>
-          <span class="flex items-center gap-1 text-yellow-500 text-sm font-semibold">
-            <i data-lucide="star" class="w-4 h-4 fill-yellow-500"></i>
-            <span id="hero-score">--</span>
-          </span>
         </div>
-        <h1 id="hero-title" class="text-4xl md:text-6xl font-black text-neutral-50 mb-3 leading-tight tracking-tight drop-shadow-xl">Conectando...</h1>
-        <p id="hero-desc" class="text-neutral-300 text-sm md:text-base line-clamp-2 md:line-clamp-3 mb-6 max-w-2xl drop-shadow-lg font-light">Sincronizando com a base de dados global.</p>
+        <h1 id="hero-title" class="text-4xl md:text-5xl font-black text-neutral-50 mb-2 leading-tight tracking-tight drop-shadow-xl transition-all duration-500">Conectando...</h1>
+        <div class="flex items-center justify-center gap-3 mb-6 text-sm">
+          <span class="flex items-center gap-1 text-yellow-500 font-bold"><i data-lucide="star" class="w-4 h-4 fill-yellow-500"></i> <span id="hero-score">--</span></span>
+          <span class="text-neutral-400">•</span>
+          <span id="hero-episodes" class="text-neutral-300 font-medium">-- Episódios</span>
+        </div>
         
-        <div class="flex gap-4">
-          <button id="hero-play-btn" class="tv-focus bg-brand-500 hover:bg-brand-600 text-neutral-950 font-bold px-8 py-3 rounded-xl flex items-center gap-2 transition duration-300 shadow-lg shadow-brand-500/20">
-            <i data-lucide="play-circle" class="w-5 h-5 fill-neutral-950"></i> Assistir
-          </button>
-          <button id="hero-info-btn" class="tv-focus bg-neutral-800/60 backdrop-blur hover:bg-neutral-700/80 text-neutral-100 font-medium px-6 py-3 rounded-xl flex items-center gap-2 transition duration-300 border border-neutral-700/50">
-            <i data-lucide="info" class="w-5 h-5"></i> Detalhes
-          </button>
+        <button id="hero-play-btn" class="tv-focus bg-brand-500 hover:bg-brand-600 text-dark-950 font-black px-10 py-3.5 rounded-xl flex items-center justify-center gap-2 transition duration-300 shadow-lg shadow-brand-500/20 transform hover:scale-105">
+          <i data-lucide="play-circle" class="w-5 h-5 fill-dark-950"></i> ASSISTIR
+        </button>
+
+        <!-- Dots do Carrossel -->
+        <div id="hero-dots" class="flex items-center justify-center gap-2 mt-8">
+           <!-- Injetado via JS -->
         </div>
       </div>
     </section>
@@ -115,46 +118,39 @@
     <!-- LISTAS DE CONTEÚDO -->
     <div class="space-y-12 px-4 md:px-12 py-10">
       
-      <!-- Atualizações -->
       <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes em Atualização <span class="text-[10px] bg-brand-500/20 text-brand-500 px-2 py-0.5 rounded ml-2 font-semibold">NOVOS</span></h2>
+        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes em Atualização <span class="text-[10px] bg-brand-500 text-dark-950 px-2 py-0.5 rounded ml-1 font-bold">NOVOS</span></h2>
         <div class="relative group"><div id="row-releasing" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
       </section>
 
-      <!-- Mais Assistidos -->
       <section>
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Mais Assistidos</h2>
         <div class="relative group"><div id="row-popular" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
       </section>
 
-      <!-- Isekai -->
       <section>
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes Isekai</h2>
         <div class="relative group"><div id="row-isekai" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
       </section>
 
-      <!-- Romance -->
       <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes de Romance</h2>
+        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes de Romance <i data-lucide="heart" class="w-5 h-5 text-rose-500 fill-rose-500"></i></h2>
         <div class="relative group"><div id="row-romance" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
       </section>
 
-      <!-- Pura Adrenalina (Lista Fixa) -->
       <section>
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Pura Adrenalina <i data-lucide="zap" class="w-5 h-5 text-yellow-500 fill-yellow-500"></i></h2>
         <div class="relative group"><div id="row-adrenaline" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
       </section>
 
-      <!-- Recomendações (Capas Maiores) -->
       <section>
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Recomendações em Destaque</h2>
-        <div class="relative group"><div id="row-recommended" class="flex gap-5 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
+        <div class="relative group"><div id="row-recommended" class="flex gap-4 sm:gap-5 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
       </section>
 
-      <!-- Filmes (Capas Maiores) -->
       <section>
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Filmes de Anime</h2>
-        <div class="relative group"><div id="row-movies" class="flex gap-5 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
+        <div class="relative group"><div id="row-movies" class="flex gap-4 sm:gap-5 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
       </section>
 
     </div>
@@ -188,10 +184,10 @@
   <!-- ==================== ABA: BAIXADOS ==================== -->
   <main id="tab-downloads" class="tab-section px-4 md:px-12 py-8 min-h-[80vh] flex flex-col items-center justify-center text-center">
     <div class="bg-neutral-800/50 p-6 rounded-full mb-6 border border-neutral-700/50">
-      <i data-lucide="download-cloud" class="w-16 h-16 text-neutral-500"></i>
+      <i data-lucide="download" class="w-16 h-16 text-neutral-500"></i>
     </div>
-    <h2 class="text-2xl font-bold text-neutral-50 mb-3">Nenhum Episódio Baixado</h2>
-    <p class="text-neutral-400 max-w-md text-sm">Seus episódios baixados para assistir offline e sem interrupções aparecerão aqui.</p>
+    <h2 class="text-2xl font-bold text-neutral-50 mb-3">Meus Downloads</h2>
+    <p class="text-neutral-400 max-w-md text-sm">Seus episódios salvos na memória do aparelho aparecerão aqui para assistir sem internet.</p>
   </main>
 
   <!-- ==================== ABA: LISTA ==================== -->
@@ -204,24 +200,74 @@
 
   <!-- ==================== ABA: PERFIL & HISTÓRICO ==================== -->
   <main id="tab-profile" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
-    <div class="flex items-center gap-5 mb-10 bg-dark-900/50 p-6 sm:p-8 rounded-3xl border border-neutral-800/50 backdrop-blur-sm">
-      <div class="w-20 h-20 bg-gradient-to-tr from-brand-600 to-brand-400 rounded-full flex items-center justify-center text-dark-950 font-black text-3xl shadow-lg shadow-brand-500/20">
+    <div class="flex items-center gap-5 mb-8 bg-dark-900/50 p-6 sm:p-8 rounded-3xl border border-neutral-800/50 backdrop-blur-sm relative">
+      <button onclick="editProfile()" class="absolute top-4 right-4 text-neutral-400 hover:text-brand-500"><i data-lucide="edit-3" class="w-5 h-5"></i></button>
+      <div id="profile-avatar" class="w-20 h-20 bg-gradient-to-tr from-brand-600 to-brand-400 rounded-full flex items-center justify-center text-dark-950 font-black text-3xl shadow-lg shadow-brand-500/20 uppercase">
         U
       </div>
       <div>
-        <h2 class="text-2xl font-bold text-neutral-50">Usuário Otaku</h2>
-        <p class="text-sm text-neutral-400 mt-1 flex items-center gap-1"><i data-lucide="hard-drive" class="w-4 h-4"></i> Conta Gratuita</p>
+        <h2 id="profile-name" class="text-2xl font-bold text-neutral-50">Usuário Otaku</h2>
+        <p class="text-sm text-neutral-400 mt-1 flex items-center gap-1"><i data-lucide="smartphone" class="w-4 h-4"></i> Conta Local</p>
       </div>
     </div>
 
-    <div>
-      <div class="flex items-center justify-between mb-6 border-b border-neutral-800/60 pb-4">
-        <h2 class="text-2xl font-bold text-neutral-50 pl-2 border-l-4 border-brand-500">Continuar Assistindo</h2>
-        <button onclick="clearHistory()" class="text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20 transition">Limpar Histórico</button>
-      </div>
-      <div class="relative group"><div id="row-history" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
+    <!-- Botões de Ação Perfil -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+      <button onclick="navigateToTab('historyFull')" class="bg-dark-900 border border-neutral-800 hover:border-brand-500 p-4 rounded-2xl flex items-center justify-between group transition">
+        <div class="flex items-center gap-3"><i data-lucide="clock" class="text-brand-500 w-5 h-5"></i> <span class="font-bold">Histórico Completo</span></div>
+        <i data-lucide="chevron-right" class="text-neutral-500 group-hover:text-brand-500 transition"></i>
+      </button>
+      <button onclick="navigateToTab('about')" class="bg-dark-900 border border-neutral-800 hover:border-brand-500 p-4 rounded-2xl flex items-center justify-between group transition">
+        <div class="flex items-center gap-3"><i data-lucide="info" class="text-brand-500 w-5 h-5"></i> <span class="font-bold">Sobre o App</span></div>
+        <i data-lucide="chevron-right" class="text-neutral-500 group-hover:text-brand-500 transition"></i>
+      </button>
     </div>
   </main>
+
+  <!-- SUB-ABA: HISTÓRICO COMPLETO -->
+  <main id="tab-historyFull" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
+    <div class="flex items-center justify-between mb-8 border-b border-neutral-800/60 pb-4">
+      <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500 mr-4"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+      <h2 class="text-2xl font-bold text-neutral-50 flex-1">Continuar Assistindo</h2>
+      <button onclick="clearHistory()" class="text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20 transition">Limpar Tudo</button>
+    </div>
+    <div id="history-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
+  </main>
+
+  <!-- SUB-ABA: SOBRE -->
+  <main id="tab-about" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
+    <div class="flex items-center gap-4 mb-8 border-b border-neutral-800/60 pb-4">
+      <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+      <h2 class="text-2xl font-bold text-neutral-50">Sobre o Aplicativo</h2>
+    </div>
+    <div class="bg-dark-900 p-8 rounded-3xl border border-neutral-800/60 text-center max-w-xl mx-auto">
+      <div class="bg-brand-500 w-16 h-16 mx-auto rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-brand-500/20">
+        <i data-lucide="play" class="w-8 h-8 fill-dark-950 stroke-dark-950"></i>
+      </div>
+      <h2 class="text-3xl font-black tracking-widest text-neutral-50 mb-2">OTAKU<span class="text-brand-500">FLOW</span></h2>
+      <p class="text-neutral-400 text-sm mb-8">A melhor plataforma de streaming do universo otaku.</p>
+      
+      <div class="space-y-4 text-sm text-left">
+        <div class="flex justify-between border-b border-neutral-800 pb-2">
+          <span class="text-neutral-500">Criador/Desenvolvedor</span>
+          <span class="font-bold text-brand-500">Vtzin x</span>
+        </div>
+        <div class="flex justify-between border-b border-neutral-800 pb-2">
+          <span class="text-neutral-500">Lançamento Oficial</span>
+          <span class="font-bold text-neutral-200">29 de Junho de 2026</span>
+        </div>
+        <div class="flex justify-between border-b border-neutral-800 pb-2">
+          <span class="text-neutral-500">Última Atualização</span>
+          <span class="font-bold text-neutral-200">29 de Junho de 2026</span>
+        </div>
+        <div class="flex justify-between pb-2">
+          <span class="text-neutral-500">Versão</span>
+          <span class="font-bold text-neutral-200">2.1.0 Beta</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
 
   <!-- ==================== MODAL DE DETALHES (ANIME) ==================== -->
   <div id="details-modal" class="fixed inset-0 z-50 bg-dark-950/95 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 md:p-8 opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
@@ -229,7 +275,6 @@
     
     <div class="bg-dark-900 sm:rounded-3xl w-full h-full sm:h-auto max-h-full sm:max-h-[92vh] max-w-6xl border-0 sm:border border-neutral-800 overflow-hidden shadow-2xl relative flex flex-col z-10 transform scale-95 transition-transform duration-300" id="modal-content-box">
       
-      <!-- BOTÃO FECHAR -->
       <button type="button" onclick="closeModal()" class="tv-focus absolute top-4 right-4 z-[999] bg-dark-950/80 text-neutral-300 hover:bg-brand-500 hover:text-dark-950 p-2.5 rounded-full transition-all duration-200 shadow-xl border border-neutral-700 cursor-pointer">
         <i data-lucide="x" class="w-5 h-5 pointer-events-none"></i>
       </button>
@@ -237,10 +282,10 @@
       <div class="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-y-auto scrollbar-hide relative">
         
         <!-- Painel Esquerdo -->
-        <div class="col-span-1 md:col-span-4 relative h-[45vh] md:h-full min-h-[380px] bg-dark-950 flex flex-col justify-end p-6 md:p-8 overflow-hidden">
-          <div id="modal-trailer-container" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-60 hidden"></div>
+        <div class="col-span-1 md:col-span-4 relative h-[45vh] md:h-full min-h-[400px] bg-dark-950 flex flex-col justify-end p-6 md:p-8 overflow-hidden">
+          <div id="modal-trailer-container" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-50 hidden"></div>
           <img id="modal-cover" class="absolute inset-0 w-full h-full object-cover filter brightness-[0.35] z-10 transition-opacity duration-[2000ms]" src="" alt="Capa">
-          <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/70 to-transparent z-20"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/80 to-transparent z-20"></div>
           
           <div class="relative z-30 w-full mt-auto">
             <span id="modal-score" class="bg-brand-500 text-dark-950 font-bold px-2.5 py-1 rounded-md text-xs inline-flex items-center gap-1.5 mb-3 shadow">
@@ -260,90 +305,56 @@
         <div class="col-span-1 md:col-span-8 p-6 md:p-10 flex flex-col justify-start bg-dark-900/50">
           <div class="space-y-8">
             
-            <!-- Ficha Técnica -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-dark-950/60 p-5 rounded-2xl border border-neutral-800/80 text-xs text-neutral-300 shadow-inner">
-              <div>
-                <span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Lançamento</span>
-                <span id="tech-season" class="font-bold text-neutral-100 text-sm">--</span>
-              </div>
-              <div>
-                <span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Formato</span>
-                <span id="tech-format" class="font-bold text-neutral-100 text-sm">--</span>
-              </div>
-              <div>
-                <span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Status</span>
-                <span id="tech-status" class="font-bold text-brand-500 text-sm">--</span>
-              </div>
-              <div>
-                <span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Total</span>
-                <span id="tech-episodes" class="font-bold text-neutral-100 text-sm">-- eps</span>
-              </div>
+              <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Lançamento</span><span id="tech-season" class="font-bold text-neutral-100 text-sm">--</span></div>
+              <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Formato</span><span id="tech-format" class="font-bold text-neutral-100 text-sm">--</span></div>
+              <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Status</span><span id="tech-status" class="font-bold text-brand-500 text-sm">--</span></div>
+              <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Total</span><span id="tech-episodes" class="font-bold text-neutral-100 text-sm">-- eps</span></div>
             </div>
 
             <div id="modal-genres" class="flex flex-wrap gap-2"></div>
 
-            <!-- SINOPSE TRADUZIDA INFINITA -->
+            <!-- SOBRE -->
             <div>
               <div class="flex items-center justify-between mb-3">
-                <h3 class="text-sm font-bold text-neutral-100 flex items-center gap-2">
-                  <i data-lucide="align-left" class="w-4 h-4 text-brand-500"></i> Sobre
-                </h3>
-                <span id="translation-status" class="text-[10px] bg-brand-500/10 text-brand-500 font-semibold px-2 py-1 rounded flex items-center gap-1.5 hidden">
-                  <i data-lucide="globe" class="w-3 h-3 animate-spin"></i> Traduzindo (Auto)...
-                </span>
+                <h3 class="text-sm font-bold text-neutral-100 flex items-center gap-2"><i data-lucide="align-left" class="w-4 h-4 text-brand-500"></i> Sobre</h3>
+                <span id="translation-status" class="text-[10px] bg-brand-500/10 text-brand-500 font-semibold px-2 py-1 rounded flex items-center gap-1.5 hidden"><i data-lucide="globe" class="w-3 h-3 animate-spin"></i> Traduzindo...</span>
               </div>
-              <p id="modal-synopsis" class="text-neutral-400 text-sm leading-relaxed max-h-36 overflow-y-auto scroll-smooth pr-3 font-light select-text">
-                Carregando...
-              </p>
+              <p id="modal-synopsis" class="text-neutral-400 text-sm leading-relaxed max-h-36 overflow-y-auto scroll-smooth pr-3 font-light select-text">Carregando...</p>
             </div>
 
-            <!-- RELAÇÕES (TEMPORADAS E FILMES) -->
-            <div id="modal-relations-container" class="hidden pb-2 border-b border-neutral-800/60">
-              <h4 class="text-sm font-bold text-neutral-100 flex items-center gap-2 mb-4">
-                <i data-lucide="git-merge" class="w-4 h-4 text-brand-500"></i> Temporadas e Relacionados
-              </h4>
-              <div id="modal-relations-list" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-                <!-- Botões de Temporadas vão aqui -->
+            <!-- ACORDEON DE TEMPORADAS -->
+            <div id="modal-seasons-container" class="hidden">
+              <button onclick="toggleSeasons()" class="w-full bg-dark-950 border border-neutral-800 hover:border-brand-500/50 p-4 rounded-xl flex items-center justify-between group transition">
+                <div class="flex items-center gap-3"><i data-lucide="git-merge" class="text-brand-500 w-5 h-5"></i> <span class="font-bold text-sm">Explorar Temporadas e Filmes</span></div>
+                <i data-lucide="chevron-down" id="seasons-arrow" class="text-neutral-500 group-hover:text-brand-500 transition-transform duration-300"></i>
+              </button>
+              <div id="seasons-list" class="hidden flex-col gap-2 mt-2 px-2 overflow-y-auto max-h-60 scrollbar-hide origin-top transition-all duration-300">
+                <!-- Temporadas aqui -->
               </div>
             </div>
 
-            <!-- PLAYER -->
             <div id="player-container" class="hidden bg-dark-950 border border-neutral-800 rounded-2xl p-8 text-center shadow-inner">
               <div class="flex flex-col items-center justify-center gap-4">
-                <div class="w-14 h-14 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 animate-pulse border border-brand-500/20">
-                  <i data-lucide="server" class="w-7 h-7"></i>
-                </div>
+                <div class="w-14 h-14 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 animate-pulse border border-brand-500/20"><i data-lucide="server" class="w-7 h-7"></i></div>
                 <h4 class="font-bold text-base text-neutral-100" id="player-episode-title">Conectando ao Servidor...</h4>
-                <p class="text-xs text-neutral-500 max-w-sm mx-auto">Em breve: Aqui o player nativo receberá o vídeo direto da Render API.</p>
-                <div class="mt-4 flex gap-3">
-                  <button type="button" onclick="hidePlayer()" class="bg-neutral-800 text-neutral-200 font-semibold text-xs py-2.5 px-8 rounded-xl transition hover:bg-neutral-700 border border-neutral-700">
-                    Fechar Player
-                  </button>
-                  <button type="button" onclick="showToast('Aviso', 'Baixar episódios requer integração com servidor.')" class="bg-dark-900 text-brand-500 font-semibold text-xs py-2.5 px-6 rounded-xl transition hover:bg-brand-500 hover:text-dark-950 border border-brand-500/50 flex items-center gap-2">
-                    <i data-lucide="download" class="w-4 h-4"></i> Baixar
-                  </button>
+                <div class="mt-4 flex flex-col sm:flex-row gap-3">
+                  <button type="button" onclick="hidePlayer()" class="bg-neutral-800 text-neutral-200 font-semibold text-xs py-3 px-8 rounded-xl transition hover:bg-neutral-700 border border-neutral-700">Fechar Player</button>
+                  <button type="button" onclick="showToast('Aviso', 'O download estará disponível ao conectar a API Render.')" class="bg-dark-900 text-brand-500 font-semibold text-xs py-3 px-8 rounded-xl transition hover:bg-brand-500 hover:text-dark-950 border border-brand-500/50 flex items-center justify-center gap-2"><i data-lucide="download" class="w-4 h-4"></i> Baixar Episódio</button>
                 </div>
               </div>
             </div>
 
-            <!-- LISTA DE EPISÓDIOS -->
+            <!-- Episódios -->
             <div id="episodes-container" class="pb-8">
-              <div class="flex items-center justify-between mb-4 pb-3">
-                <h4 class="text-sm font-bold text-neutral-100 flex items-center gap-2">
-                  <i data-lucide="layers" class="w-4 h-4 text-brand-500"></i> Episódios
-                </h4>
+              <div class="flex items-center justify-between mb-4 pb-3 border-b border-neutral-800/50">
+                <h4 class="text-sm font-bold text-neutral-100 flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 text-brand-500"></i> Episódios</h4>
                 <span id="modal-pagination-info" class="text-[10px] text-neutral-400 font-bold bg-dark-950 border border-neutral-800 px-2.5 py-1 rounded-md">Pág 1</span>
               </div>
-              
               <div id="modal-episodes-list" class="space-y-3 mb-5"></div>
-
               <div id="modal-pagination-controls" class="flex justify-between items-center gap-3 hidden pt-2">
-                <button id="btn-prev-page" type="button" class="flex-1 bg-dark-950 border border-neutral-800 text-neutral-400 hover:text-brand-500 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2">
-                  <i data-lucide="chevron-left" class="w-4 h-4"></i> Anteriores
-                </button>
-                <button id="btn-next-page" type="button" class="flex-1 bg-dark-950 border border-neutral-800 text-neutral-400 hover:text-brand-500 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2">
-                   Próximos <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </button>
+                <button id="btn-prev-page" type="button" class="flex-1 bg-dark-950 border border-neutral-800 text-neutral-400 hover:text-brand-500 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2"><i data-lucide="chevron-left" class="w-4 h-4"></i> Anteriores</button>
+                <button id="btn-next-page" type="button" class="flex-1 bg-dark-950 border border-neutral-800 text-neutral-400 hover:text-brand-500 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2">Próximos <i data-lucide="chevron-right" class="w-4 h-4"></i></button>
               </div>
             </div>
           </div>
@@ -354,26 +365,21 @@
   </div>
 
   <!-- MENU INFERIOR MOBILE -->
-  <nav class="fixed bottom-0 inset-x-0 bg-dark-950/95 border-t border-neutral-800/80 md:hidden z-40 px-2 sm:px-6 py-2.5 flex justify-between items-center backdrop-blur-xl">
+  <nav class="fixed bottom-0 inset-x-0 bg-dark-950/95 border-t border-neutral-900 md:hidden z-40 px-2 sm:px-6 py-2 flex justify-between items-center backdrop-blur-xl">
     <button onclick="navigateToTab('home')" id="nav-btn-home" class="nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="home" class="w-5 h-5"></i>
-      <span class="text-[9px] font-bold tracking-wide">Início</span>
+      <i data-lucide="home" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Início</span>
     </button>
     <button onclick="navigateToTab('manga')" id="nav-btn-manga" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="book-open" class="w-5 h-5"></i>
-      <span class="text-[9px] font-bold tracking-wide">Mangá</span>
+      <i data-lucide="book-open" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Mangá</span>
     </button>
     <button onclick="navigateToTab('downloads')" id="nav-btn-downloads" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="download-cloud" class="w-5 h-5"></i>
-      <span class="text-[9px] font-bold tracking-wide">Baixados</span>
+      <i data-lucide="download" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Baixados</span>
     </button>
     <button onclick="navigateToTab('watchlist')" id="nav-btn-watchlist" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="list" class="w-5 h-5"></i>
-      <span class="text-[9px] font-bold tracking-wide">Lista</span>
+      <i data-lucide="list" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Lista</span>
     </button>
     <button onclick="navigateToTab('profile')" id="nav-btn-profile" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1">
-      <i data-lucide="user" class="w-5 h-5"></i>
-      <span class="text-[9px] font-bold tracking-wide">Perfil</span>
+      <i data-lucide="user" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Perfil</span>
     </button>
   </nav>
 
@@ -384,6 +390,8 @@
     const aniListCache = {};
     let watchlist = JSON.parse(localStorage.getItem('otakuflow_watchlist')) || [];
     let watchHistory = JSON.parse(localStorage.getItem('otakuflow_history')) || [];
+    let userProfile = JSON.parse(localStorage.getItem('otakuflow_user')) || { name: 'Usuário Otaku', avatar: 'U' };
+    
     let activeAnimeData = null; 
     let currentEpPage = 1;
     const EPS_PER_PAGE = 100;
@@ -391,22 +399,29 @@
     let focusableElements = [];
     let currentFocusIndex = -1;
     let coverTimeout = null; 
+    let carouselInterval = null;
+    let currentCarouselIndex = 0;
+    let carouselItems = [];
 
-    // CONTROLE DE ROTAS E BOTÃO VOLTAR DO CELULAR
+    // ROTEAMENTO (HISTORY API)
     window.addEventListener('popstate', (e) => {
       const modal = document.getElementById('details-modal');
       if (!modal.classList.contains('opacity-0')) {
-        closeModal(true); // true = não precisa mexer no history push
-      } 
-      else if (e.state && e.state.tab) {
-        navigateToTab(e.state.tab, false);
+        closeModal(true);
       } else {
-        navigateToTab('home', false);
+        // Se estamos em qualquer aba que não seja Home e apertarmos voltar, vamos para Home
+        if (document.getElementById('tab-home').classList.contains('active')) {
+          // Se já tá na home, o comportamento natural fecha o app no celular
+        } else {
+          navigateToTab('home', false);
+        }
       }
     });
 
     window.onload = function() {
+      // Injeta Home como raiz do histórico
       window.history.replaceState({ tab: 'home' }, '', '#home');
+      updateProfileUI();
       fetchAniListData();
       renderWatchlist();
       renderHistory();
@@ -426,18 +441,32 @@
       }, 3500);
     }
 
-    // TRADUÇÃO FATIADA (Bypass no Limite da API Gratuita)
+    // PERFIL
+    function updateProfileUI() {
+      document.getElementById('profile-name').textContent = userProfile.name;
+      document.getElementById('profile-avatar').textContent = userProfile.avatar;
+    }
+    function editProfile() {
+      const newName = prompt("Digite seu nome de usuário:", userProfile.name);
+      if (newName && newName.trim() !== "") {
+        userProfile.name = newName.trim();
+        userProfile.avatar = newName.trim().charAt(0).toUpperCase();
+        localStorage.setItem('otakuflow_user', JSON.stringify(userProfile));
+        updateProfileUI();
+        showToast("Sucesso", "Perfil atualizado!");
+      }
+    }
+
+    // TRADUÇÃO INFINITA VIA MYMEMORY (API GRÁTIS)
     async function translateSynopsis(text, callback) {
       if (!text || text.trim() === "") return callback("Sem informações disponíveis no momento.");
-      
       let cleanText = text.replace(/<[^>]*>/g, '').trim(); 
-      // Corta em pedaços de no máximo 400 letras para não estourar a MyMemory API
-      const chunks = cleanText.match(/.{1,400}(?:\s|$)/g) || [cleanText];
       
+      // Fatiador de texto (MyMemory suporta ~500 chars por vez grátis)
+      const chunks = cleanText.match(/.{1,450}(?:\s|$)/g) || [cleanText];
       let finalTranslation = "";
       
       try {
-        // Traduz cada pedaço um por um para garantir
         for (let chunk of chunks) {
             const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk.trim())}&langpair=en|pt-br`;
             const res = await fetch(url);
@@ -445,24 +474,20 @@
             finalTranslation += (data?.responseData?.translatedText || chunk) + " ";
         }
         callback(finalTranslation.trim());
-      } catch (e) { 
-        callback(cleanText); // Fallback inglês se der erro de rede
-      }
+      } catch (e) { callback(cleanText); }
     }
 
-    // BANCO DE DADOS PRINCIPAL E LISTAS VARIADAS
     async function fetchAniListData() {
       const url = 'https://graphql.anilist.co';
-      // Query completa com Relações de Temporada adicionadas
       const query = `
         query {
-          releasing: Page(page: 1, perPage: 10) { media(type: ANIME, status: RELEASING, sort: TRENDING_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } }
-          popular: Page(page: 1, perPage: 10) { media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } }
-          isekai: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Isekai"], sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } }
-          romance: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Romance"], sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } }
-          movies: Page(page: 1, perPage: 10) { media(type: ANIME, format: MOVIE, sort: TRENDING_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } }
-          adrenalina: Page(page: 1, perPage: 10) { media(type: ANIME, id_in: [20, 16498, 166216, 21123, 127230, 98659, 97940, 115230, 20613, 11061]) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } }
-          recommended: Page(page: 1, perPage: 10) { media(type: ANIME, sort: [SCORE_DESC, POPULARITY_DESC], isAdult: false, format_not: MOVIE, episodes_greater: 10) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } }
+          releasing: Page(page: 1, perPage: 12) { media(type: ANIME, status: RELEASING, sort: TRENDING_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
+          popular: Page(page: 1, perPage: 12) { media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
+          isekai: Page(page: 1, perPage: 10) { media(type: ANIME, id_in: [108465, 21202, 100182, 177325, 20832, 168255, 125206, 101280, 99263, 114336], sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
+          romance: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Romance"], sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
+          movies: Page(page: 1, perPage: 10) { media(type: ANIME, format: MOVIE, sort: TRENDING_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
+          adrenalina: Page(page: 1, perPage: 10) { media(type: ANIME, id_in: [20, 16498, 166216, 21123, 127230, 98659, 97940, 115230, 20613, 11061]) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
+          recommended: Page(page: 1, perPage: 10) { media(type: ANIME, sort: [SCORE_DESC, POPULARITY_DESC], isAdult: false, format_not: MOVIE, episodes_greater: 12) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
         }
       `;
       try {
@@ -470,49 +495,80 @@
         const result = await response.json();
         const data = result.data;
         
-        buildHeroBanner(data.releasing.media[0]); 
+        // Inicia Carrossel
+        initCarousel(data.releasing.media); 
+        
         renderRow('row-releasing', data.releasing.media, false);
         renderRow('row-popular', data.popular.media, false);
         renderRow('row-isekai', data.isekai.media, false);
         renderRow('row-romance', data.romance.media, false);
         renderRow('row-adrenaline', data.adrenalina.media, false);
         
-        // Renderizadores grandes (Filmes e Recomendações)
+        // Grandes
         renderRow('row-recommended', data.recommended.media, false, true);
         renderRow('row-movies', data.movies.media, false, true);
+      } catch (e) {}
+    }
 
-      } catch (e) {
-        console.warn("Erro ao buscar dados.", e);
+    // LÓGICA DO CARROSSEL
+    function initCarousel(list) {
+      carouselItems = list.filter(a => a.bannerImage).slice(0, 5);
+      if(carouselItems.length === 0) carouselItems = list.slice(0, 5);
+      
+      const dotsContainer = document.getElementById('hero-dots');
+      dotsContainer.innerHTML = '';
+      carouselItems.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-brand-500 w-6' : 'bg-neutral-600'}`;
+        dotsContainer.appendChild(dot);
+      });
+
+      renderCarouselItem();
+      clearInterval(carouselInterval);
+      carouselInterval = setInterval(() => {
+        currentCarouselIndex = (currentCarouselIndex + 1) % carouselItems.length;
+        renderCarouselItem();
+      }, 5000);
+    }
+
+    function renderCarouselItem() {
+      const anime = carouselItems[currentCarouselIndex];
+      if (!anime) return;
+      
+      const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji;
+      const banner = anime.bannerImage || anime.coverImage?.extraLarge || "";
+      const score = anime.meanScore ? (anime.meanScore / 10).toFixed(1) : "--";
+      const epCount = anime.episodes || (anime.nextAiringEpisode ? anime.nextAiringEpisode.episode - 1 : '?');
+      
+      const bgEl = document.getElementById('hero-bg');
+      bgEl.style.opacity = 0; // fade out
+      setTimeout(() => {
+        bgEl.style.backgroundImage = `url('${banner}')`;
+        bgEl.style.opacity = 1; // fade in
+      }, 300);
+
+      document.getElementById('hero-title').textContent = title;
+      document.getElementById('hero-score').textContent = score;
+      document.getElementById('hero-episodes').textContent = `${epCount} Episódios`;
+      document.getElementById('hero-play-btn').onclick = () => openModal(anime);
+
+      // Atualiza dots
+      const dots = document.getElementById('hero-dots').children;
+      for(let i=0; i<dots.length; i++) {
+        dots[i].className = `w-2 h-2 rounded-full transition-all duration-300 ${i === currentCarouselIndex ? 'bg-brand-500 w-6' : 'bg-neutral-600'}`;
       }
     }
 
-    function buildHeroBanner(anime) {
-      if (!anime) return;
-      const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji || "Anime";
-      const banner = anime.bannerImage || anime.coverImage?.extraLarge || "";
-      const score = anime.meanScore ? (anime.meanScore / 10).toFixed(1) : "--";
-      const tempDiv = document.createElement("div"); tempDiv.innerHTML = anime.description || "";
-      
-      document.getElementById('hero-bg').style.backgroundImage = `url('${banner}')`;
-      document.getElementById('hero-title').textContent = title;
-      document.getElementById('hero-score').textContent = score;
-      document.getElementById('hero-desc').textContent = tempDiv.textContent || tempDiv.innerText || "Destaque da semana";
-      document.getElementById('hero-play-btn').onclick = () => openModal(anime);
-      document.getElementById('hero-info-btn').onclick = () => openModal(anime);
-    }
-
+    // CARDS
     function createAnimeCard(anime, showBadge = true, isLarge = false) {
       const card = document.createElement('div');
       const wClass = isLarge ? "w-40 sm:w-56 md:w-64" : "w-28 sm:w-36 md:w-40";
-      
       card.className = `tv-focus shrink-0 ${wClass} bg-dark-900 rounded-xl overflow-hidden border border-neutral-800/50 hover:border-brand-500/80 cursor-pointer transition-all duration-300 transform hover:-translate-y-1.5 shadow-lg hover:shadow-brand-500/20 relative group`;
       card.setAttribute('tabindex', '0');
 
       const title = anime.title?.userPreferred || anime.title?.english || anime.title?.romaji || "Desconhecido";
       const cover = anime.coverImage?.large || anime.coverImage?.extraLarge || anime.coverImage || "";
       const score = anime.meanScore ? `★ ${(anime.meanScore / 10).toFixed(1)}` : '★ -';
-      
-      // Lógica de episódios garantida: Pega total, se não tiver pega o episódio exibindo atual, se não achar bota "?"
       const epCount = anime.episodes || (anime.nextAiringEpisode ? anime.nextAiringEpisode.episode - 1 : '?');
       const extraInfo = anime.epNum ? `Parei no Ep ${anime.epNum}` : `${epCount} Episódios`;
 
@@ -548,73 +604,67 @@
       if (!container) return;
       container.innerHTML = ''; 
       if (list.length === 0 && isHistory) {
-        container.innerHTML = `<p class="text-xs text-neutral-500 p-4">Nenhum histórico encontrado. Assista a algo!</p>`;
-        return;
+        container.innerHTML = `<p class="text-xs text-neutral-500 p-4">Nenhum histórico.</p>`; return;
       }
       list.forEach(anime => { if (anime) container.appendChild(createAnimeCard(anime, !isHistory, isLarge)); });
     }
 
-    // FAVORITOS
+    // LISTAS LOCAIS
     function toggleWatchlist(anime) {
       const index = watchlist.findIndex(item => item.id === anime.id);
-      if (index > -1) { watchlist.splice(index, 1); showToast('Atualizado', 'Removido da lista.'); } 
-      else { watchlist.push(anime); showToast('Adicionado', 'Salvo em favoritos!'); }
+      if (index > -1) { watchlist.splice(index, 1); showToast('Atualizado', 'Removido.'); } 
+      else { watchlist.push(anime); showToast('Adicionado', 'Salvo!'); }
       localStorage.setItem('otakuflow_watchlist', JSON.stringify(watchlist));
       updateWatchlistBtnUI(anime); renderWatchlist();
     }
     function updateWatchlistBtnUI(anime) {
       const exists = watchlist.some(item => item.id === anime.id);
-      const btnText = document.getElementById('watchlist-btn-text');
       const btnIcon = document.getElementById('watchlist-btn-icon');
-      if (exists) { btnText.textContent = "Remover da Lista"; btnIcon.setAttribute('data-lucide', 'bookmark-minus'); btnIcon.classList.add('text-brand-500', 'fill-brand-500'); } 
-      else { btnText.textContent = "Adicionar à Lista"; btnIcon.setAttribute('data-lucide', 'bookmark'); btnIcon.classList.remove('text-brand-500', 'fill-brand-500'); }
+      if (exists) { btnIcon.setAttribute('data-lucide', 'bookmark-minus'); btnIcon.classList.add('text-brand-500', 'fill-brand-500'); } 
+      else { btnIcon.setAttribute('data-lucide', 'bookmark'); btnIcon.classList.remove('text-brand-500', 'fill-brand-500'); }
       lucide.createIcons();
     }
     function renderWatchlist() {
-      const grid = document.getElementById('watchlist-grid');
-      grid.innerHTML = '';
-      if (watchlist.length === 0) { grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600"><i data-lucide="bookmark" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>Sua lista está vazia.</div>`; } 
-      else { watchlist.forEach(anime => grid.appendChild(createAnimeCard(anime))); }
+      const grid = document.getElementById('watchlist-grid'); grid.innerHTML = '';
+      if (watchlist.length === 0) grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600"><i data-lucide="bookmark" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>Vazia.</div>`;
+      else watchlist.forEach(anime => grid.appendChild(createAnimeCard(anime)));
       lucide.createIcons();
     }
-
-    // HISTÓRICO
     function saveHistory(anime, epNum) {
       watchHistory = watchHistory.filter(h => h.id !== anime.id);
       watchHistory.unshift({ id: anime.id, title: anime.title, coverImage: anime.coverImage, epNum: epNum, timestamp: Date.now() });
       if (watchHistory.length > 20) watchHistory.pop(); 
-      localStorage.setItem('otakuflow_history', JSON.stringify(watchHistory));
-      renderHistory();
+      localStorage.setItem('otakuflow_history', JSON.stringify(watchHistory)); renderHistory();
     }
-    function renderHistory() { renderRow('row-history', watchHistory, true); }
+    function renderHistory() {
+      renderRow('row-history', watchHistory, true); // Aba Perfil
+      const gridFull = document.getElementById('history-grid'); // Sub-aba Histórico
+      if(gridFull) {
+        gridFull.innerHTML = '';
+        watchHistory.forEach(anime => gridFull.appendChild(createAnimeCard(anime, false)));
+      }
+    }
     function clearHistory() { watchHistory = []; localStorage.setItem('otakuflow_history', JSON.stringify([])); renderHistory(); showToast('Limpo', 'Histórico apagado.'); }
 
-    // BUSCA E ROTEAMENTO
+    // BUSCA
     let searchTimeout = null;
     function setupSearch() {
-      const inputHeader = document.getElementById('global-search-input');
-      const spinner = document.getElementById('search-spinner');
-      inputHeader.addEventListener('input', (e) => {
-        const value = e.target.value.trim();
-        clearTimeout(searchTimeout);
+      document.getElementById('global-search-input').addEventListener('input', (e) => {
+        const value = e.target.value.trim(); clearTimeout(searchTimeout);
         if (value.length < 3) { if (value.length === 0) clearSearch(); return; }
-        
-        navigateToTab('search');
-        spinner.classList.remove('hidden');
+        navigateToTab('search'); document.getElementById('search-spinner').classList.remove('hidden');
         searchTimeout = setTimeout(() => { performSearch(value); }, 650);
       });
     }
-
     function clearSearch() {
       document.getElementById('global-search-input').value = '';
       document.getElementById('search-spinner').classList.add('hidden');
-      document.getElementById('search-grid').innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600"><i data-lucide="search" class="w-16 h-16 mx-auto mb-4 opacity-20"></i>Use a barra superior para buscar um anime.</div>`;
+      document.getElementById('search-grid').innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600"><i data-lucide="search" class="w-16 h-16 mx-auto mb-4 opacity-20"></i>Busque animes.</div>`;
       lucide.createIcons();
     }
-
     async function performSearch(queryText) {
       const url = 'https://graphql.anilist.co';
-      const query = `query ($search: String) { Page(page: 1, perPage: 24) { media(search: $search, type: ANIME, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } } }`;
+      const query = `query ($search: String) { Page(page: 1, perPage: 24) { media(search: $search, type: ANIME, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } } }`;
       try {
         const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables: { search: queryText } }) });
         const result = await response.json();
@@ -622,45 +672,52 @@
         showSearchResults(result?.data?.Page?.media || []);
       } catch (e) { document.getElementById('search-spinner').classList.add('hidden'); }
     }
-
     async function performSearchAndOpen(id, fallbackTitle) {
-      showToast('Carregando...', `Procurando Temporada: ${fallbackTitle}`);
+      showToast('Carregando...', `Acessando banco de dados...`);
       const url = 'https://graphql.anilist.co';
-      const query = `query ($id: Int) { Media(id: $id) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } } } } } }`;
+      const query = `query ($id: Int) { Media(id: $id) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }`;
       try {
         const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables: { id: id } }) });
         const result = await response.json();
         if(result?.data?.Media) openModal(result.data.Media);
-      } catch (e) { showToast('Erro', 'Falha ao buscar dados.'); }
+      } catch (e) { showToast('Erro', 'Falha.'); }
     }
-
     function showSearchResults(list) {
-      const grid = document.getElementById('search-grid');
-      grid.innerHTML = '';
+      const grid = document.getElementById('search-grid'); grid.innerHTML = '';
       if (list.length === 0) grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600">Nenhum anime encontrado.</div>`;
       else list.forEach(anime => grid.appendChild(createAnimeCard(anime)));
     }
 
+    // UTILITÁRIOS
     const translateSeason = (season, year) => { const s = { WINTER: "Inverno", SPRING: "Primavera", SUMMER: "Verão", FALL: "Outono" }; return season ? `${s[season] || season} de ${year || ''}` : year || "--"; };
     const translateFormat = (f) => ({ TV: "Série", MOVIE: "Filme", OVA: "OVA", ONA: "Web", TV_SHORT: "Curta", SPECIAL: "Especial" }[f] || f || "--");
     const translateStatus = (s) => ({ FINISHED: "Finalizado", RELEASING: "Lançando", NOT_YET_RELEASED: "Em Breve" }[s] || s || "--");
-    const translateRelation = (t) => ({ SEQUEL: "Continuação", PREQUEL: "Anterior", ALTERNATIVE: "Alternativo", SIDE_STORY: "Spin-off", PARENT: "Principal", SUMMARY: "Resumo", SPIN_OFF: "Spin-off" }[t] || "Relacionado");
+    const translateRelation = (t) => ({ SEQUEL: "Continuação", PREQUEL: "Anterior", ALTERNATIVE: "Alternativo", SIDE_STORY: "Spin-off", PARENT: "História Base", SUMMARY: "Resumo", SPIN_OFF: "Spin-off" }[t] || "Relacionado");
 
-    // MODAL DE DETALHES
+    // MODAL & ACORDEON DE TEMPORADAS
+    function toggleSeasons() {
+      const list = document.getElementById('seasons-list');
+      const arrow = document.getElementById('seasons-arrow');
+      if (list.classList.contains('hidden')) {
+        list.classList.remove('hidden');
+        arrow.classList.add('rotate-180');
+      } else {
+        list.classList.add('hidden');
+        arrow.classList.remove('rotate-180');
+      }
+    }
+
     function openModal(anime) {
       activeAnimeData = anime;
       currentEpPage = 1; 
       hidePlayer();
       document.body.classList.add('modal-open');
-      
-      // Push State pro celular reconhecer que abriu uma "página"
       window.history.pushState({ modal: 'open' }, '', `#anime_${anime.id}`);
 
       const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji || "Sem título";
       document.getElementById('modal-title').textContent = title;
       document.getElementById('modal-title-alt').textContent = anime.title?.romaji || "";
       document.getElementById('modal-score').innerHTML = `<i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> ${anime.meanScore ? (anime.meanScore/10).toFixed(1) : "--"}`;
-      
       document.getElementById('tech-season').textContent = translateSeason(anime.season, anime.seasonYear);
       document.getElementById('tech-format').textContent = translateFormat(anime.format);
       document.getElementById('tech-status').textContent = translateStatus(anime.status);
@@ -684,15 +741,11 @@
       coverImg.classList.remove('opacity-0');
 
       if (anime.trailer && anime.trailer.site === 'youtube' && anime.trailer.id) {
-        // Uso de nocookie para mitigar anúncios do yt
         trailerContainer.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${anime.trailer.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${anime.trailer.id}" class="w-full h-full scale-[1.35] pointer-events-none" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
         trailerContainer.classList.remove('hidden');
         coverTimeout = setTimeout(() => { coverImg.classList.add('opacity-0'); }, 4000);
-      } else {
-        trailerContainer.classList.add('hidden');
-      }
+      } else { trailerContainer.classList.add('hidden'); }
 
-      // TRADUÇÃO (API PÚBLICA MYMEMORY - Cortada para não bugar)
       const synopsisEl = document.getElementById('modal-synopsis');
       const translationStatus = document.getElementById('translation-status');
       synopsisEl.textContent = "Traduzindo sinopse...";
@@ -714,38 +767,41 @@
         span.textContent = g; genresDiv.appendChild(span);
       });
 
-      // CONSTRUÇÃO DE TEMPORADAS / RELAÇÕES
-      const relContainer = document.getElementById('modal-relations-container');
-      const relList = document.getElementById('modal-relations-list');
-      relList.innerHTML = '';
-      
+      // CONSTRUÇÃO DE TEMPORADAS (ACORDEON VERTICAL)
+      const seasonsContainer = document.getElementById('modal-seasons-container');
+      const seasonsList = document.getElementById('modal-seasons-list');
+      seasonsList.innerHTML = '';
+      seasonsList.classList.add('hidden'); // Começa fechado
+      document.getElementById('seasons-arrow').classList.remove('rotate-180');
+
       if (anime.relations && anime.relations.edges && anime.relations.edges.length > 0) {
-          // Filtra apenas o que for Anime (Ignora Mangá, Light Novel)
           const validRelations = anime.relations.edges.filter(e => e.node.type === 'ANIME');
           if (validRelations.length > 0) {
               validRelations.forEach(rel => {
                   const btn = document.createElement('button');
                   btn.type = "button";
-                  btn.className = "tv-focus flex items-center gap-3 bg-dark-950/50 hover:bg-brand-500 hover:text-dark-950 border border-neutral-800 p-2 rounded-xl text-left transition duration-300 shrink-0 w-52 sm:w-64 group";
+                  btn.className = "tv-focus w-full flex items-center gap-3 bg-dark-950/50 hover:bg-brand-500 hover:text-dark-950 border border-neutral-800/50 p-2 rounded-xl text-left transition duration-300 group";
                   
                   const relTitle = rel.node.title?.userPreferred || rel.node.title?.english || rel.node.title?.romaji;
-                  const relCover = rel.node.coverImage?.large;
                   const typeTrans = translateRelation(rel.relationType);
+                  const statusTrans = translateStatus(rel.node.status);
+                  const formatTrans = translateFormat(rel.node.format);
 
                   btn.innerHTML = `
-                      <img src="${relCover}" class="w-10 h-14 object-cover rounded-md group-hover:scale-105 transition">
-                      <div class="flex flex-col overflow-hidden">
+                      <img src="${rel.node.coverImage?.large}" class="w-10 h-14 object-cover rounded-md">
+                      <div class="flex flex-col flex-1 overflow-hidden">
                          <span class="text-[9px] text-brand-500 font-bold uppercase group-hover:text-dark-950">${typeTrans}</span>
-                         <span class="text-xs font-bold text-neutral-200 truncate group-hover:text-dark-950 mt-0.5">${relTitle}</span>
+                         <span class="text-xs font-bold text-neutral-200 truncate group-hover:text-dark-950">${relTitle}</span>
+                         <span class="text-[9px] text-neutral-500 group-hover:text-dark-900/80">${formatTrans} • ${statusTrans}</span>
                       </div>
+                      <i data-lucide="play-circle" class="w-5 h-5 text-neutral-600 group-hover:text-dark-950 mr-2 shrink-0"></i>
                   `;
                   btn.onclick = () => performSearchAndOpen(rel.node.id, relTitle);
-                  relList.appendChild(btn);
+                  seasonsList.appendChild(btn);
               });
-              relContainer.classList.remove('hidden');
-          } else { relContainer.classList.add('hidden'); }
-      } else { relContainer.classList.add('hidden'); }
-
+              seasonsContainer.classList.remove('hidden');
+          } else { seasonsContainer.classList.add('hidden'); }
+      } else { seasonsContainer.classList.add('hidden'); }
 
       renderModalEpisodesList(activeAnimeData, currentEpPage);
 
@@ -768,14 +824,17 @@
       
       const startIndex = (page - 1) * EPS_PER_PAGE + 1;
       const endIndex = Math.min(page * EPS_PER_PAGE, total);
-      const defaultCover = anime.bannerImage || anime.coverImage?.extraLarge;
+      // Se não tiver thumbnail real na api, usa a cover
+      const fallbackThumb = anime.bannerImage || anime.coverImage?.extraLarge || ""; 
 
       for (let i = startIndex; i <= endIndex; i++) {
+        // Tenta achar o thumbnail REAL do episódio na API streamingEpisodes
         const foundEp = realEpisodesData.find(ep => ep.title.includes(`Episode ${i} `) || ep.title.includes(`Episódio ${i} `)) || realEpisodesData[i-1];
         let epTitleText = `Episódio ${i}`; 
         if (foundEp && foundEp.title) epTitleText = foundEp.title.replace(/Episode \d+ - /, ''); 
         
-        const thumbnail = (foundEp && foundEp.thumbnail) ? foundEp.thumbnail : defaultCover;
+        // Se a Anilist forneceu thumbnail do ep, usa. Senão, capa do anime.
+        const thumbnail = (foundEp && foundEp.thumbnail) ? foundEp.thumbnail : fallbackThumb;
 
         const epRow = document.createElement('button');
         epRow.type = "button";
@@ -790,7 +849,7 @@
             <span class="text-[9px] font-black text-neutral-500 group-hover:text-dark-950/70 uppercase tracking-widest block mb-0.5">Ep ${i}</span>
             <h4 class="text-xs sm:text-sm font-bold truncate text-neutral-200 group-hover:text-dark-950">${epTitleText}</h4>
           </div>
-          <div class="p-2 sm:p-3 text-brand-500 group-hover:text-dark-950 shrink-0"><i data-lucide="play" class="w-5 h-5 sm:w-6 sm:h-6 fill-current"></i></div>
+          <div class="p-2 sm:p-3 text-brand-500 group-hover:text-dark-950 shrink-0"><i data-lucide="play-circle" class="w-5 h-5 sm:w-6 sm:h-6 fill-current"></i></div>
         `;
         epRow.onclick = () => selectEpisode(i);
         epsListContainer.appendChild(epRow);
@@ -807,11 +866,11 @@
         pagControls.classList.remove('hidden');
         btnPrev.onclick = () => renderModalEpisodesList(anime, page - 1);
         btnPrev.disabled = (page === 1);
-        btnPrev.className = `flex-1 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2 ${page === 1 ? 'bg-dark-950 border border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-brand-500 shadow-md'}`;
+        btnPrev.className = `flex-1 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2 ${page === 1 ? 'bg-dark-950 border border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-dark-950 shadow-md'}`;
         
         btnNext.onclick = () => renderModalEpisodesList(anime, page + 1);
         btnNext.disabled = (endIndex === total);
-        btnNext.className = `flex-1 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2 ${endIndex === total ? 'bg-dark-950 border border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-brand-500 shadow-md'}`;
+        btnNext.className = `flex-1 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2 ${endIndex === total ? 'bg-dark-950 border border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-dark-950 shadow-md'}`;
       } else {
         pagControls.classList.add('hidden');
       }
@@ -821,18 +880,13 @@
     function closeModal(isPopState = false) {
       const modal = document.getElementById('details-modal');
       const modalBox = document.getElementById('modal-content-box');
-      
-      modalBox.classList.remove('scale-100');
-      modalBox.classList.add('scale-95');
+      modalBox.classList.remove('scale-100'); modalBox.classList.add('scale-95');
       modal.classList.add('opacity-0', 'pointer-events-none');
-      
       document.body.classList.remove('modal-open'); 
       clearTimeout(coverTimeout);
       document.getElementById('modal-trailer-container').innerHTML = ''; 
       
-      if (!isPopState && window.history.state?.modal === 'open') {
-        window.history.back(); // Volta virtualmente
-      }
+      if (!isPopState && window.history.state?.modal === 'open') { window.history.back(); }
       updateFocusableElements();
     }
 
@@ -851,30 +905,33 @@
     }
 
     function navigateToTab(tabName, pushHistory = true) {
+      // Regra de Voltar inteligente do celular
+      if (pushHistory) {
+        // Se formos para uma tela secundária a partir da home, empilha. Se pular de secundária pra secundária, substitui.
+        if (window.history.state?.tab === 'home') {
+           window.history.pushState({ tab: tabName }, '', `#${tabName}`);
+        } else {
+           window.history.replaceState({ tab: tabName }, '', `#${tabName}`);
+        }
+      }
+
+      // Atualiza botões
       const btns = document.querySelectorAll('nav .nav-btn');
-      btns.forEach(b => {
-        b.className = "nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1";
-      });
-      const activeBtn = document.getElementById(`nav-btn-${tabName}`);
+      btns.forEach(b => { b.className = "nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"; });
+      const activeBtn = document.getElementById(`nav-btn-${tabName === 'historyFull' || tabName === 'about' ? 'profile' : tabName}`);
       if(activeBtn) activeBtn.className = "nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1";
 
       document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(`tab-${tabName}`).classList.add('active');
 
-      if (pushHistory) { window.history.pushState({ tab: tabName }, '', `#${tabName}`); }
-
       if (tabName === 'home') window.scrollTo({ top: 0, behavior: 'smooth' }); 
-      else if (tabName === 'search') { document.getElementById('global-search-input').focus(); } 
       updateFocusableElements();
     }
 
     function updateFocusableElements() {
       const isModalOpen = !document.getElementById('details-modal').classList.contains('pointer-events-none');
-      if (isModalOpen) {
-        focusableElements = Array.from(document.querySelectorAll('#details-modal .tv-focus'));
-      } else {
-        focusableElements = Array.from(document.querySelectorAll('header .tv-focus, .tab-section.active .tv-focus, nav button'));
-      }
+      if (isModalOpen) { focusableElements = Array.from(document.querySelectorAll('#details-modal .tv-focus')); } 
+      else { focusableElements = Array.from(document.querySelectorAll('header .tv-focus, .tab-section.active .tv-focus, nav button')); }
       focusableElements.forEach(el => el.classList.remove('active-focus'));
       currentFocusIndex = -1;
     }
@@ -885,11 +942,7 @@
         if (e.key !== 'Escape') e.preventDefault();
         
         if (focusableElements.length === 0) updateFocusableElements();
-        if (e.key === 'Escape') { 
-          const modal = document.getElementById('details-modal');
-          if (!modal.classList.contains('opacity-0')) closeModal(); 
-          return; 
-        }
+        if (e.key === 'Escape') { const modal = document.getElementById('details-modal'); if (!modal.classList.contains('opacity-0')) closeModal(); return; }
         if (currentFocusIndex === -1) { currentFocusIndex = 0; highlightElement(focusableElements[0]); return; }
 
         let newIndex = currentFocusIndex;
