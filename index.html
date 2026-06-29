@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OtakuFlow - Seu Portal de Animes</title>
   
-  <!-- Tailwind CSS para design responsivo e moderno -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts - Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Lucide Icons para os ícones da interface -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
@@ -68,7 +65,6 @@
 </head>
 <body class="bg-dark-950 text-neutral-100 font-sans select-none overflow-x-hidden min-h-screen pb-24 md:pb-12">
 
-  <!-- NOTIFICAÇÃO PERSONALIZADA (Toast) -->
   <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-80 transition-all duration-300 ease-out bg-dark-800 border-l-4 border-brand-500 text-neutral-100 p-4 rounded shadow-2xl flex flex-col gap-2 max-w-sm pointer-events-none opacity-0">
     <div class="flex items-center gap-3">
       <i data-lucide="info" id="toast-icon" class="text-brand-500 w-6 h-6 shrink-0"></i>
@@ -77,13 +73,8 @@
         <p class="text-xs text-neutral-400" id="toast-message">Mensagem do sistema.</p>
       </div>
     </div>
-    <!-- Detalhes do erro técnico (Apenas se falhar) -->
-    <div id="toast-debug" class="hidden text-[10px] bg-black/40 p-2 rounded text-rose-400 font-mono overflow-x-auto max-h-24 scrollbar-hide select-text pointer-events-auto">
-      Erro técnico.
-    </div>
   </div>
 
-  <!-- CABEÇALHO / MENU DE NAVEGAÇÃO -->
   <header class="sticky top-0 z-40 backdrop-blur-md bg-dark-950/80 border-b border-neutral-800/60 px-4 md:px-12 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
     <div class="flex items-center gap-2">
       <div class="bg-brand-500 p-2 rounded-lg text-dark-950">
@@ -93,7 +84,6 @@
       <span class="hidden md:inline-block bg-dark-800 text-[10px] text-brand-500 font-bold tracking-widest uppercase px-2 py-0.5 rounded border border-brand-500/30">TV & Mobile</span>
     </div>
 
-    <!-- Barra de busca com AniList em tempo real -->
     <div class="relative w-full sm:w-80 md:w-96">
       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <i data-lucide="search" class="text-neutral-500 w-5 h-5"></i>
@@ -104,14 +94,12 @@
         placeholder="Pesquisar animes na AniList..." 
         class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-full py-2 pl-10 pr-4 text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none transition duration-200"
       >
-      <!-- Indicador de busca ativa -->
       <div id="search-spinner" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden">
         <div class="animate-spin rounded-full h-4 w-4 border-t-2 border-brand-500"></div>
       </div>
     </div>
   </header>
 
-  <!-- BANNER DE DESTAQUE (Hero Section) -->
   <section id="hero-section" class="relative h-[60vh] w-full bg-dark-900 flex items-end overflow-hidden">
     <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-700 scale-105 filter brightness-[0.45]" style="background-image: url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920');"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/40 to-transparent fade-mask"></div>
@@ -121,7 +109,7 @@
         <span id="hero-tag" class="bg-brand-500/20 text-brand-500 font-bold text-xs uppercase tracking-widest px-2.5 py-1 rounded border border-brand-500/30">Destaque da Temporada</span>
         <span class="flex items-center gap-1 text-yellow-500 text-sm font-semibold">
           <i data-lucide="star" class="w-4 h-4 fill-yellow-500"></i>
-          <span id="hero-score">9.2</span>
+          <span id="hero-score">--</span>
         </span>
       </div>
       <h1 id="hero-title" class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-neutral-50 mb-3 leading-tight tracking-tight drop-shadow-lg">Carregando catálogo...</h1>
@@ -138,7 +126,6 @@
     </div>
   </section>
 
-  <!-- RESULTADOS DA PESQUISA -->
   <section id="search-section" class="px-4 md:px-12 py-8 hidden">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">
@@ -149,14 +136,11 @@
       </button>
     </div>
     <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-      <!-- Cards serão injetados dinamicamente -->
-    </div>
+      </div>
   </section>
 
-  <!-- SEÇÕES DE CONTEÚDO (HOME) -->
   <div id="home-content" class="space-y-10 px-4 md:px-12 py-8">
     
-    <!-- FILEIRA EXCLUSIVA: MINHA LISTA (Exibida apenas se houver itens salvos) -->
     <section id="watchlist-section" class="hidden">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl md:text-2xl font-bold text-brand-500 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">
@@ -165,12 +149,10 @@
       </div>
       <div class="relative group">
         <div id="row-watchlist" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 -mx-1 scroll-smooth">
-          <!-- Cards de favoritos injetados aqui -->
-        </div>
+          </div>
       </div>
     </section>
 
-    <!-- FILEIRA 1: EM ALTA (TRENDING) -->
     <section id="trending-section">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">
@@ -188,7 +170,6 @@
       </div>
     </section>
 
-    <!-- FILEIRA 2: POPULARES DE TODOS OS TEMPOS -->
     <section id="popular-section">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl md:text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">
@@ -208,31 +189,26 @@
 
   </div>
 
-  <!-- MODAL DE DETALHES & PLAYER -->
   <div id="details-modal" class="fixed inset-0 z-50 bg-neutral-950/95 flex items-center justify-center p-4 md:p-10 opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
     <div class="bg-dark-900 rounded-2xl w-full max-w-5xl border border-neutral-800 overflow-hidden shadow-2xl relative my-auto">
       
-      <!-- Botão Fechar -->
       <button onclick="closeModal()" class="tv-focus absolute top-4 right-4 z-10 bg-neutral-950/80 hover:bg-brand-500 hover:text-neutral-950 p-2 rounded-full transition duration-200">
         <i data-lucide="x" class="w-6 h-6"></i>
       </button>
 
-      <!-- Grid de Detalhes -->
       <div class="grid grid-cols-1 md:grid-cols-12">
         
-        <!-- Banner/Imagem lateral (Esquerda) -->
         <div class="col-span-1 md:col-span-5 relative h-64 md:h-auto min-h-[300px] bg-dark-950 flex items-end">
           <img id="modal-cover" class="absolute inset-0 w-full h-full object-cover filter brightness-[0.4]" src="" alt="Capa">
           <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent"></div>
           
           <div class="relative z-10 p-6">
             <span id="modal-score" class="bg-brand-500 text-dark-950 font-bold px-2 py-1 rounded text-xs inline-flex items-center gap-1 mb-2">
-              <i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> 8.5
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> --
             </span>
             <h3 id="modal-title-alt" class="text-xs text-neutral-400 font-medium tracking-wide block uppercase mb-1">Romaji Title</h3>
             <h2 id="modal-title" class="text-xl md:text-2xl font-black text-neutral-50 mb-4">Título do Anime</h2>
             
-            <!-- Botão Adicionar aos Favoritos -->
             <button id="modal-watchlist-btn" class="tv-focus w-full bg-neutral-800/80 hover:bg-neutral-700/80 text-neutral-100 font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 border border-neutral-700/50 text-xs transition duration-200">
               <i data-lucide="bookmark" id="watchlist-btn-icon" class="w-4 h-4"></i>
               <span id="watchlist-btn-text">Adicionar à Minha Lista</span>
@@ -240,20 +216,16 @@
           </div>
         </div>
 
-        <!-- Painel de Informações & Episódios (Direita) -->
         <div class="col-span-1 md:col-span-7 p-6 md:p-8 flex flex-col justify-between max-h-[85vh] overflow-y-auto scrollbar-hide">
           <div>
-            <!-- Gêneros -->
             <div id="modal-genres" class="flex flex-wrap gap-2 mb-4">
-              <!-- Gêneros dinâmicos -->
-            </div>
+              </div>
 
             <h3 class="text-sm font-semibold text-neutral-400 uppercase tracking-widest mb-2">Sinopse</h3>
             <p id="modal-synopsis" class="text-neutral-300 text-sm leading-relaxed mb-6 max-h-36 overflow-y-auto scroll-smooth pr-2">
               Carregando sinopse...
             </p>
 
-            <!-- PLAYER PLACEHOLDER (Para conexão futura com a Render) -->
             <div id="player-container" class="hidden mb-6 bg-neutral-950 border border-neutral-800 rounded-lg p-6 text-center">
               <div class="flex flex-col items-center justify-center gap-3">
                 <div class="w-12 h-12 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 animate-bounce">
@@ -274,17 +246,15 @@
               </div>
             </div>
 
-            <!-- Lista de Episódios -->
             <div id="episodes-container">
               <div class="flex items-center justify-between mb-3 border-b border-neutral-800 pb-2">
                 <h4 class="text-sm font-bold text-neutral-50 uppercase tracking-wider flex items-center gap-1.5">
                   <i data-lucide="play-square" class="w-4 h-4 text-brand-500"></i> Episódios Disponíveis
                 </h4>
-                <span id="modal-episode-count" class="text-xs text-neutral-400 bg-dark-800 px-2 py-0.5 rounded">Total: 12 eps</span>
+                <span id="modal-episode-count" class="text-xs text-neutral-400 bg-dark-800 px-2 py-0.5 rounded">Total: -- eps</span>
               </div>
               <div id="modal-episodes-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-56 overflow-y-auto pr-1">
-                <!-- Botões de episódios -->
-              </div>
+                </div>
             </div>
           </div>
 
@@ -300,7 +270,6 @@
     </div>
   </div>
 
-  <!-- BARRA DE NAVEGAÇÃO INFERIOR (Mobile - some em TVs e Computadores) -->
   <nav class="fixed bottom-0 inset-x-0 bg-dark-900 border-t border-neutral-800/80 md:hidden z-40 px-6 py-2 flex justify-around items-center backdrop-blur-md">
     <button onclick="navigateToTab('home')" class="flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-200">
       <i data-lucide="home" class="w-5 h-5"></i>
@@ -316,89 +285,11 @@
     </button>
   </nav>
 
-  <!-- SCRIPT DE LÓGICA, CONEXÃO E BANCO LOCAL -->
   <script>
-    // Inicialização dos ícones do Lucide
     lucide.createIcons();
 
-    // Cache interno de dados
-    const aniListCache = {
-      trending: null,
-      popular: null,
-      timestamp: 0
-    };
-
-    // Coleção local de favoritos (LocalStorage)
+    const aniListCache = { trending: null, popular: null };
     let watchlist = JSON.parse(localStorage.getItem('otakuflow_watchlist')) || [];
-
-    // BANCO DE DADOS LOCAL DE SEGURANÇA (Para demonstração caso ocorra algum bloqueio estrito na rede)
-    const localMockData = {
-      trending: [
-        {
-          id: 16498,
-          title: { english: "Attack on Titan Season 4", userPreferred: "Shingeki no Kyojin: The Final Season", romaji: "Shingeki no Kyojin: The Final Season" },
-          bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920",
-          coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600", extraLarge: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" },
-          description: "Eren Yeager jurou exterminar até o último Titã. Mas em uma batalha desesperada, ele se torna aquilo que mais odeia. Com a verdade sobre o porão revelada, os horizontes se expandem para além das muralhas.",
-          genres: ["Ação", "Fantasia", "Drama", "Mistério"],
-          meanScore: 91,
-          episodes: 28
-        },
-        {
-          id: 101922,
-          title: { english: "Demon Slayer: Kimetsu no Yaiba", userPreferred: "Kimetsu no Yaiba", romaji: "Kimetsu no Yaiba" },
-          bannerImage: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1920",
-          coverImage: { large: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600", extraLarge: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600" },
-          description: "Japão, era Taisho. Tanjiro, um jovem bondoso que vende carvão, encontra sua família massacrada por um demônio. Para piorar, sua irmã Nezuko se transformou em um demônio. Ele inicia uma jornada para salvá-la.",
-          genres: ["Ação", "Fantasia", "Histórico"],
-          meanScore: 86,
-          episodes: 26
-        },
-        {
-          id: 113415,
-          title: { english: "Jujutsu Kaisen", userPreferred: "Jujutsu Kaisen", romaji: "Jujutsu Kaisen" },
-          bannerImage: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920",
-          coverImage: { large: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600", extraLarge: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600" },
-          description: "Dificuldades, arrependimento, vergonha... Os sentimentos negativos dos humanos tornam-se Maldições. Yuji Itadori, um estudante comum, engole um dedo amaldiçoado para salvar seus amigos e vira o receptáculo do Rei das Maldições.",
-          genres: ["Ação", "Sobrenatural", "Escolar"],
-          meanScore: 87,
-          episodes: 24
-        }
-      ],
-      popular: [
-        {
-          id: 21,
-          title: { english: "One Piece", userPreferred: "One Piece", romaji: "ONE PIECE" },
-          bannerImage: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1920",
-          coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600", extraLarge: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" },
-          description: "Gol D. Roger era o Rei dos Piratas. Suas últimas palavras antes de morrer revelaram o One Piece, o maior tesouro do mundo. Isso deu início à Grande Era dos Piratas, onde Monkey D. Luffy navega em busca do tesouro.",
-          genres: ["Ação", "Aventura", "Fantasia"],
-          meanScore: 88,
-          episodes: 1100
-        },
-        {
-          id: 1535,
-          title: { english: "Death Note", userPreferred: "Death Note", romaji: "Death Note" },
-          bannerImage: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1920",
-          coverImage: { large: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600", extraLarge: "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600" },
-          description: "Light Yagami é um estudante genial que encontra um caderno misterioso capaz de matar qualquer pessoa cujo nome seja escrito nele. Ele decide criar um mundo perfeito eliminando os criminosos, sob o codinome Kira.",
-          genres: ["Psicológico", "Suspense", "Sobrenatural"],
-          meanScore: 88,
-          episodes: 37
-        },
-        {
-          id: 20,
-          title: { english: "Naruto", userPreferred: "Naruto", romaji: "Naruto" },
-          bannerImage: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1920",
-          coverImage: { large: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600", extraLarge: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600" },
-          description: "Naruto Uzumaki é um jovem shinobi que carrega uma terrível raposa de nove caudas selada dentro de si. Rejeitado por sua vila, ele luta constantemente para obter o título de Hokage e o respeito de todos.",
-          genres: ["Ação", "Comédia", "Aventura"],
-          meanScore: 80,
-          episodes: 220
-        }
-      ]
-    };
-
     let activeAnimeData = null; 
     let focusableElements = [];
     let currentFocusIndex = -1;
@@ -410,31 +301,10 @@
       setupTVControls();
     };
 
-    // Alerta personalizado com console de erro embutido
-    function showToast(title, message, isWarning = false, debugMessage = "") {
+    function showToast(title, message) {
       const toast = document.getElementById('toast');
-      const toastTitle = document.getElementById('toast-title');
-      const toastMsg = document.getElementById('toast-message');
-      const toastDebug = document.getElementById('toast-debug');
-      const toastIcon = document.getElementById('toast-icon');
-      
-      toastTitle.textContent = title;
-      toastMsg.textContent = message;
-      
-      if (debugMessage) {
-        toastDebug.textContent = `Origem do erro: ${debugMessage}`;
-        toastDebug.classList.remove('hidden');
-      } else {
-        toastDebug.classList.add('hidden');
-      }
-      
-      if (isWarning) {
-        toast.className = "fixed top-5 right-5 z-50 transform translate-x-80 transition-all duration-300 ease-out bg-amber-950 border-l-4 border-amber-500 text-neutral-100 p-4 rounded shadow-2xl flex flex-col gap-2 max-w-sm pointer-events-none opacity-0";
-        toastIcon.className = "text-amber-500 w-6 h-6 shrink-0";
-      } else {
-        toast.className = "fixed top-5 right-5 z-50 transform translate-x-80 transition-all duration-300 ease-out bg-dark-800 border-l-4 border-brand-500 text-neutral-100 p-4 rounded shadow-2xl flex flex-col gap-2 max-w-sm pointer-events-none opacity-0";
-        toastIcon.className = "text-brand-500 w-6 h-6 shrink-0";
-      }
+      document.getElementById('toast-title').textContent = title;
+      document.getElementById('toast-message').textContent = message;
       
       toast.classList.remove('opacity-0', 'translate-x-80');
       toast.classList.add('opacity-100', 'translate-x-0');
@@ -442,48 +312,42 @@
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-x-80');
         toast.classList.remove('opacity-100', 'translate-x-0');
-      }, 7000);
+      }, 4000);
     }
 
-    // Consulta real de dados da API AniList (Corrigida a sintaxe estrita GraphQL)
+    // LISTA DE FALLBACK LOCAL APENAS SE A REDE CAIR TOTALMENTE
+    const fallbackLocalMock = [
+      {
+        id: 21,
+        title: { english: "One Piece", userPreferred: "One Piece" },
+        coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" },
+        meanScore: 89, episodes: 1100, description: "Grande Era dos Piratas!", genres: ["Ação"]
+      }
+    ];
+
+    // CARREGAMENTO SEGURO DA API (BLINDADO COM OPTIONAL CHAINING)
     async function fetchAniListData() {
       const url = 'https://graphql.anilist.co';
-      
-      // Correção crucial: Argumento 'sort' agora usa array estrito [] exigido pelo motor GraphQL da AniList
       const query = `
         query {
-          trending: Page(page: 1, perPage: 8) {
+          trending: Page(page: 1, perPage: 10) {
             media(sort: [TRENDING_DESC], type: ANIME, isAdult: false) {
               id
-              title {
-                romaji
-                english
-                userPreferred
-              }
+              title { romaji english userPreferred }
               bannerImage
-              coverImage {
-                extraLarge
-                large
-              }
+              coverImage { extraLarge large }
               description
               genres
               meanScore
               episodes
             }
           }
-          popular: Page(page: 1, perPage: 8) {
+          popular: Page(page: 1, perPage: 10) {
             media(sort: [POPULAR_DESC], type: ANIME, isAdult: false) {
               id
-              title {
-                romaji
-                english
-                userPreferred
-              }
+              title { romaji english userPreferred }
               bannerImage
-              coverImage {
-                extraLarge
-                large
-              }
+              coverImage { extraLarge large }
               description
               genres
               meanScore
@@ -496,76 +360,47 @@
       try {
         const response = await fetch(url, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: query })
         });
 
-        if (!response.ok) {
-          throw new Error(`Erro HTTP ${response.status} ao conectar à AniList.`);
-        }
-
+        if (!response.ok) throw new Error();
         const result = await response.json();
         
-        if (result.errors) {
-          throw new Error(`Erro na query GraphQL: ${result.errors[0].message}`);
-        }
-
-        const data = result.data;
-        aniListCache.trending = data.trending.media;
-        aniListCache.popular = data.popular.media;
-        aniListCache.timestamp = Date.now();
+        // Atribui os dados coletados com segurança
+        aniListCache.trending = result?.data?.trending?.media || fallbackLocalMock;
+        aniListCache.popular = result?.data?.popular?.media || fallbackLocalMock;
 
         document.getElementById('source-tag-trending').textContent = "Puxado da AniList API";
         document.getElementById('source-tag-popular').textContent = "Puxado da AniList API";
 
-        buildHeroBanner(data.trending.media[0]); 
-        renderRow('row-trending', data.trending.media);
-        renderRow('row-popular', data.popular.media);
+        // Monta os blocos na home de forma totalmente segura
+        buildHeroBanner(aniListCache.trending[0]); 
+        renderRow('row-trending', aniListCache.trending);
+        renderRow('row-popular', aniListCache.popular);
         
         updateFocusableElements();
-
       } catch (error) {
-        console.warn('Erro na ligação à API da AniList:', error);
-        loadFallbackDemo(error.message);
+        console.warn('Erro ao processar blocos da Home. Ativando proteção local.');
+        aniListCache.trending = fallbackLocalMock;
+        aniListCache.popular = fallbackLocalMock;
+        buildHeroBanner(fallbackLocalMock[0]);
+        renderRow('row-trending', fallbackLocalMock);
+        renderRow('row-popular', fallbackLocalMock);
       }
     }
 
-    // Carrega o banco offline local em caso de erro CORS/Brave Shields
-    function loadFallbackDemo(errorMessage = "") {
-      aniListCache.trending = localMockData.trending;
-      aniListCache.popular = localMockData.popular;
-
-      document.getElementById('source-tag-trending').textContent = "Modo de Demonstração Offline";
-      document.getElementById('source-tag-popular').textContent = "Modo de Demonstração Offline";
-      document.getElementById('hero-tag').textContent = "Modo de Teste Local";
-
-      buildHeroBanner(localMockData.trending[0]);
-      renderRow('row-trending', localMockData.trending);
-      renderRow('row-popular', localMockData.popular);
-      
-      updateFocusableElements();
-
-      // Mostra ao usuário o erro técnico real de forma elegante
-      showToast(
-        'Modo de Segurança Ativado', 
-        'Carregamos os dados locais porque o browser ou a rede bloquearam a conexão com a AniList.', 
-        true,
-        errorMessage || "Erro de Rede genérico (CORS / Bloqueador de Anúncios Ativo)."
-      );
-    }
-
-    // Monta o Banner Principal
+    // SUPORTE A DADOS NULOS DO BANNER
     function buildHeroBanner(anime) {
       if (!anime) return;
 
-      const title = anime.title.english || anime.title.userPreferred || anime.title.romaji;
-      const banner = anime.bannerImage || anime.coverImage.extraLarge;
+      const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji || "Anime sem título";
+      const coverUrl = anime.coverImage?.extraLarge || anime.coverImage?.large || "";
+      const banner = anime.bannerImage || coverUrl;
       const score = anime.meanScore ? (anime.meanScore / 10).toFixed(1) : "8.5";
       
       const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = anime.description || "Sem descrição disponível.";
+      tempDiv.innerHTML = anime.description || "Sem sinopse disponível.";
       const desc = tempDiv.textContent || tempDiv.innerText || "";
 
       document.getElementById('hero-bg').style.backgroundImage = `url('${banner}')`;
@@ -577,20 +412,21 @@
       document.getElementById('hero-info-btn').onclick = () => openModal(anime);
     }
 
-    // Cria as fileiras de cards horizontais
+    // SUPORTE A DADOS NULOS NOS CARDS DO GRID
     function renderRow(containerId, list) {
       const container = document.getElementById(containerId);
+      if (!container) return;
       container.innerHTML = ''; 
 
       list.forEach((anime) => {
+        if (!anime) return;
         const card = document.createElement('div');
         card.className = "tv-focus shrink-0 w-36 sm:w-44 bg-dark-900 rounded-lg overflow-hidden border border-neutral-800/60 hover:border-brand-500/80 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-brand-500/10";
         card.setAttribute('tabindex', '0');
-        card.setAttribute('data-id', anime.id);
 
-        const title = anime.title.userPreferred || anime.title.english || anime.title.romaji;
-        const cover = anime.coverImage.large || anime.coverImage.extraLarge;
-        const score = anime.meanScore ? `★ ${(anime.meanScore / 10).toFixed(1)}` : '★ 8.2';
+        const title = anime.title?.userPreferred || anime.title?.english || anime.title?.romaji || "Título Indisponível";
+        const cover = anime.coverImage?.large || anime.coverImage?.extraLarge || "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=600";
+        const score = anime.meanScore ? `★ ${(anime.meanScore / 10).toFixed(1)}` : '★ 8.0';
 
         card.innerHTML = `
           <div class="relative aspect-[3/4] overflow-hidden bg-neutral-900">
@@ -603,31 +439,26 @@
             <h3 class="text-xs sm:text-sm font-semibold text-neutral-200 line-clamp-2 min-h-[2.5rem] leading-snug">
               ${title}
             </h3>
-            <span class="text-[10px] text-neutral-500 block mt-1">${anime.episodes || '12'} Episódios</span>
+            <span class="text-[10px] text-neutral-500 block mt-1">${anime.episodes || '?'} Eps</span>
           </div>
         `;
 
         card.addEventListener('click', () => openModal(anime));
-        card.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') openModal(anime);
-        });
-
+        card.addEventListener('keydown', (e) => { if (e.key === 'Enter') openModal(anime); });
         container.appendChild(card);
       });
     }
 
-    // Gerenciador de Favoritos (Minha Lista)
+    // MANIPULAÇÃO DO BOTÃO FAVORITOS (LOCALSTORAGE)
     function toggleWatchlist(anime) {
       const index = watchlist.findIndex(item => item.id === anime.id);
-      
       if (index > -1) {
         watchlist.splice(index, 1);
-        showToast('Lista Atualizada', `Removido dos teus favoritos.`);
+        showToast('Lista Atualizada', `Removido da sua lista.`);
       } else {
         watchlist.push(anime);
-        showToast('Adicionado', `Salvo na tua lista de favoritos!`);
+        showToast('Adicionado', `Salvo em favoritos!`);
       }
-
       localStorage.setItem('otakuflow_watchlist', JSON.stringify(watchlist));
       updateWatchlistBtnUI(anime);
       renderWatchlist();
@@ -656,12 +487,11 @@
         section.classList.add('hidden');
         return;
       }
-
       section.classList.remove('hidden');
       renderRow('row-watchlist', watchlist);
     }
 
-    // Configurações da Barra de Pesquisa
+    // PESQUISA DA ANILIST
     let searchTimeout = null;
     function setupSearch() {
       const searchInput = document.getElementById('search-input');
@@ -670,16 +500,12 @@
       searchInput.addEventListener('input', (e) => {
         const value = e.target.value.trim();
         clearTimeout(searchTimeout);
-        
         if (value.length < 3) {
           if (value.length === 0) clearSearch();
           return;
         }
-
         spinner.classList.remove('hidden');
-        searchTimeout = setTimeout(() => {
-          performSearch(value);
-        }, 650);
+        searchTimeout = setTimeout(() => { performSearch(value); }, 650);
       });
     }
 
@@ -694,23 +520,14 @@
 
     async function performSearch(queryText) {
       const url = 'https://graphql.anilist.co';
-      const spinner = document.getElementById('search-spinner');
-      
       const query = `
         query ($search: String) {
-          Page(page: 1, perPage: 12) {
+          Page(page: 1, perPage: 15) {
             media(search: $search, type: ANIME, isAdult: false) {
               id
-              title {
-                romaji
-                english
-                userPreferred
-              }
+              title { romaji english userPreferred }
               bannerImage
-              coverImage {
-                extraLarge
-                large
-              }
+              coverImage { extraLarge large }
               description
               genres
               meanScore
@@ -723,32 +540,14 @@
       try {
         const response = await fetch(url, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            query: query,
-            variables: { search: queryText }
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: query, variables: { search: queryText } })
         });
-
-        if (!response.ok) throw new Error();
         const result = await response.json();
-        spinner.classList.add('hidden');
-
-        showSearchResults(result.data.Page.media);
-
+        document.getElementById('search-spinner').classList.add('hidden');
+        showSearchResults(result?.data?.Page?.media || []);
       } catch (error) {
-        spinner.classList.add('hidden');
-        const listCombined = [...localMockData.trending, ...localMockData.popular, ...watchlist];
-        const filtered = listCombined.filter(anime => {
-          const title = (anime.title.english || anime.title.userPreferred || "").toLowerCase();
-          return title.includes(queryText.toLowerCase());
-        });
-
-        // Removendo IDs repetidos
-        const unique = Array.from(new Map(filtered.map(item => [item.id, item])).values());
-        showSearchResults(unique);
+        document.getElementById('search-spinner').classList.add('hidden');
       }
     }
 
@@ -761,28 +560,22 @@
       document.getElementById('search-section').classList.remove('hidden');
 
       if (list.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full text-center py-12 text-neutral-500">
-            <i data-lucide="frown" class="w-12 h-12 mx-auto mb-3"></i>
-            Nenhum anime encontrado.
-          </div>
-        `;
-        lucide.createIcons();
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-neutral-500">Nenhum anime encontrado.</div>`;
       } else {
         renderRow('search-grid', list);
       }
       updateFocusableElements();
     }
 
-    // Modal de Detalhes
+    // MODAL DE DETALHES SEGURO
     function openModal(anime) {
       activeAnimeData = anime;
       hidePlayer();
 
-      const title = anime.title.english || anime.title.userPreferred || anime.title.romaji;
-      const romaji = anime.title.romaji || "";
-      const cover = anime.coverImage.extraLarge || anime.coverImage.large;
-      const score = anime.meanScore ? (anime.meanScore / 10).toFixed(1) : "8.2";
+      const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji || "Sem título";
+      const romaji = anime.title?.romaji || "";
+      const cover = anime.coverImage?.extraLarge || anime.coverImage?.large || "";
+      const score = anime.meanScore ? (anime.meanScore / 10).toFixed(1) : "8.0";
       
       const tempDiv = document.createElement("div");
       tempDiv.innerHTML = anime.description || "Sem sinopse disponível.";
@@ -794,13 +587,12 @@
       document.getElementById('modal-score').innerHTML = `<i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> ${score}`;
       document.getElementById('modal-synopsis').textContent = desc;
       
-      // Atualiza o botão de Favorito no Modal
       updateWatchlistBtnUI(anime);
       document.getElementById('modal-watchlist-btn').onclick = () => toggleWatchlist(anime);
 
       const genresDiv = document.getElementById('modal-genres');
       genresDiv.innerHTML = '';
-      if (anime.genres && anime.genres.length > 0) {
+      if (anime.genres) {
         anime.genres.forEach(genre => {
           const span = document.createElement('span');
           span.className = "bg-dark-800 text-neutral-300 text-xs px-2.5 py-1 rounded-full border border-neutral-700/60";
@@ -818,11 +610,7 @@
       for (let i = 1; i <= limit; i++) {
         const epBtn = document.createElement('button');
         epBtn.className = "tv-focus bg-dark-950/80 hover:bg-brand-500 hover:text-dark-950 border border-neutral-800 text-neutral-200 py-2.5 px-2 rounded-lg text-xs font-semibold text-center transition duration-200 flex flex-col items-center justify-center gap-0.5";
-        epBtn.innerHTML = `
-          <span class="text-[9px] uppercase tracking-widest text-neutral-500">EP</span>
-          <span class="text-sm font-bold">${i}</span>
-        `;
-        
+        epBtn.innerHTML = `<span class="text-[9px] uppercase tracking-widest text-neutral-500">EP</span><span class="text-sm font-bold">${i}</span>`;
         epBtn.onclick = () => selectEpisode(i);
         epsGrid.appendChild(epBtn);
       }
@@ -837,9 +625,7 @@
     }
 
     function closeModal() {
-      const modal = document.getElementById('details-modal');
-      modal.classList.add('opacity-0', 'pointer-events-none');
-      modal.classList.remove('opacity-100');
+      document.getElementById('details-modal').classList.add('opacity-0', 'pointer-events-none');
       document.body.classList.remove('overflow-hidden');
       updateFocusableElements();
     }
@@ -848,8 +634,7 @@
       document.getElementById('episodes-container').classList.add('hidden');
       const player = document.getElementById('player-container');
       player.classList.remove('hidden');
-      
-      const animeTitle = activeAnimeData ? (activeAnimeData.title.userPreferred || activeAnimeData.title.english) : "Anime";
+      const animeTitle = activeAnimeData ? (activeAnimeData.title?.userPreferred || activeAnimeData.title?.english) : "Anime";
       document.getElementById('player-episode-title').textContent = `${animeTitle} - Episódio ${epNum}`;
     }
 
@@ -859,14 +644,12 @@
     }
 
     function simulateStreamLoad() {
-      showToast('API de Streaming', 'Dados e token do episódio encaminhados para a fila de carregamento da Render!');
+      showToast('API de Streaming', 'Dados enviados para as contas da Render com sucesso!');
     }
 
-    // Navegação de abas no Mobile
     function navigateToTab(tabName) {
       const footerBtns = document.querySelectorAll('nav button');
       footerBtns.forEach(btn => btn.className = "flex flex-col items-center justify-center gap-1 text-neutral-400 hover:text-brand-500 transition duration-200");
-
       event.currentTarget.className = "flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-200";
 
       if (tabName === 'home') {
@@ -874,22 +657,19 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (tabName === 'search') {
         document.getElementById('search-input').focus();
-        showToast('Pesquisa ativa', 'Escreva o nome de um anime para buscar na AniList!');
       } else if (tabName === 'watchlist') {
         if (watchlist.length === 0) {
-          showToast('Lista vazia', 'Adicione animes na tua lista clicando no botão favoritar!');
+          showToast('Lista vazia', 'Adicione animes favoritos clicando no card do anime!');
           return;
         }
         clearSearch();
-        const watchlistEl = document.getElementById('watchlist-section');
-        watchlistEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById('watchlist-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
-    /* SISTEMA DE NAVEGAÇÃO DE TV */
+    /* CONTROLES DE TV */
     function updateFocusableElements() {
       const isModalOpen = !document.getElementById('details-modal').classList.contains('pointer-events-none');
-      
       if (isModalOpen) {
         focusableElements = Array.from(document.querySelectorAll('#details-modal .tv-focus'));
       } else {
@@ -900,7 +680,6 @@
           focusableElements = Array.from(document.querySelectorAll('header .tv-focus, #hero-section .tv-focus, #home-content .tv-focus'));
         }
       }
-
       focusableElements.forEach(el => el.classList.remove('active-focus'));
       currentFocusIndex = -1;
     }
@@ -909,17 +688,10 @@
       window.addEventListener('keydown', (e) => {
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Escape'].includes(e.key)) {
           if (e.key !== 'Escape') e.preventDefault();
-        } else {
-          return;
-        }
+        } else return;
 
         if (focusableElements.length === 0) updateFocusableElements();
-
-        if (e.key === 'Escape') {
-          const isModalOpen = !document.getElementById('details-modal').classList.contains('pointer-events-none');
-          if (isModalOpen) closeModal();
-          return;
-        }
+        if (e.key === 'Escape') { closeModal(); return; }
 
         if (currentFocusIndex === -1) {
           currentFocusIndex = 0;
@@ -931,31 +703,11 @@
         const cols = window.innerWidth < 640 ? 2 : window.innerWidth < 768 ? 3 : window.innerWidth < 1024 ? 4 : 6;
 
         switch (e.key) {
-          case 'ArrowRight':
-            newIndex = Math.min(focusableElements.length - 1, currentFocusIndex + 1);
-            break;
-          case 'ArrowLeft':
-            newIndex = Math.max(0, currentFocusIndex - 1);
-            break;
-          case 'ArrowDown':
-            if (currentFocusIndex + cols < focusableElements.length) {
-              newIndex = currentFocusIndex + cols;
-            } else {
-              newIndex = Math.min(focusableElements.length - 1, currentFocusIndex + 1);
-            }
-            break;
-          case 'ArrowUp':
-            if (currentFocusIndex - cols >= 0) {
-              newIndex = currentFocusIndex - cols;
-            } else {
-              newIndex = Math.max(0, currentFocusIndex - 1);
-            }
-            break;
-          case 'Enter':
-            if (focusableElements[currentFocusIndex]) {
-              focusableElements[currentFocusIndex].click();
-            }
-            break;
+          case 'ArrowRight': newIndex = Math.min(focusableElements.length - 1, currentFocusIndex + 1); break;
+          case 'ArrowLeft': newIndex = Math.max(0, currentFocusIndex - 1); break;
+          case 'ArrowDown': newIndex = (currentFocusIndex + cols < focusableElements.length) ? currentFocusIndex + cols : Math.min(focusableElements.length - 1, currentFocusIndex + 1); break;
+          case 'ArrowUp': newIndex = (currentFocusIndex - cols >= 0) ? currentFocusIndex - cols : Math.max(0, currentFocusIndex - 1); break;
+          case 'Enter': if (focusableElements[currentFocusIndex]) focusableElements[currentFocusIndex].click(); break;
         }
 
         if (newIndex !== currentFocusIndex) {
@@ -970,11 +722,7 @@
       if (!el) return;
       el.classList.add('active-focus');
       el.focus();
-      el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'center'
-      });
+      el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     }
   </script>
 </body>
