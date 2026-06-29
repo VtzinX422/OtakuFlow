@@ -41,15 +41,19 @@
       -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
     }
 
-    /* Congelamento forçado do fundo quando o modal está aberto */
     body.modal-open {
       overflow: hidden !important;
       touch-action: none;
     }
+
+    .tab-section { display: none; }
+    .tab-section.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body class="bg-dark-950 text-neutral-100 font-sans select-none overflow-x-hidden min-h-screen pb-24 md:pb-12">
 
+  <!-- TOAST NOTIFICATIONS -->
   <div id="toast" class="fixed top-5 right-5 z-[9999] transform translate-x-80 transition-all duration-300 ease-out bg-dark-800 border-l-4 border-brand-500 text-neutral-100 p-4 rounded shadow-2xl flex items-center gap-3 max-w-sm pointer-events-none opacity-0">
     <i data-lucide="info" class="text-brand-500 w-6 h-6 shrink-0"></i>
     <div>
@@ -58,6 +62,7 @@
     </div>
   </div>
 
+  <!-- HEADER GERAL -->
   <header class="sticky top-0 z-40 backdrop-blur-md bg-dark-950/80 border-b border-neutral-800/60 px-4 md:px-12 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
     <div class="flex items-center gap-2">
       <div class="bg-brand-500 p-2 rounded-lg text-dark-950">
@@ -67,133 +72,179 @@
       <span class="hidden md:inline-block bg-dark-800 text-[10px] text-brand-500 font-bold tracking-widest uppercase px-2 py-0.5 rounded border border-brand-500/30">TV & Mobile</span>
     </div>
 
+    <!-- Barra de busca no Header (Redireciona para aba Busca se usada na Home) -->
     <div class="relative w-full sm:w-80 md:w-96">
       <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <i data-lucide="search" class="text-neutral-500 w-5 h-5"></i>
       </div>
-      <input type="text" id="search-input" placeholder="Pesquisar animes..." class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-full py-2 pl-10 pr-4 text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none transition duration-200">
+      <input type="text" id="global-search-input" placeholder="Pesquisar animes..." class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-full py-2 pl-10 pr-4 text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none transition duration-200">
       <div id="search-spinner" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden">
         <div class="animate-spin rounded-full h-4 w-4 border-t-2 border-brand-500"></div>
       </div>
     </div>
   </header>
 
-  <section id="hero-section" class="relative h-[55vh] w-full bg-dark-900 flex items-end overflow-hidden">
-    <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-700 scale-105 filter brightness-[0.4]" style="background-image: url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920');"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/40 to-transparent fade-mask"></div>
-    
-    <div class="relative z-10 w-full px-6 md:px-12 pb-8 md:pb-12 max-w-4xl">
-      <div class="flex items-center gap-3 mb-2 flex-wrap">
-        <span class="bg-brand-500/20 text-brand-500 font-bold text-xs uppercase tracking-widest px-2.5 py-1 rounded border border-brand-500/30">Destaque do Dia</span>
-        <span class="flex items-center gap-1 text-yellow-500 text-sm font-semibold">
-          <i data-lucide="star" class="w-4 h-4 fill-yellow-500"></i>
-          <span id="hero-score">--</span>
-        </span>
-      </div>
-      <h1 id="hero-title" class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-neutral-50 mb-3 leading-tight tracking-tight drop-shadow-lg">Carregando catálogo...</h1>
-      <p id="hero-desc" class="text-neutral-300 text-sm md:text-base line-clamp-3 mb-6 max-w-2xl drop-shadow-md">Conectando ao banco de dados...</p>
+  <!-- ==================== ABA: INÍCIO (HOME) ==================== -->
+  <main id="tab-home" class="tab-section active">
+    <section id="hero-section" class="relative h-[55vh] w-full bg-dark-900 flex items-end overflow-hidden">
+      <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-700 scale-105 filter brightness-[0.4]" style="background-image: url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920');"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/40 to-transparent fade-mask"></div>
       
-      <div class="flex gap-4">
-        <button id="hero-play-btn" class="tv-focus bg-brand-500 hover:bg-brand-600 text-neutral-950 font-bold px-6 py-3 rounded-lg flex items-center gap-2 transition duration-200 shadow-lg shadow-brand-500/20 transform hover:scale-105">
-          <i data-lucide="play-circle" class="w-5 h-5 fill-neutral-950"></i> Assistir Agora
-        </button>
-        <button id="hero-info-btn" class="tv-focus bg-neutral-800/80 hover:bg-neutral-700/80 text-neutral-100 font-semibold px-6 py-3 rounded-lg flex items-center gap-2 transition duration-200 border border-neutral-700/50">
-          <i data-lucide="info" class="w-5 h-5"></i> Mais Detalhes
-        </button>
+      <div class="relative z-10 w-full px-6 md:px-12 pb-8 md:pb-12 max-w-4xl">
+        <div class="flex items-center gap-3 mb-2 flex-wrap">
+          <span class="bg-brand-500/20 text-brand-500 font-bold text-xs uppercase tracking-widest px-2.5 py-1 rounded border border-brand-500/30">Destaque do Dia</span>
+          <span class="flex items-center gap-1 text-yellow-500 text-sm font-semibold">
+            <i data-lucide="star" class="w-4 h-4 fill-yellow-500"></i>
+            <span id="hero-score">--</span>
+          </span>
+        </div>
+        <h1 id="hero-title" class="text-3xl md:text-5xl lg:text-6xl font-extrabold text-neutral-50 mb-3 leading-tight tracking-tight drop-shadow-lg">Carregando catálogo...</h1>
+        <p id="hero-desc" class="text-neutral-300 text-sm md:text-base line-clamp-3 mb-6 max-w-2xl drop-shadow-md">Conectando ao banco de dados...</p>
+        
+        <div class="flex gap-4">
+          <button id="hero-play-btn" class="tv-focus bg-brand-500 hover:bg-brand-600 text-neutral-950 font-bold px-6 py-3 rounded-lg flex items-center gap-2 transition duration-200 shadow-lg shadow-brand-500/20 transform hover:scale-105">
+            <i data-lucide="play-circle" class="w-5 h-5 fill-neutral-950"></i> Assistir Agora
+          </button>
+          <button id="hero-info-btn" class="tv-focus bg-neutral-800/80 hover:bg-neutral-700/80 text-neutral-100 font-semibold px-6 py-3 rounded-lg flex items-center gap-2 transition duration-200 border border-neutral-700/50">
+            <i data-lucide="info" class="w-5 h-5"></i> Mais Detalhes
+          </button>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="search-section" class="px-4 md:px-12 py-8 hidden">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">Resultados da Busca</h2>
+    <div class="space-y-10 px-4 md:px-12 py-8">
+      <section id="trending-section">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl md:text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">Em Alta no Momento</h2>
+        </div>
+        <div class="relative group">
+          <div id="row-trending" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 -mx-1 scroll-smooth">
+            <!-- Skeletons -->
+            <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
+            <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
+            <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="popular-section">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl md:text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">Mais Populares</h2>
+        </div>
+        <div class="relative group">
+          <div id="row-popular" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 -mx-1 scroll-smooth">
+            <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
+            <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
+            <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ==================== ABA: BUSCAR ==================== -->
+  <main id="tab-search" class="tab-section px-4 md:px-12 py-8 min-h-[70vh]">
+    <div class="flex justify-between items-center mb-6 border-b border-neutral-800 pb-4">
+      <h2 class="text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">
+        Resultados da Busca
+      </h2>
       <button onclick="clearSearch()" class="text-neutral-400 hover:text-brand-500 flex items-center gap-1 text-sm">
         <i data-lucide="x" class="w-4 h-4"></i> Limpar pesquisa
       </button>
     </div>
-    <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"></div>
-  </section>
+    <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      <div class="col-span-full text-center py-12 text-neutral-500">
+        <i data-lucide="search" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+        Use a barra superior para buscar um anime.
+      </div>
+    </div>
+  </main>
 
-  <div id="home-content" class="space-y-10 px-4 md:px-12 py-8">
-    <section id="watchlist-section" class="hidden">
+  <!-- ==================== ABA: LISTA ==================== -->
+  <main id="tab-watchlist" class="tab-section px-4 md:px-12 py-8 min-h-[70vh]">
+    <div class="flex items-center justify-between mb-6 border-b border-neutral-800 pb-4">
+      <h2 class="text-2xl font-bold text-brand-500 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">
+        Minha Lista <span class="text-xs text-neutral-500 font-normal ml-2 text-neutral-400">Favoritos Salvos</span>
+      </h2>
+    </div>
+    <div id="watchlist-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+      <!-- Injetado dinamicamente -->
+    </div>
+  </main>
+
+  <!-- ==================== ABA: PERFIL & HISTÓRICO ==================== -->
+  <main id="tab-profile" class="tab-section px-4 md:px-12 py-8 min-h-[70vh]">
+    
+    <!-- Cabeçalho do Perfil -->
+    <div class="flex items-center gap-4 mb-8 bg-dark-900 p-6 rounded-2xl border border-neutral-800">
+      <div class="w-16 h-16 bg-brand-500 rounded-full flex items-center justify-center text-dark-950 font-black text-2xl shadow-lg">
+        O
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-neutral-50">Usuário Otaku</h2>
+        <p class="text-xs text-neutral-400">Armazenamento Local • Gratuito</p>
+      </div>
+    </div>
+
+    <!-- Continuar Assistindo -->
+    <div class="mb-6">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl md:text-2xl font-bold text-brand-500 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">Minha Lista</h2>
+        <h2 class="text-xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">
+          Continuar Assistindo
+        </h2>
+        <button onclick="clearHistory()" class="text-xs text-neutral-500 hover:text-brand-500 transition">Limpar Histórico</button>
       </div>
-      <div class="relative group">
-        <div id="row-watchlist" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 -mx-1 scroll-smooth"></div>
-      </div>
-    </section>
-
-    <section id="trending-section">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">Em Alta no Momento</h2>
-      </div>
-      <div class="relative group">
-        <div id="row-trending" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 -mx-1 scroll-smooth">
-          <!-- Skeletons -->
-          <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
-          <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
-          <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="popular-section">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 tracking-wide flex items-center gap-2 border-l-4 border-brand-500 pl-3">Mais Populares</h2>
-      </div>
-      <div class="relative group">
-        <div id="row-popular" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 -mx-1 scroll-smooth">
-          <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
-          <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
-          <div class="h-64 w-36 sm:w-44 rounded-lg bg-dark-900 animate-pulse shrink-0"></div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- MODAL DE DETALHES -->
-  <div id="details-modal" class="fixed inset-0 z-50 bg-neutral-950/95 flex items-center justify-center p-0 sm:p-4 md:p-8 opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
-    <div class="bg-dark-900 sm:rounded-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[90vh] max-w-5xl border-0 sm:border border-neutral-800 overflow-hidden shadow-2xl relative flex flex-col">
       
-      <!-- Botão Fechar Corrigido e com Z-index altíssimo -->
-      <button onclick="closeModal()" class="tv-focus absolute top-4 right-4 z-[999] bg-black/60 backdrop-blur text-neutral-200 hover:bg-brand-500 hover:text-dark-950 p-2.5 rounded-full transition duration-200 shadow-lg border border-neutral-700 cursor-pointer">
-        <i data-lucide="x" class="w-6 h-6"></i>
+      <div class="relative group">
+        <div id="row-history" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 -mx-1 scroll-smooth">
+          <!-- Histórico injetado aqui -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== MODAL DE DETALHES ==================== -->
+  <div id="details-modal" class="fixed inset-0 z-50 bg-neutral-950/95 flex items-center justify-center p-0 sm:p-4 md:p-8 opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
+    <div class="bg-dark-900 sm:rounded-2xl w-full h-full sm:h-auto max-h-full sm:max-h-[95vh] max-w-5xl border-0 sm:border border-neutral-800 overflow-hidden shadow-2xl relative flex flex-col">
+      
+      <!-- Botão Fechar Garantido (z-index agressivo e type button) -->
+      <button type="button" onclick="closeModal()" class="tv-focus absolute top-4 right-4 z-[99999] bg-black/80 text-neutral-100 hover:bg-brand-500 hover:text-dark-950 p-2.5 rounded-full transition duration-200 shadow-xl border border-neutral-600 cursor-pointer">
+        <i data-lucide="x" class="w-6 h-6 pointer-events-none"></i>
       </button>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-y-auto scrollbar-hide">
+      <div class="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-y-auto scrollbar-hide relative">
         
         <!-- Painel Esquerdo (Capa / Trailer) -->
-        <div class="col-span-1 md:col-span-4 relative h-72 md:h-full min-h-[350px] bg-dark-950 flex flex-col justify-end p-6 overflow-hidden">
+        <div class="col-span-1 md:col-span-4 relative h-[40vh] md:h-full min-h-[350px] bg-dark-950 flex flex-col justify-end p-6 overflow-hidden">
           
-          <!-- Trailer Iframe (Se existir, injetado via JS) -->
-          <div id="modal-trailer-container" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-50 hidden">
+          <!-- Trailer Iframe (No-cookie para evitar anúncios intrusivos) -->
+          <div id="modal-trailer-container" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-60 hidden">
             <!-- Iframe entra aqui -->
           </div>
 
-          <!-- Imagem de Capa (Aparece se não houver trailer ou como overlay) -->
-          <img id="modal-cover" class="absolute inset-0 w-full h-full object-cover filter brightness-[0.4] z-0 transition-opacity duration-500" src="" alt="Capa">
-          <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/60 to-transparent z-10"></div>
+          <!-- Capa por cima do trailer (Oculta anúncios iniciais por alguns segundos) -->
+          <img id="modal-cover" class="absolute inset-0 w-full h-full object-cover filter brightness-[0.4] z-10 transition-opacity duration-[2000ms]" src="" alt="Capa">
+          <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-950/70 to-transparent z-20"></div>
           
-          <div class="relative z-20 w-full">
+          <div class="relative z-30 w-full">
             <span id="modal-score" class="bg-brand-500 text-dark-950 font-bold px-2 py-1 rounded text-xs inline-flex items-center gap-1 mb-2 shadow">
               <i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> --
             </span>
             <h3 id="modal-title-alt" class="text-xs text-neutral-400 font-medium tracking-wide block uppercase mb-1 truncate">Romaji</h3>
-            <h2 id="modal-title" class="text-xl md:text-3xl font-black text-neutral-50 mb-4 leading-tight drop-shadow-lg">Título</h2>
+            <h2 id="modal-title" class="text-2xl md:text-3xl font-black text-neutral-50 mb-4 leading-tight drop-shadow-lg">Título</h2>
             
-            <button id="modal-watchlist-btn" class="tv-focus w-full bg-neutral-800/90 hover:bg-brand-500 hover:text-dark-950 text-neutral-100 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 border border-neutral-700/50 text-sm transition duration-200 shadow-lg">
+            <button id="modal-watchlist-btn" type="button" class="tv-focus w-full bg-neutral-800/90 hover:bg-brand-500 hover:text-dark-950 text-neutral-100 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 border border-neutral-700/50 text-sm transition duration-200 shadow-lg">
               <i data-lucide="bookmark" id="watchlist-btn-icon" class="w-4 h-4"></i>
-              <span id="watchlist-btn-text">Adicionar à Minha Lista</span>
+              <span id="watchlist-btn-text">Adicionar à Lista</span>
             </button>
           </div>
         </div>
 
-        <!-- Painel Direito (Ficha, SOBRE, Episódios) -->
+        <!-- Painel Direito -->
         <div class="col-span-1 md:col-span-8 p-6 md:p-8 flex flex-col justify-start">
           <div class="space-y-6">
             
-            <!-- Ficha Técnica Corrigida -->
+            <!-- Ficha Técnica -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-dark-950/50 p-4 rounded-xl border border-neutral-800/80 text-xs text-neutral-300">
               <div>
                 <span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-0.5">Lançamento</span>
@@ -215,14 +266,14 @@
 
             <div id="modal-genres" class="flex flex-wrap gap-1.5"></div>
 
-            <!-- Alterado para SOBRE com tradução -->
+            <!-- SOBRE com tradução IA funcionando -->
             <div>
               <div class="flex items-center justify-between mb-2">
                 <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-1">
                   <i data-lucide="info" class="w-3.5 h-3.5"></i> Sobre
                 </h3>
                 <span id="translation-status" class="text-[10px] bg-brand-500/10 text-brand-500 font-medium px-2 py-0.5 rounded flex items-center gap-1 hidden">
-                  <i data-lucide="languages" class="w-3 h-3"></i> Traduzindo (IA)...
+                  <i data-lucide="sparkles" class="w-3 h-3"></i> Traduzindo (IA)...
                 </span>
               </div>
               <p id="modal-synopsis" class="text-neutral-300 text-xs sm:text-sm leading-relaxed max-h-32 overflow-y-auto scroll-smooth pr-2 bg-dark-950/30 p-3 rounded-lg border border-neutral-800/40 select-text">
@@ -238,22 +289,34 @@
                 <h4 class="font-bold text-sm text-neutral-200" id="player-episode-title">Conectando ao Servidor...</h4>
                 <p class="text-xs text-neutral-400 max-w-md">Iniciando protocolo de raspagem na Consumet API...</p>
                 <div class="flex gap-2 mt-2">
-                  <button onclick="hidePlayer()" class="bg-neutral-800 text-neutral-300 font-semibold text-xs py-2 px-6 rounded-lg transition hover:bg-neutral-700">
+                  <button type="button" onclick="hidePlayer()" class="bg-neutral-800 text-neutral-300 font-semibold text-xs py-2 px-6 rounded-lg transition hover:bg-neutral-700">
                     Sair do Player
                   </button>
                 </div>
               </div>
             </div>
 
-            <!-- Lista Vertical de Episódios -->
+            <!-- Lista Vertical de Episódios com Paginação -->
             <div id="episodes-container" class="pb-6">
               <div class="flex items-center justify-between mb-3 border-b border-neutral-800 pb-2">
                 <h4 class="text-xs font-bold text-neutral-400 uppercase tracking-wider flex items-center gap-1.5">
                   <i data-lucide="play-square" class="w-4 h-4 text-brand-500"></i> Episódios
                 </h4>
+                <span id="modal-pagination-info" class="text-[10px] text-neutral-500 font-bold bg-dark-950 px-2 py-1 rounded">Pág 1</span>
               </div>
-              <div id="modal-episodes-list" class="space-y-2.5">
-                <!-- Lista injetada aqui -->
+              
+              <div id="modal-episodes-list" class="space-y-2.5 mb-4">
+                <!-- Episódios -->
+              </div>
+
+              <!-- Controles de Paginação -->
+              <div id="modal-pagination-controls" class="flex justify-between items-center gap-2 mt-4 hidden">
+                <button id="btn-prev-page" type="button" class="flex-1 bg-dark-950 border border-neutral-800 text-neutral-400 hover:text-brand-500 py-2 rounded-lg text-xs font-bold transition flex justify-center items-center gap-2">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i> Anteriores
+                </button>
+                <button id="btn-next-page" type="button" class="flex-1 bg-dark-950 border border-neutral-800 text-neutral-400 hover:text-brand-500 py-2 rounded-lg text-xs font-bold transition flex justify-center items-center gap-2">
+                   Próximos <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
               </div>
             </div>
           </div>
@@ -263,34 +326,49 @@
     </div>
   </div>
 
-  <nav class="fixed bottom-0 inset-x-0 bg-dark-900 border-t border-neutral-800/80 md:hidden z-40 px-6 py-2 flex justify-around items-center backdrop-blur-md">
-    <button onclick="navigateToTab('home')" class="flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-200">
+  <!-- MENU INFERIOR (Mobile) ATUALIZADO -->
+  <nav class="fixed bottom-0 inset-x-0 bg-dark-900 border-t border-neutral-800/80 md:hidden z-40 px-6 py-2 flex justify-between items-center backdrop-blur-md">
+    <button onclick="navigateToTab('home')" id="nav-btn-home" class="nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-200 flex-1">
       <i data-lucide="home" class="w-5 h-5"></i>
       <span class="text-[10px] font-bold">Início</span>
     </button>
-    <button onclick="navigateToTab('search')" class="flex flex-col items-center justify-center gap-1 text-neutral-400 hover:text-brand-500 transition duration-200">
+    <button onclick="navigateToTab('search')" id="nav-btn-search" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-400 hover:text-brand-500 transition duration-200 flex-1">
       <i data-lucide="search" class="w-5 h-5"></i>
       <span class="text-[10px]">Buscar</span>
     </button>
-    <button onclick="navigateToTab('watchlist')" class="flex flex-col items-center justify-center gap-1 text-neutral-400 hover:text-brand-500 transition duration-200">
-      <i data-lucide="bookmark" class="w-5 h-5"></i>
+    <button onclick="navigateToTab('watchlist')" id="nav-btn-watchlist" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-400 hover:text-brand-500 transition duration-200 flex-1">
+      <i data-lucide="list" class="w-5 h-5"></i>
       <span class="text-[10px]">Lista</span>
+    </button>
+    <button onclick="navigateToTab('profile')" id="nav-btn-profile" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-400 hover:text-brand-500 transition duration-200 flex-1">
+      <i data-lucide="user" class="w-5 h-5"></i>
+      <span class="text-[10px]">Perfil</span>
     </button>
   </nav>
 
+  <!-- LÓGICA DO APLICATIVO -->
   <script>
     lucide.createIcons();
-    const apiKey = ""; // API Key do ambiente para o tradutor IA
+    
+    // A chave injetada pelo ambiente (sem checagem if para não quebrar a injeção)
+    const apiKey = ""; 
 
     const aniListCache = { trending: null, popular: null };
     let watchlist = JSON.parse(localStorage.getItem('otakuflow_watchlist')) || [];
+    let watchHistory = JSON.parse(localStorage.getItem('otakuflow_history')) || [];
+    
     let activeAnimeData = null; 
+    let currentEpPage = 1;
+    const EPS_PER_PAGE = 100;
+    
     let focusableElements = [];
     let currentFocusIndex = -1;
+    let coverTimeout = null; // Timer para o trailer
 
     window.onload = function() {
       fetchAniListData();
       renderWatchlist();
+      renderHistory();
       setupSearch();
       setupTVControls();
     };
@@ -309,22 +387,19 @@
 
     const fallbackLocalMock = [{
       id: 21, title: { english: "One Piece", romaji: "ONE PIECE" },
-      coverImage: { extraLarge: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" },
+      coverImage: { extraLarge: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600", large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" },
       bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920",
       meanScore: 89, episodes: 1100, description: "Catálogo Offline de Segurança.", genres: ["Ação"], season: "FALL", seasonYear: 1999, format: "TV", status: "RELEASING"
     }];
 
-    // GEMINI IA TRADUTOR
+    // GEMINI IA TRADUTOR - CORRIGIDO (Vai chamar a API independente da variável local parecer vazia)
     async function translateSynopsis(text, callback) {
       if (!text || text.trim() === "") return callback("Sem informações disponíveis.");
       const cleanText = text.replace(/<[^>]*>/g, ''); 
-      
-      // Se não houver chave no ambiente de teste, retorna o texto limpo
-      if (!apiKey) return callback(cleanText);
 
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
       const payload = {
-        contents: [{ parts: [{ text: `Traduza a seguinte sinopse de anime para português do Brasil, de forma natural. Apenas devolva o texto traduzido:\n\n${cleanText}` }] }]
+        contents: [{ parts: [{ text: `Traduza a seguinte sinopse de anime para português do Brasil, de forma fluida e profissional. Apenas devolva o texto traduzido, sem introduções:\n\n${cleanText}` }] }]
       };
 
       try {
@@ -334,7 +409,9 @@
           const translatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
           if (translatedText) return callback(translatedText.trim());
         }
-      } catch (e) { console.error("Erro no tradutor:", e); }
+      } catch (e) { console.error("Falha no Gemini:", e); }
+      
+      // Fallback para o original caso o Gemini falhe
       callback(cleanText);
     }
 
@@ -346,8 +423,7 @@
             media(type: ANIME, isAdult: false, sort: [TRENDING_DESC, POPULARITY_DESC]) {
               id title { romaji english userPreferred } bannerImage coverImage { extraLarge large }
               description genres meanScore episodes season seasonYear format status
-              nextAiringEpisode { episode } trailer { id site }
-              streamingEpisodes { title thumbnail url }
+              nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url }
             }
           }
         }
@@ -385,41 +461,60 @@
       document.getElementById('hero-info-btn').onclick = () => openModal(anime);
     }
 
-    function renderRow(containerId, list) {
+    // Criador de Cards genérico para todas as abas
+    function createAnimeCard(anime, showBadge = true) {
+      const card = document.createElement('div');
+      card.className = "tv-focus shrink-0 w-32 sm:w-40 md:w-44 bg-dark-900 rounded-lg overflow-hidden border border-neutral-800/60 hover:border-brand-500/80 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-brand-500/20 relative";
+      card.setAttribute('tabindex', '0');
+
+      const title = anime.title?.userPreferred || anime.title?.english || anime.title?.romaji || "Desconhecido";
+      const cover = anime.coverImage?.large || anime.coverImage?.extraLarge || anime.cover || "";
+      const score = anime.meanScore ? `★ ${(anime.meanScore / 10).toFixed(1)}` : '★ -';
+      const extraInfo = anime.epNum ? `Parei no Ep ${anime.epNum}` : `${anime.episodes || '?'} Episódios`;
+
+      let badgeHTML = '';
+      if (showBadge && !anime.epNum) {
+        // Por padrão nosso app assumirá Legendado até o servidor dizer o contrário
+        badgeHTML = `<div class="absolute top-2 left-2 bg-neutral-800/95 text-neutral-300 font-semibold px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wide z-10 border border-neutral-700/50 shadow">LEG</div>`;
+      } else if (anime.epNum) {
+        // Badge de Histórico
+        badgeHTML = `<div class="absolute top-2 left-2 bg-brand-500 text-dark-950 font-bold px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wide z-10 shadow">VISTO</div>`;
+      }
+
+      card.innerHTML = `
+        <div class="relative aspect-[3/4] overflow-hidden bg-neutral-900">
+          ${badgeHTML}
+          ${!anime.epNum ? `<div class="absolute top-2 right-2 bg-neutral-950/90 text-brand-500 font-bold px-1.5 py-0.5 rounded text-[10px] border border-brand-500/20 z-10 shadow">${score}</div>` : ''}
+          <img src="${cover}" alt="${title}" class="w-full h-full object-cover transition duration-300 hover:scale-105" loading="lazy">
+        </div>
+        <div class="p-2.5">
+          <h3 class="text-xs sm:text-sm font-semibold text-neutral-200 line-clamp-2 min-h-[2.5rem] leading-snug">${title}</h3>
+          <span class="text-[9px] text-brand-500 block mt-1 font-semibold">${extraInfo}</span>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        // Se for histórico, simula fetch da anilist completo
+        if (anime.epNum && !anime.description) performSearchAndOpen(anime.id, title);
+        else openModal(anime);
+      });
+      card.addEventListener('keydown', (e) => { if (e.key === 'Enter') card.click(); });
+      return card;
+    }
+
+    function renderRow(containerId, list, isHistory = false) {
       const container = document.getElementById(containerId);
       if (!container) return;
       container.innerHTML = ''; 
-
-      list.forEach((anime) => {
-        if (!anime) return;
-        const card = document.createElement('div');
-        card.className = "tv-focus shrink-0 w-32 sm:w-40 md:w-44 bg-dark-900 rounded-lg overflow-hidden border border-neutral-800/60 hover:border-brand-500/80 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-brand-500/20 relative";
-        card.setAttribute('tabindex', '0');
-
-        const title = anime.title?.userPreferred || anime.title?.english || anime.title?.romaji || "Desconhecido";
-        const cover = anime.coverImage?.large || anime.coverImage?.extraLarge || "";
-        const score = anime.meanScore ? `★ ${(anime.meanScore / 10).toFixed(1)}` : '★ -';
-
-        card.innerHTML = `
-          <div class="relative aspect-[3/4] overflow-hidden bg-neutral-900">
-            <div class="absolute top-2 left-2 bg-neutral-800/95 text-neutral-300 font-semibold px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wide z-10 border border-neutral-700/50 shadow">
-              LEG
-            </div>
-            <div class="absolute top-2 right-2 bg-neutral-950/90 text-brand-500 font-bold px-1.5 py-0.5 rounded text-[10px] border border-brand-500/20 z-10 shadow">
-              ${score}
-            </div>
-            <img src="${cover}" alt="${title}" class="w-full h-full object-cover transition duration-300 hover:scale-105" loading="lazy">
-          </div>
-          <div class="p-2.5">
-            <h3 class="text-xs sm:text-sm font-semibold text-neutral-200 line-clamp-2 min-h-[2.5rem] leading-snug">${title}</h3>
-          </div>
-        `;
-        card.addEventListener('click', () => openModal(anime));
-        card.addEventListener('keydown', (e) => { if (e.key === 'Enter') openModal(anime); });
-        container.appendChild(card);
+      if (list.length === 0 && isHistory) {
+        container.innerHTML = `<p class="text-xs text-neutral-500 p-4">Nenhum histórico encontrado. Assista a algo!</p>`;
+        return;
+      }
+      list.forEach(anime => {
+        if (anime) container.appendChild(createAnimeCard(anime, !isHistory));
       });
     }
 
+    // LISTAS LOCAIS (FAVORITOS E HISTÓRICO)
     function toggleWatchlist(anime) {
       const index = watchlist.findIndex(item => item.id === anime.id);
       if (index > -1) { watchlist.splice(index, 1); showToast('Atualizado', 'Removido da lista.'); } 
@@ -435,44 +530,75 @@
       if (exists) {
         btnText.textContent = "Remover da Lista"; btnIcon.setAttribute('data-lucide', 'bookmark-check'); btnIcon.classList.add('text-brand-500', 'fill-brand-500');
       } else {
-        btnText.textContent = "Adicionar à Minha Lista"; btnIcon.setAttribute('data-lucide', 'bookmark'); btnIcon.classList.remove('text-brand-500', 'fill-brand-500');
+        btnText.textContent = "Adicionar à Lista"; btnIcon.setAttribute('data-lucide', 'bookmark'); btnIcon.classList.remove('text-brand-500', 'fill-brand-500');
       }
       lucide.createIcons();
     }
 
     function renderWatchlist() {
-      const section = document.getElementById('watchlist-section');
-      if (watchlist.length === 0) { section.classList.add('hidden'); return; }
-      section.classList.remove('hidden'); renderRow('row-watchlist', watchlist);
+      const grid = document.getElementById('watchlist-grid');
+      grid.innerHTML = '';
+      if (watchlist.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-neutral-500">Sua lista está vazia. Explore animes e clique em "Adicionar à Lista".</div>`;
+      } else {
+        watchlist.forEach(anime => grid.appendChild(createAnimeCard(anime)));
+      }
     }
 
+    function saveHistory(anime, epNum) {
+      watchHistory = watchHistory.filter(h => h.id !== anime.id); // Remove se já existe
+      watchHistory.unshift({
+        id: anime.id,
+        title: anime.title,
+        coverImage: anime.coverImage,
+        epNum: epNum,
+        timestamp: Date.now()
+      });
+      if (watchHistory.length > 20) watchHistory.pop(); // Mantém os últimos 20
+      localStorage.setItem('otakuflow_history', JSON.stringify(watchHistory));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      renderRow('row-history', watchHistory, true);
+    }
+
+    function clearHistory() {
+      watchHistory = [];
+      localStorage.setItem('otakuflow_history', JSON.stringify([]));
+      renderHistory();
+      showToast('Limpo', 'Histórico apagado.');
+    }
+
+    // BUSCA
     let searchTimeout = null;
     function setupSearch() {
-      const searchInput = document.getElementById('search-input');
+      const inputHeader = document.getElementById('global-search-input');
       const spinner = document.getElementById('search-spinner');
-      searchInput.addEventListener('input', (e) => {
+      
+      inputHeader.addEventListener('input', (e) => {
         const value = e.target.value.trim();
         clearTimeout(searchTimeout);
         if (value.length < 3) { if (value.length === 0) clearSearch(); return; }
+        
+        // Vai para a aba buscar visualmente
+        navigateToTab('search');
         spinner.classList.remove('hidden');
         searchTimeout = setTimeout(() => { performSearch(value); }, 650);
       });
     }
 
     function clearSearch() {
-      document.getElementById('search-input').value = '';
+      document.getElementById('global-search-input').value = '';
       document.getElementById('search-spinner').classList.add('hidden');
-      document.getElementById('search-section').classList.add('hidden');
-      document.getElementById('home-content').classList.remove('hidden');
-      document.getElementById('hero-section').classList.remove('hidden');
-      updateFocusableElements();
+      document.getElementById('search-grid').innerHTML = `<div class="col-span-full text-center py-12 text-neutral-500">Use a barra superior para buscar um anime.</div>`;
     }
 
     async function performSearch(queryText) {
       const url = 'https://graphql.anilist.co';
       const query = `
         query ($search: String) {
-          Page(page: 1, perPage: 18) {
+          Page(page: 1, perPage: 24) {
             media(search: $search, type: ANIME, isAdult: false) {
               id title { romaji english userPreferred } bannerImage coverImage { extraLarge large }
               description genres meanScore episodes season seasonYear format status
@@ -489,17 +615,26 @@
       } catch (e) { document.getElementById('search-spinner').classList.add('hidden'); }
     }
 
+    async function performSearchAndOpen(id, fallbackTitle) {
+      // Usado para abrir um anime a partir do histórico (que só tem dados parciais salvos)
+      showToast('Carregando', `Buscando dados de ${fallbackTitle}...`);
+      const url = 'https://graphql.anilist.co';
+      const query = `query ($id: Int) { Media(id: $id) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } } }`;
+      try {
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables: { id: id } }) });
+        const result = await response.json();
+        if(result?.data?.Media) openModal(result.data.Media);
+      } catch (e) { showToast('Erro', 'Falha ao buscar dados do anime.'); }
+    }
+
     function showSearchResults(list) {
       const grid = document.getElementById('search-grid');
       grid.innerHTML = '';
-      document.getElementById('home-content').classList.add('hidden');
-      document.getElementById('hero-section').classList.add('hidden');
-      document.getElementById('search-section').classList.remove('hidden');
       if (list.length === 0) grid.innerHTML = `<div class="col-span-full text-center py-12 text-neutral-500">Nenhum anime encontrado.</div>`;
-      else renderRow('search-grid', list);
-      updateFocusableElements();
+      else list.forEach(anime => grid.appendChild(createAnimeCard(anime)));
     }
 
+    // UTILITÁRIOS METADATA
     const translateSeason = (season, year) => {
       const s = { WINTER: "Inverno", SPRING: "Primavera", SUMMER: "Verão", FALL: "Outono" };
       return season ? `${s[season] || season} de ${year || ''}` : year || "--";
@@ -507,52 +642,55 @@
     const translateFormat = (f) => ({ TV: "Série", MOVIE: "Filme", OVA: "OVA", ONA: "Web" }[f] || f || "--");
     const translateStatus = (s) => ({ FINISHED: "Finalizado", RELEASING: "Lançando", NOT_YET_RELEASED: "Em Breve" }[s] || s || "--");
 
+    // MODAL DE DETALHES & PAGINAÇÃO
     function openModal(anime) {
       activeAnimeData = anime;
+      currentEpPage = 1; // Reseta página de episódios
       hidePlayer();
-      
-      // Congela a tela de fundo (Anti-Scroll)
       document.body.classList.add('modal-open');
 
       const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji || "Sem título";
-      const romaji = anime.title?.romaji || "";
-      const cover = anime.coverImage?.extraLarge || anime.coverImage?.large || "";
-      
       document.getElementById('modal-title').textContent = title;
-      document.getElementById('modal-title-alt').textContent = romaji;
+      document.getElementById('modal-title-alt').textContent = anime.title?.romaji || "";
       document.getElementById('modal-score').innerHTML = `<i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> ${anime.meanScore ? (anime.meanScore/10).toFixed(1) : "--"}`;
       
-      // Ficha Técnica (Temporada e Lançamentos)
       document.getElementById('tech-season').textContent = translateSeason(anime.season, anime.seasonYear);
       document.getElementById('tech-format').textContent = translateFormat(anime.format);
       document.getElementById('tech-status').textContent = translateStatus(anime.status);
       
       let totalEpsText = anime.episodes ? `${anime.episodes} eps` : "--";
-      let renderEpsCount = anime.episodes || 12;
+      let totalRenderEps = anime.episodes || 12;
       
-      // Se está lançando e não tem total, calcula pelo próximo episódio
       if (anime.status === 'RELEASING' && !anime.episodes && anime.nextAiringEpisode) {
         const releasedEps = anime.nextAiringEpisode.episode - 1;
         totalEpsText = `${releasedEps} eps (Lançando)`;
-        renderEpsCount = releasedEps;
+        totalRenderEps = releasedEps;
       }
       document.getElementById('tech-episodes').textContent = totalEpsText;
+      activeAnimeData.totalRenderEps = totalRenderEps; // Salva para a paginação usar
 
-      // Trailer do YouTube no Fundo
+      // LÓGICA DO TRAILER E CAPA (No-cookie & Delay anti-anúncio)
+      clearTimeout(coverTimeout);
       const trailerContainer = document.getElementById('modal-trailer-container');
       const coverImg = document.getElementById('modal-cover');
-      trailerContainer.innerHTML = ''; // reseta
+      trailerContainer.innerHTML = ''; 
+      coverImg.src = anime.coverImage?.extraLarge || anime.coverImage?.large || "";
+      coverImg.classList.remove('opacity-0');
+
       if (anime.trailer && anime.trailer.site === 'youtube' && anime.trailer.id) {
-        trailerContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${anime.trailer.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${anime.trailer.id}" class="w-full h-full scale-[1.35] pointer-events-none" frameborder="0"></iframe>`;
+        // Usa youtube-nocookie para reduzir anúncios
+        trailerContainer.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${anime.trailer.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${anime.trailer.id}" class="w-full h-full scale-[1.35] pointer-events-none" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
         trailerContainer.classList.remove('hidden');
-        coverImg.classList.add('opacity-0'); // esconde a imagem aos poucos
+        
+        // Aguarda 4 segundos com a imagem por cima para esconder o loading/anúncio visual do youtube
+        coverTimeout = setTimeout(() => {
+          coverImg.classList.add('opacity-0');
+        }, 4000);
       } else {
         trailerContainer.classList.add('hidden');
-        coverImg.src = cover;
-        coverImg.classList.remove('opacity-0');
       }
 
-      // SOBRE + TRADUTOR GEMINI
+      // TRADUTOR IA
       const synopsisEl = document.getElementById('modal-synopsis');
       const translationStatus = document.getElementById('translation-status');
       synopsisEl.textContent = "Lendo informações...";
@@ -574,23 +712,37 @@
         span.textContent = g; genresDiv.appendChild(span);
       });
 
-      // LISTA VERTICAL DE EPISÓDIOS (CORRIGIDA)
+      renderModalEpisodesList(activeAnimeData, currentEpPage);
+
+      const modal = document.getElementById('details-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100');
+      
+      lucide.createIcons();
+      setTimeout(() => updateFocusableElements(), 100);
+    }
+
+    // RENDERIZADOR DE EPISÓDIOS PAGINADOS (1-100, 101-200, etc)
+    function renderModalEpisodesList(anime, page) {
       const epsListContainer = document.getElementById('modal-episodes-list');
       epsListContainer.innerHTML = '';
+      
       const realEpisodesData = anime.streamingEpisodes || [];
+      const total = anime.totalRenderEps || 12;
+      
+      const startIndex = (page - 1) * EPS_PER_PAGE + 1;
+      const endIndex = Math.min(page * EPS_PER_PAGE, total);
+      const defaultCover = anime.bannerImage || anime.coverImage?.extraLarge;
 
-      for (let i = 1; i <= renderEpsCount; i++) {
-        if (i > 100) break; // Limite de UI
-
-        // Tenta achar o título/imagem real da API, senão cria um genérico bonito
+      for (let i = startIndex; i <= endIndex; i++) {
         const foundEp = realEpisodesData.find(ep => ep.title.includes(`Episode ${i} `) || ep.title.includes(`Episódio ${i} `)) || realEpisodesData[i-1];
+        let epTitleText = `Episódio ${i}`; 
+        if (foundEp && foundEp.title) epTitleText = foundEp.title.replace(/Episode \d+ - /, ''); 
         
-        let epTitleText = `Episódio ${i}`; // Padrão genérico se a API falhar
-        if (foundEp && foundEp.title) epTitleText = foundEp.title.replace(/Episode \d+ - /, ''); // Limpa texto gringo
-        
-        const thumbnail = (foundEp && foundEp.thumbnail) ? foundEp.thumbnail : (anime.bannerImage || cover);
+        const thumbnail = (foundEp && foundEp.thumbnail) ? foundEp.thumbnail : defaultCover;
 
         const epRow = document.createElement('button');
+        epRow.type = "button";
         epRow.className = "tv-focus w-full flex items-center gap-3 sm:gap-4 bg-dark-950/60 hover:bg-brand-500 hover:text-dark-950 border border-neutral-800/80 p-2 sm:p-2.5 rounded-xl text-left transition duration-200 group";
         
         epRow.innerHTML = `
@@ -601,7 +753,6 @@
           <div class="flex-1 min-w-0">
             <span class="text-[9px] font-bold text-neutral-500 group-hover:text-dark-950/70 uppercase tracking-widest block">EPISÓDIO ${i}</span>
             <h4 class="text-xs sm:text-sm font-semibold truncate text-neutral-100 group-hover:text-dark-950">${epTitleText}</h4>
-            <p class="text-[9px] text-neutral-500 group-hover:text-dark-900/80 mt-0.5 flex items-center gap-1"><i data-lucide="tv" class="w-3 h-3"></i> HD</p>
           </div>
           <div class="p-2 text-brand-500 group-hover:text-dark-950 shrink-0"><i data-lucide="play" class="w-5 h-5 fill-current"></i></div>
         `;
@@ -609,26 +760,44 @@
         epsListContainer.appendChild(epRow);
       }
 
-      const modal = document.getElementById('details-modal');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      modal.classList.add('opacity-100');
+      // Controles de Paginação
+      const pagInfo = document.getElementById('modal-pagination-info');
+      const pagControls = document.getElementById('modal-pagination-controls');
+      const btnPrev = document.getElementById('btn-prev-page');
+      const btnNext = document.getElementById('btn-next-page');
+      
+      pagInfo.textContent = `Pág ${page}`;
+      
+      if (total > EPS_PER_PAGE) {
+        pagControls.classList.remove('hidden');
+        
+        btnPrev.onclick = () => renderModalEpisodesList(anime, page - 1);
+        btnPrev.disabled = (page === 1);
+        btnPrev.className = `flex-1 border py-2 rounded-lg text-xs font-bold transition flex justify-center items-center gap-2 ${page === 1 ? 'bg-dark-950 border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-brand-500'}`;
+        
+        btnNext.onclick = () => renderModalEpisodesList(anime, page + 1);
+        btnNext.disabled = (endIndex === total);
+        btnNext.className = `flex-1 border py-2 rounded-lg text-xs font-bold transition flex justify-center items-center gap-2 ${endIndex === total ? 'bg-dark-950 border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-brand-500'}`;
+      } else {
+        pagControls.classList.add('hidden');
+      }
       
       lucide.createIcons();
-      // Atraso mínimo para garantir que os botões do modal estejam no DOM antes do foco
-      setTimeout(() => updateFocusableElements(), 100);
     }
 
     function closeModal() {
+      // Type 'button' e eventListener diretos agora bloqueiam bugs de touch
       document.getElementById('details-modal').classList.add('opacity-0', 'pointer-events-none');
-      document.body.classList.remove('modal-open'); // Libera o fundo
-      
-      // Desliga o trailer do Youtube para não ficar tocando áudio fantasma
-      document.getElementById('modal-trailer-container').innerHTML = '';
-      
+      document.body.classList.remove('modal-open'); 
+      clearTimeout(coverTimeout);
+      document.getElementById('modal-trailer-container').innerHTML = ''; // Mata o iframe
       updateFocusableElements();
     }
 
     function selectEpisode(epNum) {
+      // Salva no histórico!
+      if (activeAnimeData) saveHistory(activeAnimeData, epNum);
+
       document.getElementById('episodes-container').classList.add('hidden');
       const player = document.getElementById('player-container');
       player.classList.remove('hidden');
@@ -641,29 +810,37 @@
       document.getElementById('episodes-container').classList.remove('hidden');
     }
 
+    // NAVEGAÇÃO DE ABAS
     function navigateToTab(tabName) {
-      const btns = document.querySelectorAll('nav button');
-      btns.forEach(b => b.className = "flex flex-col items-center justify-center gap-1 text-neutral-400 hover:text-brand-500 transition duration-200");
-      event.currentTarget.className = "flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-200";
+      // Atualiza os botões visuais da barra inferior
+      const btns = document.querySelectorAll('nav .nav-btn');
+      btns.forEach(b => b.className = "nav-btn flex flex-col items-center justify-center gap-1 text-neutral-400 hover:text-brand-500 transition duration-200 flex-1");
+      const activeBtn = document.getElementById(`nav-btn-${tabName}`);
+      if(activeBtn) activeBtn.className = "nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-200 flex-1";
 
-      if (tabName === 'home') { clearSearch(); window.scrollTo({ top: 0, behavior: 'smooth' }); } 
-      else if (tabName === 'search') document.getElementById('search-input').focus();
-      else if (tabName === 'watchlist') {
-        if (watchlist.length === 0) return showToast('Lista vazia', 'Adicione animes aos favoritos primeiro!');
-        clearSearch(); document.getElementById('watchlist-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      // Esconde todas as seções
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+      // Mostra a selecionada
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+
+      if (tabName === 'home') { 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+      } 
+      else if (tabName === 'search') {
+        document.getElementById('global-search-input').focus();
+      } 
+      updateFocusableElements();
     }
 
     // NAVEGAÇÃO DE TV E ANTI-VAZAMENTO DE FOCO
     function updateFocusableElements() {
       const isModalOpen = !document.getElementById('details-modal').classList.contains('pointer-events-none');
       if (isModalOpen) {
-        // Pega APENAS botões dentro do modal, impedindo a TV de interagir com o fundo
         focusableElements = Array.from(document.querySelectorAll('#details-modal .tv-focus'));
       } else {
-        const searchOpen = !document.getElementById('search-section').classList.contains('hidden');
-        if (searchOpen) focusableElements = Array.from(document.querySelectorAll('header .tv-focus, #search-section .tv-focus'));
-        else focusableElements = Array.from(document.querySelectorAll('header .tv-focus, #hero-section .tv-focus, #home-content .tv-focus'));
+        // Apenas elementos visíveis da aba atual
+        const activeTab = document.querySelector('.tab-section.active');
+        focusableElements = Array.from(document.querySelectorAll('header .tv-focus, .tab-section.active .tv-focus, nav button'));
       }
       focusableElements.forEach(el => el.classList.remove('active-focus'));
       currentFocusIndex = -1;
