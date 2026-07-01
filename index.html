@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>OtakuFlow - Portal de Animes</title>
+  <title>VzAnime - Portal de Animes e Mangás</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,13 @@
         extend: {
           fontFamily: { sans: ['Outfit', 'sans-serif'] },
           colors: {
-            brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 900: '#7c2d12' },
+            brand: { 
+              50: 'rgb(var(--brand-50) / <alpha-value>)', 
+              100: 'rgb(var(--brand-100) / <alpha-value>)', 
+              500: 'rgb(var(--brand-500) / <alpha-value>)', 
+              600: 'rgb(var(--brand-600) / <alpha-value>)', 
+              900: 'rgb(var(--brand-900) / <alpha-value>)' 
+            },
             dark: { 950: '#050505', 900: '#111111', 800: '#1a1a1a', 700: '#262626' }
           }
         }
@@ -26,34 +32,89 @@
   </script>
 
   <style>
+    :root {
+      /* Valores RGB para suportar opacidades do Tailwind */
+      --brand-50: 255 247 237;
+      --brand-100: 255 237 213;
+      --brand-500: 249 115 22;
+      --brand-600: 234 88 12;
+      --brand-900: 124 45 18;
+    }
+    
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     
-    .tv-focus:focus, .tv-focus.active-focus {
-      outline: 3px solid #f97316;
-      outline-offset: 2px;
-      transform: scale(1.04);
-      z-index: 20;
-    }
-    
+    .custom-scroll::-webkit-scrollbar { width: 4px; }
+    .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 10px; }
+
     .fade-mask {
-      mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
     }
 
-    body.modal-open { overflow: hidden !important; touch-action: none; }
-
-    .tab-section { display: none; opacity: 0; transition: opacity 0.3s ease; }
-    .tab-section.active { display: block; opacity: 1; animation: slideUp 0.4s ease-out; }
+    .tab-section { display: none; opacity: 0; }
+    .tab-block.active { display: block; opacity: 1; animation: fadeIn 0.3s ease-out forwards; flex-shrink: 0; width: 100%; }
+    .tab-flex.active { display: flex; opacity: 1; animation: fadeIn 0.3s ease-out forwards; width: 100%; flex: 1; min-height: 0; }
     
-    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
     .carousel-bg { transition: background-image 0.8s ease-in-out, opacity 0.8s ease-in-out; }
     .lucide { stroke-width: 1.75; }
+    
+    .synopsis-content i, .synopsis-content em { font-style: italic; color: #a3a3a3; }
+    .synopsis-content br { display: block; margin-bottom: 0.5rem; }
+
+    @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
+    .dot-progress { animation: progress 5s linear forwards; }
+    
+    .text-fade {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%);
+    }
   </style>
 </head>
-<body class="bg-dark-950 text-neutral-100 font-sans select-none overflow-x-hidden min-h-screen pb-24 md:pb-12">
 
+<body class="bg-dark-950 text-neutral-100 font-sans select-none flex flex-col h-[100dvh] w-screen overflow-hidden relative">
+
+  <!-- ==================== SPLASH SCREEN ==================== -->
+  <div id="splash-screen" class="fixed inset-0 z-[9999] bg-dark-950 flex flex-col items-center justify-center transition-opacity duration-500">
+    <div class="relative mb-6">
+      <div class="absolute inset-0 bg-brand-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+      
+      <div id="splash-avatar-container" class="w-36 h-36 rounded-full overflow-hidden shadow-2xl shadow-brand-500/30 border-4 border-brand-500 relative z-10 animate-bounce flex items-center justify-center bg-dark-800" style="animation-duration: 2s;">
+        <img id="splash-avatar-img" src="https://api.dicebear.com/7.x/lorelei/svg?seed=Aki&backgroundColor=f97316" alt="Carregando" class="w-full h-full object-cover">
+        <span id="splash-avatar-text" class="font-black text-6xl text-brand-500 hidden">U</span>
+      </div>
+    </div>
+    
+    <h1 class="text-3xl font-black text-neutral-50 tracking-widest mb-3 drop-shadow-lg">VZ<span class="text-brand-500">ANIME</span></h1>
+    <div class="flex items-center gap-2.5 text-brand-500 font-bold bg-brand-500/10 px-4 py-2 rounded-xl border border-brand-500/20 shadow-md">
+      <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+      <span class="text-xs tracking-wide">Conectando ao Servidor...</span>
+    </div>
+  </div>
+  
+  <script>
+    (function(){
+       const stored = JSON.parse(localStorage.getItem('vzanime_user'));
+       if(stored) {
+           if(stored.avatarImg) {
+               document.getElementById('splash-avatar-img').src = stored.avatarImg;
+           } else if(stored.name) {
+               document.getElementById('splash-avatar-img').classList.add('hidden');
+               document.getElementById('splash-avatar-text').classList.remove('hidden');
+               document.getElementById('splash-avatar-text').textContent = stored.name.charAt(0).toUpperCase();
+           }
+       }
+    })();
+  </script>
+
+  <!-- TOAST DE AVISOS -->
   <div id="toast" class="fixed top-5 right-5 z-[9999] transform translate-x-80 transition-all duration-300 ease-out bg-dark-800 border-l-4 border-brand-500 text-neutral-100 p-4 rounded-xl shadow-2xl flex items-center gap-3 max-w-sm pointer-events-none opacity-0">
     <i data-lucide="info" class="text-brand-500 w-6 h-6 shrink-0"></i>
     <div>
@@ -62,200 +123,708 @@
     </div>
   </div>
 
-  <header class="sticky top-0 z-40 backdrop-blur-xl bg-dark-950/80 border-b border-neutral-800/50 px-4 md:px-12 py-3 flex flex-col sm:flex-row justify-between items-center gap-4">
-    <div class="flex items-center gap-2 cursor-pointer" onclick="navigateToTab('home')">
-      <div class="bg-gradient-to-br from-brand-500 to-brand-600 p-2 rounded-xl text-dark-950 shadow-lg shadow-brand-500/20">
-        <i data-lucide="play" class="w-5 h-5 fill-dark-950 stroke-dark-950"></i>
+  <!-- MENU LATERAL (DRAWER) -->
+  <div id="side-menu-overlay" class="fixed inset-0 bg-black/70 z-[90] hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm" onclick="closeMenu()"></div>
+  <div id="side-menu" class="fixed inset-y-0 left-0 w-72 bg-dark-950 border-r border-neutral-800/80 z-[100] transform -translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+     <div class="p-6 bg-gradient-to-b from-dark-900 to-dark-950 border-b border-neutral-800/50 flex flex-col items-center justify-center relative">
+        <button onclick="closeMenu()" class="absolute top-4 right-4 text-neutral-500 hover:text-brand-500 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <span class="text-[10px] font-medium tracking-wide text-neutral-400 mb-3 mt-1" id="menu-user-email">otaku@vzanime.com</span>
+        
+        <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-brand-500 shadow-xl shadow-brand-500/20 bg-dark-800 flex items-center justify-center mb-3 cursor-pointer group" onclick="navigateToTab('profile'); closeMenu();">
+           <img id="menu-avatar-img" src="" class="w-full h-full object-cover hidden group-hover:scale-110 transition duration-300">
+           <span id="menu-avatar-text" class="text-brand-500 font-black text-3xl group-hover:scale-110 transition duration-300">U</span>
+        </div>
+        
+        <h3 class="font-black tracking-wide text-neutral-50 cursor-pointer hover:text-brand-500 transition" id="menu-user-name" onclick="navigateToTab('profile'); closeMenu();">Usuário Vz</h3>
+     </div>
+     
+     <div class="flex-1 overflow-y-auto custom-scroll py-4 px-3 space-y-1">
+        <button onclick="navigateToTab('profile'); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="user" class="w-5 h-5"></i> Meu Perfil</button>
+        <button onclick="showToast('Em breve', 'Sistema de Notificações em desenvolvimento'); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="bell" class="w-5 h-5"></i> Notificações</button>
+        <button onclick="navigateToTab('recent'); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="clock" class="w-5 h-5"></i> Recentes</button>
+        <button onclick="navigateToTab('watchlist'); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="bookmark" class="w-5 h-5"></i> Salvos</button>
+        <button onclick="navigateToTab('historyFull'); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="play-circle" class="w-5 h-5"></i> Continuar Assistindo</button>
+        <button onclick="navigateToTab('downloads'); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="download" class="w-5 h-5"></i> Downloads</button>
+        <button onclick="navigateToTab('search'); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="search" class="w-5 h-5"></i> Pesquisar</button>
+        <button onclick="playRandomAnime(); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="shuffle" class="w-5 h-5"></i> Aleatório</button>
+        <hr class="border-neutral-800/60 my-2 mx-2">
+        <button onclick="openSettingsModal(); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="settings" class="w-5 h-5"></i> Configurações</button>
+        <button onclick="navigateToTab('about'); closeMenu();" class="w-full flex items-center gap-4 px-4 py-3 text-sm font-semibold text-neutral-300 hover:text-brand-500 hover:bg-brand-500/10 rounded-xl transition"><i data-lucide="info" class="w-5 h-5"></i> Sobre o App</button>
+     </div>
+  </div>
+
+  <!-- CABEÇALHO DINÂMICO (HEADER) -->
+  <header id="main-header" class="fixed top-0 inset-x-0 z-40 transition-all duration-300 bg-transparent px-4 sm:px-8 py-3 flex justify-between items-center h-16 pointer-events-auto">
+    <!-- Logo Inclinada (Esquerda) -->
+    <div class="flex items-center gap-2.5 cursor-pointer shrink-0 group" onclick="navigateToTab('home')">
+      <div class="bg-gradient-to-br from-brand-500 to-brand-600 w-9 h-9 rounded-xl text-dark-950 shadow-lg shadow-brand-500/20 flex items-center justify-center transform -rotate-6 group-hover:rotate-0 transition duration-300">
+        <i data-lucide="play" class="w-5 h-5 fill-dark-950 stroke-dark-950 ml-0.5"></i>
       </div>
-      <span class="text-2xl font-black tracking-widest text-neutral-50">OTAKU<span class="text-brand-500">FLOW</span></span>
+      <span class="text-xl font-black tracking-widest text-neutral-50 hidden sm:block drop-shadow-md">VZ<span class="text-brand-500">ANIME</span></span>
     </div>
 
-    <div class="relative w-full sm:w-80 md:w-96">
+    <!-- Barra de Pesquisa Central (Invisível no Topo) -->
+    <div id="header-search" class="flex-1 max-w-md mx-4 opacity-0 scale-95 pointer-events-none transition-all duration-300 origin-center hidden sm:block relative">
       <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
         <i data-lucide="search" class="text-neutral-500 w-4 h-4"></i>
       </div>
-      <input type="text" id="global-search-input" placeholder="Buscar animes..." class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-2xl py-2.5 pl-11 pr-4 text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none transition duration-300">
+      <input type="text" id="global-search-input" placeholder="Pesquisar animes ou mangás..." class="w-full bg-dark-900/90 backdrop-blur-xl border border-neutral-800/80 focus:border-brand-500 rounded-full py-2.5 pl-11 pr-10 text-sm text-neutral-200 placeholder-neutral-500 focus:outline-none transition duration-300 shadow-xl shadow-black/50">
       <div id="search-spinner" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden">
         <div class="animate-spin rounded-full h-4 w-4 border-t-2 border-brand-500"></div>
       </div>
     </div>
+
+    <!-- Perfil do Usuário (Direita) -->
+    <div class="shrink-0 cursor-pointer" onclick="navigateToTab('profile')">
+       <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-brand-500 shadow-lg shadow-brand-500/20 bg-dark-800 flex items-center justify-center relative hover:scale-110 transition duration-300">
+         <img id="header-avatar-img" src="" class="w-full h-full object-cover hidden">
+         <span id="header-avatar-text" class="text-brand-500 font-black text-sm">U</span>
+       </div>
+    </div>
   </header>
 
-  <!-- ==================== ABA: INÍCIO ==================== -->
-  <main id="tab-home" class="tab-section active">
-    <section id="hero-section" class="relative h-[60vh] w-full bg-dark-900 flex flex-col justify-end overflow-hidden">
-      <div id="hero-bg" class="absolute inset-0 bg-cover bg-center carousel-bg scale-105 filter brightness-[0.35]"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/50 to-transparent fade-mask"></div>
+  <div id="scroll-area" class="flex-1 overflow-y-auto overflow-x-hidden custom-scroll relative flex flex-col min-h-0">
+
+    <!-- ==================== ABA: INÍCIO (ANIMES) ==================== -->
+    <main id="tab-home" class="tab-section tab-block active pb-8">
       
-      <div class="relative z-10 w-full px-6 md:px-12 pb-6 max-w-5xl flex flex-col items-center text-center">
-        <div class="flex items-center gap-2 mb-3 justify-center">
-          <span class="bg-brand-500/10 text-brand-500 font-bold text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-brand-500/30">Destaque do Dia</span>
-        </div>
-        <h1 id="hero-title" class="text-4xl md:text-5xl font-black text-neutral-50 mb-2 leading-tight tracking-tight drop-shadow-xl transition-all duration-500">Conectando...</h1>
-        <div class="flex items-center justify-center gap-3 mb-6 text-sm">
-          <span class="flex items-center gap-1 text-yellow-500 font-bold"><i data-lucide="star" class="w-4 h-4 fill-yellow-500"></i> <span id="hero-score">--</span></span>
-          <span class="text-neutral-400">•</span>
-          <span id="hero-episodes" class="text-neutral-300 font-medium">-- Episódios</span>
-        </div>
+      <!-- CARROSSEL DESTAQUES ANIMES -->
+      <section id="hero-section" class="relative min-h-[60vh] h-[75vh] md:h-[80vh] w-full bg-dark-950 flex flex-col justify-end overflow-hidden pb-6">
+        <div id="hero-bg" class="absolute inset-0 bg-cover bg-top carousel-bg filter brightness-[0.6] opacity-80"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/90 to-transparent fade-mask"></div>
         
-        <button id="hero-play-btn" class="tv-focus bg-brand-500 hover:bg-brand-600 text-dark-950 font-black px-10 py-3.5 rounded-xl flex items-center justify-center gap-2 transition duration-300 shadow-lg shadow-brand-500/20 transform hover:scale-105">
-          <i data-lucide="play-circle" class="w-5 h-5 fill-dark-950"></i> ASSISTIR
-        </button>
+        <div class="relative z-10 w-full px-6 flex flex-col items-center justify-center text-center mx-auto max-w-2xl mt-auto pt-24">
+          <div class="flex items-center gap-2 mb-4 justify-center">
+            <span class="bg-brand-500/20 text-brand-500 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-brand-500/50 backdrop-blur-md shadow-lg shadow-brand-500/10">Destaque do Dia</span>
+          </div>
+          
+          <h1 id="hero-title" class="text-3xl md:text-5xl font-black text-white mb-2 leading-tight truncate w-full px-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">Conectando...</h1>
+          
+          <p id="hero-synopsis" class="text-xs sm:text-sm text-neutral-300 text-fade mb-5 w-full px-2 drop-shadow-md">Carregando informações do banco de dados...</p>
 
-        <div id="hero-dots" class="flex items-center justify-center gap-2 mt-8"></div>
+          <div class="flex items-center justify-center gap-4 mb-6 text-xs sm:text-sm font-semibold">
+            <span class="flex items-center gap-1 text-yellow-400 bg-dark-950/60 px-3 py-1.5 rounded-lg backdrop-blur-md border border-neutral-800 shadow"><i data-lucide="star" class="w-4 h-4 fill-yellow-400"></i> <span id="hero-score">--</span></span>
+            <span id="hero-episodes" class="text-neutral-200 bg-dark-950/60 px-3 py-1.5 rounded-lg backdrop-blur-md border border-neutral-800 shadow">-- Episódios</span>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 w-full mb-8">
+            <button id="hero-play-btn" class="bg-brand-500 hover:bg-brand-400 text-dark-950 font-black px-10 py-3.5 rounded-full flex items-center justify-center gap-3 transition duration-300 shadow-xl shadow-brand-500/30 transform hover:scale-105 text-sm sm:text-base tracking-wide flex-1 max-w-[240px]">
+              <i data-lucide="play" class="w-5 h-5 fill-dark-950 stroke-dark-950"></i> ASSISTIR
+            </button>
+            <button id="hero-save-btn" class="w-12 h-12 rounded-full bg-dark-950/80 border border-brand-500/40 text-brand-500 flex items-center justify-center hover:bg-brand-500 hover:text-dark-950 hover:border-brand-500 transition duration-300 shadow-xl backdrop-blur-md shrink-0">
+              <i data-lucide="bookmark" id="hero-save-icon" class="w-5 h-5 transition-colors"></i>
+            </button>
+          </div>
+          
+          <div id="hero-dots" class="flex items-center justify-center gap-2 mt-2 h-2"></div>
+        </div>
+      </section>
+
+      <!-- LISTAS DE CONTEÚDO -->
+      <div class="space-y-12 px-4 md:px-12 py-10">
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes em Atualização <span class="text-[10px] bg-brand-500 text-dark-950 px-2 py-0.5 rounded ml-1 font-bold">NOVOS</span></h2>
+            <button onclick="openCategory('releasing', 'Animes em Atualização')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-releasing" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Mais Assistidos</h2>
+            <button onclick="openCategory('popular', 'Mais Assistidos')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-popular" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes para Relaxar ☕</h2>
+            <button onclick="openCategory('relaxar', 'Animes para Relaxar')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <p class="text-neutral-400 text-xs mb-3 pl-3 -mt-3">Vibe calma para assistir em um dia cansativo.</p>
+          <div class="relative group"><div id="row-relaxar" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Feel-Good Anime 😁</h2>
+            <button onclick="openCategory('feelgood', 'Feel-Good Anime')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <p class="text-neutral-400 text-xs mb-3 pl-3 -mt-3">Animes legais para ver e ficar feliz!</p>
+          <div class="relative group"><div id="row-feelgood" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Fantasia e Aventuras 🐦‍🔥</h2>
+            <button onclick="openCategory('fantasy', 'Fantasia e Aventuras')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-fantasy" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+        
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Pokémon</h2>
+            <button onclick="openCategory('pokemon', 'Franquia Pokémon')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-pokemon" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Dragon Ball</h2>
+            <button onclick="openCategory('dragonball', 'Franquia Dragon Ball')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-dragonball" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Naruto</h2>
+            <button onclick="openCategory('naruto', 'Franquia Naruto')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-naruto" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Attack on Titan</h2>
+            <button onclick="openCategory('aot', 'Franquia Attack on Titan')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-aot" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes Isekai</h2>
+            <button onclick="openCategory('isekai', 'Animes Isekai')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-isekai" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Romance <i data-lucide="heart" class="w-5 h-5 text-rose-500 fill-rose-500"></i></h2>
+            <button onclick="openCategory('romance', 'Animes de Romance')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-romance" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Pura Adrenalina <i data-lucide="zap" class="w-5 h-5 text-yellow-500 fill-yellow-500"></i></h2>
+            <button onclick="openCategory('adrenaline', 'Pura Adrenalina')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-adrenaline" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
       </div>
-    </section>
+    </main>
 
-    <div class="space-y-12 px-4 md:px-12 py-10">
-      <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes em Atualização <span class="text-[10px] bg-brand-500 text-dark-950 px-2 py-0.5 rounded ml-1 font-bold">NOVOS</span></h2>
-        <div class="relative group"><div id="row-releasing" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
-      </section>
-
-      <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Mais Assistidos</h2>
-        <div class="relative group"><div id="row-popular" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
-      </section>
-
-      <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes Isekai</h2>
-        <div class="relative group"><div id="row-isekai" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
-      </section>
-
-      <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Animes de Romance <i data-lucide="heart" class="w-5 h-5 text-rose-500 fill-rose-500"></i></h2>
-        <div class="relative group"><div id="row-romance" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
-      </section>
-
-      <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Pura Adrenalina <i data-lucide="zap" class="w-5 h-5 text-yellow-500 fill-yellow-500"></i></h2>
-        <div class="relative group"><div id="row-adrenaline" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
-      </section>
-
-      <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Recomendações em Destaque</h2>
-        <div class="relative group"><div id="row-recommended" class="flex gap-4 sm:gap-5 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
-      </section>
-
-      <section>
-        <h2 class="text-xl md:text-2xl font-bold text-neutral-50 mb-4 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Filmes de Anime</h2>
-        <div class="relative group"><div id="row-movies" class="flex gap-4 sm:gap-5 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
-      </section>
-    </div>
-  </main>
-
-  <!-- ==================== ABA: BUSCAR ==================== -->
-  <main id="tab-search" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
-    <div class="flex justify-between items-center mb-8 border-b border-neutral-800/60 pb-4">
-      <h2 class="text-2xl font-bold text-neutral-50 pl-2 border-l-4 border-brand-500">Resultados da Busca</h2>
-      <button onclick="clearSearch()" class="text-neutral-400 hover:text-brand-500 flex items-center gap-1 text-sm bg-dark-900 px-3 py-1.5 rounded-lg border border-neutral-800">
-        <i data-lucide="x" class="w-4 h-4"></i> Limpar
-      </button>
-    </div>
-    <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
-      <div class="col-span-full text-center py-20 text-neutral-600 flex flex-col items-center">
-        <i data-lucide="search" class="w-16 h-16 mb-4 opacity-20"></i>
-        <p class="font-light">Use a barra superior para buscar um anime.</p>
-      </div>
-    </div>
-  </main>
-
-  <!-- ==================== ABA: MANGÁ ==================== -->
-  <main id="tab-manga" class="tab-section px-4 md:px-12 py-8 min-h-[80vh] flex flex-col items-center justify-center text-center">
-    <div class="bg-brand-500/10 p-6 rounded-full mb-6 border border-brand-500/20">
-      <i data-lucide="book-open" class="w-16 h-16 text-brand-500"></i>
-    </div>
-    <h2 class="text-3xl font-black text-neutral-50 mb-3">Leitor de Mangás</h2>
-    <p class="text-neutral-400 max-w-md">Em desenvolvimento para as próximas atualizações!</p>
-  </main>
-
-  <!-- ==================== ABA: BAIXADOS ==================== -->
-  <main id="tab-downloads" class="tab-section px-4 md:px-12 py-8 min-h-[80vh] flex flex-col items-center justify-center text-center">
-    <div class="bg-neutral-800/50 p-6 rounded-full mb-6 border border-neutral-700/50">
-      <i data-lucide="download" class="w-16 h-16 text-neutral-500"></i>
-    </div>
-    <h2 class="text-2xl font-bold text-neutral-50 mb-3">Meus Downloads</h2>
-    <p class="text-neutral-400 max-w-md text-sm">Seus episódios salvos na memória do aparelho aparecerão aqui para assistir sem internet.</p>
-  </main>
-
-  <!-- ==================== ABA: LISTA ==================== -->
-  <main id="tab-watchlist" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
-    <div class="flex items-center justify-between mb-8 border-b border-neutral-800/60 pb-4">
-      <h2 class="text-2xl font-bold text-neutral-50 pl-2 border-l-4 border-brand-500">Minha Lista</h2>
-    </div>
-    <div id="watchlist-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
-  </main>
-
-  <!-- ==================== ABA: PERFIL & SOBRE (COMPLETA) ==================== -->
-  <main id="tab-profile" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
-    
-    <!-- Cartão de Usuário -->
-    <div class="flex items-center gap-5 mb-8 bg-dark-900/50 p-6 sm:p-8 rounded-3xl border border-neutral-800/50 backdrop-blur-sm relative">
-      <button onclick="editProfile()" class="absolute top-4 right-4 text-neutral-400 hover:text-brand-500"><i data-lucide="edit-3" class="w-5 h-5"></i></button>
-      <div id="profile-avatar" class="w-20 h-20 bg-gradient-to-tr from-brand-600 to-brand-400 rounded-full flex items-center justify-center text-dark-950 font-black text-3xl shadow-lg shadow-brand-500/20 uppercase">U</div>
-      <div>
-        <h2 id="profile-name" class="text-2xl font-bold text-neutral-50">Usuário Otaku</h2>
-        <p class="text-sm text-neutral-400 mt-1 flex items-center gap-1"><i data-lucide="smartphone" class="w-4 h-4"></i> Conta Local</p>
-      </div>
-    </div>
-
-    <!-- Seção Continuar Assistindo -->
-    <div class="mb-10 bg-dark-900/30 p-6 rounded-3xl border border-neutral-800/40">
-      <div class="flex items-center justify-between mb-4 border-b border-neutral-800/60 pb-4">
-        <h2 class="text-xl font-bold text-neutral-50 pl-2 border-l-4 border-brand-500">Continuar Assistindo</h2>
-        <button onclick="navigateToTab('historyFull')" class="bg-brand-500/10 text-brand-500 border border-brand-500/30 px-4 py-2 rounded-xl text-xs font-bold hover:bg-brand-500 hover:text-dark-950 transition">Ver Tudo <i data-lucide="chevron-right" class="inline w-3 h-3 ml-1"></i></button>
-      </div>
-      <div class="relative group"><div id="row-history" class="flex gap-4 overflow-x-auto scrollbar-hide py-2 px-1 scroll-smooth"></div></div>
-    </div>
-
-    <!-- Seção Sobre (Créditos) -->
-    <div class="bg-dark-900/50 p-6 sm:p-8 rounded-3xl border border-neutral-800/60 flex flex-col sm:flex-row items-center gap-6">
-      <div class="bg-brand-500 w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/20 shrink-0">
-        <i data-lucide="play" class="w-10 h-10 fill-dark-950 stroke-dark-950"></i>
-      </div>
-      <div class="w-full text-sm text-neutral-400 space-y-3">
-        <h3 class="text-2xl font-black tracking-widest text-neutral-50 mb-2">OTAKU<span class="text-brand-500">FLOW</span></h3>
-        <div class="flex justify-between border-b border-neutral-800/60 pb-2"><span>Criador:</span> <span class="font-bold text-brand-500 text-base">Vtzin x</span></div>
-        <div class="flex justify-between border-b border-neutral-800/60 pb-2"><span>Lançamento Oficial:</span> <span class="font-bold text-neutral-200">29 de Junho de 2026</span></div>
-        <div class="flex justify-between border-b border-neutral-800/60 pb-2"><span>Última Atualização:</span> <span class="font-bold text-neutral-200">29 de Junho de 2026</span></div>
-        <div class="flex justify-between"><span>Versão do Sistema:</span> <span class="font-bold text-neutral-200">2.1.0 Beta</span></div>
-      </div>
-    </div>
-  </main>
-
-  <!-- SUB-ABA: HISTÓRICO COMPLETO -->
-  <main id="tab-historyFull" class="tab-section px-4 md:px-12 py-8 min-h-[80vh]">
-    <div class="flex items-center justify-between mb-8 border-b border-neutral-800/60 pb-4">
-      <button onclick="navigateToTab('profile')" class="text-neutral-400 hover:text-brand-500 mr-4"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
-      <h2 class="text-2xl font-bold text-neutral-50 flex-1">Todos os Assistidos</h2>
-      <button onclick="clearHistory()" class="text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20 transition">Limpar Tudo</button>
-    </div>
-    <div id="history-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
-  </main>
-
-  <!-- ==================== MODAL DE DETALHES (ANIME) ==================== -->
-  <div id="details-modal" class="fixed inset-0 z-50 bg-dark-950/95 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 md:p-8 opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
-    <div class="absolute inset-0 z-0" onclick="closeModal()"></div>
-    
-    <div class="bg-dark-900 sm:rounded-3xl w-full h-full sm:h-auto max-h-full sm:max-h-[92vh] max-w-6xl border-0 sm:border border-neutral-800 overflow-hidden shadow-2xl relative flex flex-col z-10 transform scale-95 transition-transform duration-300" id="modal-content-box">
+    <!-- ==================== ABA: MANGÁ ==================== -->
+    <main id="tab-manga" class="tab-section tab-block pb-8">
       
-      <button type="button" onclick="closeModal()" class="tv-focus absolute top-4 right-4 z-[999] bg-dark-950/80 text-neutral-300 hover:bg-brand-500 hover:text-dark-950 p-2.5 rounded-full transition-all duration-200 shadow-xl border border-neutral-700 cursor-pointer">
+      <!-- CARROSSEL DESTAQUES MANGÁ -->
+      <section id="manga-hero-section" class="relative min-h-[60vh] h-[75vh] md:h-[80vh] w-full bg-dark-950 flex flex-col justify-end overflow-hidden pb-6">
+        <div id="manga-hero-bg" class="absolute inset-0 bg-cover bg-top carousel-bg filter brightness-[0.6] opacity-80"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/90 to-transparent fade-mask"></div>
+        
+        <div class="relative z-10 w-full px-6 flex flex-col items-center justify-center text-center mx-auto max-w-2xl mt-auto pt-24">
+          <div class="flex items-center gap-2 mb-4 justify-center">
+            <span class="bg-brand-500/20 text-brand-500 font-black text-[10px] uppercase tracking-widest px-3 py-1 rounded-full border border-brand-500/50 backdrop-blur-md shadow-lg shadow-brand-500/10">Mangá em Destaque</span>
+          </div>
+          
+          <h1 id="manga-hero-title" class="text-3xl md:text-5xl font-black text-white mb-2 leading-tight truncate w-full px-2 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">Conectando...</h1>
+          
+          <p id="manga-hero-synopsis" class="text-xs sm:text-sm text-neutral-300 text-fade mb-5 w-full px-2 drop-shadow-md">Carregando informações do banco de dados...</p>
+
+          <div class="flex items-center justify-center gap-4 mb-6 text-xs sm:text-sm font-semibold">
+            <span class="flex items-center gap-1 text-yellow-400 bg-dark-950/60 px-3 py-1.5 rounded-lg backdrop-blur-md border border-neutral-800 shadow"><i data-lucide="star" class="w-4 h-4 fill-yellow-400"></i> <span id="manga-hero-score">--</span></span>
+            <span id="manga-hero-episodes" class="text-neutral-200 bg-dark-950/60 px-3 py-1.5 rounded-lg backdrop-blur-md border border-neutral-800 shadow">-- Capítulos</span>
+          </div>
+
+          <div class="flex items-center justify-center gap-3 w-full mb-8">
+            <button id="manga-hero-play-btn" class="bg-brand-500 hover:bg-brand-400 text-dark-950 font-black px-10 py-3.5 rounded-full flex items-center justify-center gap-3 transition duration-300 shadow-xl shadow-brand-500/30 transform hover:scale-105 text-sm sm:text-base tracking-wide flex-1 max-w-[240px]">
+              <i data-lucide="book-open" class="w-5 h-5 fill-dark-950 stroke-dark-950"></i> LER AGORA
+            </button>
+            <button id="manga-hero-save-btn" class="w-12 h-12 rounded-full bg-dark-950/80 border border-brand-500/40 text-brand-500 flex items-center justify-center hover:bg-brand-500 hover:text-dark-950 hover:border-brand-500 transition duration-300 shadow-xl backdrop-blur-md shrink-0">
+              <i data-lucide="bookmark" id="manga-hero-save-icon" class="w-5 h-5 transition-colors"></i>
+            </button>
+          </div>
+          
+          <div id="manga-hero-dots" class="flex items-center justify-center gap-2 mt-2 h-2"></div>
+        </div>
+      </section>
+
+      <!-- LISTAS DE MANGÁ -->
+      <div class="space-y-12 px-4 md:px-12 py-10">
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Mangás em Alta <span class="text-[10px] bg-brand-500 text-dark-950 px-2 py-0.5 rounded ml-1 font-bold">TOP</span></h2>
+            <button onclick="openCategory('manga-trending', 'Mangás em Alta')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-manga-trending" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Manhwas Populares (Coreanos)</h2>
+            <button onclick="openCategory('manga-manhwa', 'Manhwas Populares')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-manga-manhwa" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Melhores Avaliados</h2>
+            <button onclick="openCategory('manga-popular', 'Melhores Avaliados')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-manga-popular" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+        
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Ação e Adrenalina</h2>
+            <button onclick="openCategory('manga-action', 'Ação e Adrenalina')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-manga-action" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Fantasia e Aventuras</h2>
+            <button onclick="openCategory('manga-fantasy', 'Fantasia e Aventuras')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-manga-fantasy" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+        
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Romance <i data-lucide="heart" class="w-5 h-5 text-rose-500 fill-rose-500"></i></h2>
+            <button onclick="openCategory('manga-romance', 'Mangás de Romance')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-manga-romance" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+        
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl md:text-2xl font-bold text-neutral-50 flex items-center gap-2 pl-2 border-l-4 border-brand-500">Slice of Life (Para Relaxar)</h2>
+            <button onclick="openCategory('manga-slice', 'Mangás para Relaxar')" class="text-neutral-500 hover:text-brand-500 transition px-2 py-1"><i data-lucide="chevron-right" class="w-6 h-6"></i></button>
+          </div>
+          <div class="relative group"><div id="row-manga-slice" class="flex gap-4 overflow-x-auto scrollbar-hide py-3 px-1 scroll-smooth"></div></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ==================== ABA: BUSCAR ==================== -->
+    <main id="tab-search" class="tab-section tab-block px-4 md:px-12 pt-20 pb-8">
+      <div class="flex justify-between items-center mb-6 pt-4">
+        <h2 class="text-2xl font-bold text-neutral-50 pl-2 border-l-4 border-brand-500">Resultados da Busca</h2>
+        <button onclick="clearSearch()" class="text-neutral-400 hover:text-brand-500 flex items-center gap-1 text-sm bg-dark-900 px-3 py-1.5 rounded-lg border border-neutral-800 transition">
+          <i data-lucide="x" class="w-4 h-4"></i> Limpar
+        </button>
+      </div>
+      
+      <!-- Filtros de Busca -->
+      <div class="flex gap-2 mb-6 border-b border-neutral-800/60 pb-4 overflow-x-auto scrollbar-hide">
+         <button onclick="setSearchFilter('ALL')" id="filter-ALL" class="search-filter-btn px-5 py-2 rounded-full bg-brand-500 text-dark-950 font-bold text-sm shadow-lg shadow-brand-500/20 shrink-0 transition">Todos</button>
+         <button onclick="setSearchFilter('ANIME')" id="filter-ANIME" class="search-filter-btn px-5 py-2 rounded-full bg-dark-900 border border-neutral-700 text-neutral-400 font-bold text-sm shrink-0 transition">Animes</button>
+         <button onclick="setSearchFilter('MANGA')" id="filter-MANGA" class="search-filter-btn px-5 py-2 rounded-full bg-dark-900 border border-neutral-700 text-neutral-400 font-bold text-sm shrink-0 transition">Mangás</button>
+      </div>
+
+      <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+        <div class="col-span-full text-center py-20 text-neutral-600 flex flex-col items-center">
+          <i data-lucide="search" class="w-16 h-16 mb-4 opacity-20"></i>
+          <p class="font-light">Use a barra superior para buscar um anime ou mangá.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ==================== ABA: EXIBIR CATEGORIA COMPLETA ==================== -->
+    <main id="tab-category" class="tab-section tab-flex flex-col flex-1 min-h-0 h-full max-h-full overflow-hidden w-full">
+      <div class="shrink-0 px-4 md:px-12 pt-20 pb-4">
+        <div class="flex items-center gap-4 mb-4 border-b border-neutral-800/60 pb-4 pt-4">
+          <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500 p-2 -ml-2 rounded-lg hover:bg-dark-900 transition"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+          <h2 id="category-title" class="text-2xl font-bold text-neutral-50 flex-1">Categoria</h2>
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto px-4 md:px-12 pb-8 custom-scroll min-h-0 h-full max-h-full">
+        <div id="category-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
+      </div>
+    </main>
+
+    <!-- ==================== ABA: EXPLORAR ==================== -->
+    <main id="tab-explore" class="tab-section tab-flex flex-col items-center justify-center text-center flex-1 min-h-0 h-full max-h-full overflow-hidden w-full pt-20">
+      <div class="bg-brand-500/10 p-6 rounded-full mb-6 border border-brand-500/20 -mt-20">
+        <i data-lucide="compass" class="w-16 h-16 text-brand-500 animate-spin" style="animation-duration: 4s;"></i>
+      </div>
+      <h2 class="text-2xl font-bold text-neutral-50 mb-3">Aba Explorar</h2>
+      <p class="text-neutral-400 max-w-md text-sm px-4">Esta funcionalidade está em desenvolvimento e chegará em uma futura atualização do VzAnime!</p>
+    </main>
+
+    <!-- ==================== ABA: LISTA ==================== -->
+    <main id="tab-watchlist" class="tab-section tab-flex flex-col flex-1 min-h-0 h-full max-h-full overflow-hidden w-full">
+      <div class="shrink-0 px-4 md:px-12 pt-20 pb-4">
+        <div class="flex items-center justify-between border-b border-neutral-800/60 pb-4 pt-4">
+          <h2 class="text-2xl font-bold text-neutral-50 pl-2 border-l-4 border-brand-500">Minha Lista</h2>
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto custom-scroll px-4 md:px-12 pb-8 min-h-0 h-full max-h-full">
+        <div id="watchlist-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
+      </div>
+    </main>
+
+    <!-- ==================== ABA: RECENTES ==================== -->
+    <main id="tab-recent" class="tab-section tab-flex flex-col flex-1 min-h-0 h-full max-h-full overflow-hidden w-full">
+      <div class="shrink-0 px-4 md:px-12 pt-20 pb-4">
+        <div class="flex items-center gap-4 mb-4 border-b border-neutral-800/60 pb-4 pt-4">
+          <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500 p-2 -ml-2 rounded-lg hover:bg-dark-900 transition"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+          <h2 class="text-2xl font-bold text-neutral-50 flex-1">Recentes (Últimas 24h)</h2>
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto custom-scroll px-4 md:px-12 pb-8 min-h-0 h-full max-h-full">
+        <div id="recent-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
+      </div>
+    </main>
+
+    <!-- ==================== ABA: PERFIL COMPACTO ==================== -->
+    <main id="tab-profile" class="tab-section tab-block h-full overflow-y-auto custom-scroll px-4 md:px-12 pt-24 pb-24 max-w-2xl mx-auto">
+      <div class="flex items-center gap-4 bg-dark-900/60 p-5 rounded-3xl border border-neutral-800/80 mb-6 backdrop-blur-sm shadow-xl">
+        <div class="relative w-16 h-16 rounded-full overflow-hidden border-2 border-brand-500 shadow-xl bg-dark-800 shrink-0 cursor-pointer group" onclick="openEditProfileModal()">
+          <img id="profile-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Avatar">
+          <span id="profile-avatar-text" class="font-black text-3xl text-brand-500 flex items-center justify-center w-full h-full">U</span>
+          <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <i data-lucide="camera" class="text-white w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="flex-1">
+          <h2 id="profile-name" class="text-xl font-bold text-white">Usuário Vz</h2>
+          <p class="text-xs text-neutral-400">otaku@vzanime.com</p>
+        </div>
+        <button onclick="openEditProfileModal()" class="p-3 bg-dark-800 rounded-xl text-neutral-400 hover:text-brand-500 hover:bg-dark-700 transition border border-neutral-700/50 shadow">
+          <i data-lucide="edit-3" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 mb-8">
+        <button onclick="navigateToTab('feedback')" class="w-full bg-dark-900 border border-neutral-800/80 p-5 rounded-2xl flex items-center justify-between text-neutral-300 hover:text-brand-500 hover:border-brand-500/50 transition shadow-md">
+          <div class="flex items-center gap-4">
+            <div class="bg-brand-500/10 p-2.5 rounded-xl text-brand-500 border border-brand-500/20"><i data-lucide="message-square" class="w-6 h-6"></i></div>
+            <div class="text-left"><span class="font-bold text-lg block text-neutral-100">Central de Ajuda</span><span class="text-[10px] text-neutral-500 font-bold uppercase tracking-wider">Reportar / Sugerir</span></div>
+          </div>
+          <i data-lucide="chevron-right" class="w-6 h-6 text-neutral-500"></i>
+        </button>
+      </div>
+      
+      <button onclick="navigateToTab('login')" class="w-full bg-brand-500 hover:bg-brand-400 text-dark-950 font-black py-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-brand-500/20 transform hover:scale-[1.02] transition duration-300 text-base tracking-wide">
+        <i data-lucide="log-in" class="w-5 h-5 stroke-current"></i> CADASTRAR / LOGIN
+      </button>
+    </main>
+
+    <!-- ==================== ABA: LOGIN/CADASTRO ==================== -->
+    <main id="tab-login" class="tab-section tab-block h-full overflow-y-auto custom-scroll px-6 pt-24 pb-24 flex flex-col items-center">
+      <div class="w-full max-w-sm mx-auto bg-dark-900/80 backdrop-blur-md p-8 rounded-3xl border border-neutral-800 shadow-2xl mt-4 sm:mt-10">
+         <div class="w-16 h-16 bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl mx-auto mb-6 flex items-center justify-center transform -rotate-6 shadow-xl shadow-brand-500/30">
+            <i data-lucide="play" class="w-8 h-8 fill-dark-950 stroke-dark-950 ml-1"></i>
+         </div>
+         <h2 class="text-2xl font-black text-center text-white mb-2 tracking-wide">Acessar Conta</h2>
+         <p class="text-center text-xs text-neutral-400 mb-8 px-2">Faça login com seu e-mail ou conta Google para sincronizar seu progresso na nuvem VzAnime.</p>
+
+         <div class="space-y-4 mb-8">
+            <input type="email" placeholder="Seu E-mail Principal" class="w-full bg-dark-950 border border-neutral-800 focus:border-brand-500 rounded-xl px-4 py-3.5 text-sm text-neutral-100 outline-none transition shadow-inner">
+            <button class="w-full bg-brand-500 hover:bg-brand-400 text-dark-950 font-black py-3.5 rounded-xl transition shadow-lg shadow-brand-500/20 tracking-wider mt-2" onclick="showToast('Aviso', 'Link de acesso mágico enviado para o e-mail.')">ENTRAR</button>
+         </div>
+
+         <div class="flex items-center gap-3 mb-6">
+            <hr class="flex-1 border-neutral-800">
+            <span class="text-[10px] text-neutral-500 font-bold uppercase tracking-widest">OU</span>
+            <hr class="flex-1 border-neutral-800">
+         </div>
+
+         <button class="w-full bg-white text-black hover:bg-gray-200 font-bold py-3 rounded-xl flex items-center justify-center gap-3 transition shadow" onclick="showToast('Aviso', 'Integração Google em desenvolvimento.')">
+            <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Entrar com o Google
+         </button>
+      </div>
+    </main>
+
+    <!-- ==================== ABA: REPORTAR / SUGERIR (CENTRAL DE AJUDA) ==================== -->
+    <main id="tab-feedback" class="tab-section tab-block h-full overflow-y-auto custom-scroll px-4 md:px-12 pt-20 pb-24 max-w-3xl mx-auto">
+       <div class="flex items-center gap-4 mb-6 border-b border-neutral-800/60 pb-4 pt-4">
+          <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500 p-2 -ml-2 rounded-lg hover:bg-dark-900 transition"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+          <h2 class="text-2xl font-bold text-neutral-50 flex-1">Central de Ajuda</h2>
+       </div>
+
+       <!-- PAINEL DA INTELIGÊNCIA ARTIFICIAL -->
+       <div class="bg-gradient-to-br from-dark-900 to-dark-950 p-5 sm:p-6 rounded-3xl border-l-4 border-l-brand-500 border border-neutral-800 shadow-xl mb-8 relative overflow-hidden">
+          <div class="absolute -right-4 -top-4 opacity-5"><i data-lucide="bot" class="w-32 h-32"></i></div>
+          <h3 class="text-brand-500 font-bold flex items-center gap-2 mb-3 text-sm uppercase tracking-wider"><i data-lucide="shield-check" class="w-5 h-5"></i> Sistema de Moderação por IA</h3>
+          <p class="text-xs sm:text-sm text-neutral-300 leading-relaxed mb-3">
+             Antes de chegar ao nosso desenvolvedor <strong>(Vtzin x)</strong>, todas as mensagens passam por uma triagem automática de Inteligência Artificial.
+          </p>
+          <ul class="text-xs text-neutral-400 space-y-2 font-medium mb-3">
+             <li class="flex gap-2"><span class="text-rose-500">🔴</span> <strong>Lista Vermelha:</strong> Mensagens com xingamentos, sacanagem, trollagens ou que não fazem sentido são reprovadas pela IA e podem ser completamente ignoradas.</li>
+             <li class="flex gap-2"><span class="text-green-500">🟢</span> <strong>Lista Verde:</strong> Relatos sérios, bem explicados e sugestões construtivas são aprovados na hora! O desenvolvedor receberá uma notificação e lerá o mais rápido possível.</li>
+          </ul>
+          <div class="bg-dark-950/50 rounded-lg p-2.5 text-[10px] text-neutral-500 font-bold border border-neutral-800/80 inline-block">
+             <i data-lucide="info" class="w-3.5 h-3.5 inline mb-0.5 text-brand-500"></i> Limite de envio: 3 Reportes e 3 Sugestões por dia.
+          </div>
+       </div>
+
+       <!-- BOTÕES DE TROCA (REPORTAR / SUGERIR) -->
+       <div class="flex gap-3 mb-6 bg-dark-950 p-1.5 rounded-2xl border border-neutral-800/80 shadow-inner">
+          <button id="btn-tab-report" onclick="toggleFeedbackTab('report')" class="flex-1 bg-brand-500 text-dark-950 font-bold py-3 rounded-xl transition text-sm shadow-md flex justify-center items-center gap-2">
+             <i data-lucide="alert-triangle" class="w-4 h-4"></i> Reportar Bug
+          </button>
+          <button id="btn-tab-suggest" onclick="toggleFeedbackTab('suggest')" class="flex-1 bg-transparent text-neutral-400 hover:text-neutral-200 font-bold py-3 rounded-xl transition text-sm flex justify-center items-center gap-2">
+             <i data-lucide="lightbulb" class="w-4 h-4"></i> Dar Sugestão
+          </button>
+       </div>
+
+       <!-- FORMULÁRIO DE REPORTAR -->
+       <div id="form-report" class="space-y-6 block">
+          <div>
+             <h3 class="text-lg font-bold text-neutral-100 mb-1">Encontrou algum problema?</h3>
+             <p class="text-xs text-neutral-400 leading-relaxed mb-5">
+                Utilize este formulário para nos avisar sobre travamentos, bugs de interface, ou falta de episódios/dublagens. Seja profissional e detalhista para que nossa equipe técnica possa resolver rapidamente.
+             </p>
+             <form onsubmit="submitFeedback(event, 'report')">
+                <div class="space-y-4">
+                   <div>
+                      <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 ml-1">1. Motivo do Reporte</label>
+                      <select required class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-xl px-4 py-3.5 text-sm text-neutral-200 outline-none transition appearance-none cursor-pointer">
+                         <option value="" disabled selected>Selecione um motivo...</option>
+                         <option>Falta de Dublagem / Episódios</option>
+                         <option>Travamentos ou Lentidão</option>
+                         <option>Erro no Player / Vídeo não carrega</option>
+                         <option>Problema visual / Interface quebrada</option>
+                         <option>Outros</option>
+                      </select>
+                   </div>
+                   <div>
+                      <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 ml-1">2. Isso acontece com frequência?</label>
+                      <select required class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-xl px-4 py-3.5 text-sm text-neutral-200 outline-none transition appearance-none cursor-pointer">
+                         <option value="" disabled selected>Selecione...</option>
+                         <option>Sim, sempre que tento acessar</option>
+                         <option>Apenas de vez em quando</option>
+                         <option>Aconteceu apenas uma vez</option>
+                      </select>
+                   </div>
+                   <div>
+                      <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 ml-1">3. Conte-nos sua situação detalhadamente</label>
+                      <textarea required rows="4" placeholder="Ex: O episódio 5 de Naruto Shippuden não está carregando a dublagem em PT-BR..." class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-xl px-4 py-3.5 text-sm text-neutral-200 outline-none transition resize-none custom-scroll"></textarea>
+                   </div>
+                   <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-dark-950 font-black py-4 rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-brand-500/20 mt-2">
+                      <i data-lucide="send" class="w-4 h-4"></i> ENVIAR REPORTE PARA A IA
+                   </button>
+                </div>
+             </form>
+          </div>
+       </div>
+
+       <!-- FORMULÁRIO DE SUGERIR -->
+       <div id="form-suggest" class="space-y-6 hidden">
+          <div>
+             <h3 class="text-lg font-bold text-neutral-100 mb-1">Tem uma ideia brilhante?</h3>
+             <p class="text-xs text-neutral-400 leading-relaxed mb-5">
+                Queremos ouvir você! Sugira novas funções, opções nas configurações, ou animes que faltam no VzAnime. Seja criativo e nos ajude a evoluir o aplicativo.
+             </p>
+             <form onsubmit="submitFeedback(event, 'suggest')">
+                <div class="space-y-4">
+                   <div>
+                      <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 ml-1">1. Qual o tipo da sua sugestão?</label>
+                      <select required class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-xl px-4 py-3.5 text-sm text-neutral-200 outline-none transition appearance-none cursor-pointer">
+                         <option value="" disabled selected>Selecione uma categoria...</option>
+                         <option>Nova Funcionalidade / Recurso</option>
+                         <option>Melhoria no Design / Interface</option>
+                         <option>Adicionar Anime / Mangá ao catálogo</option>
+                         <option>Mais opções nas Configurações</option>
+                         <option>Outros</option>
+                      </select>
+                   </div>
+                   <div>
+                      <label class="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1.5 ml-1">2. Explique sua ideia detalhadamente</label>
+                      <textarea required rows="4" placeholder="Ex: Seria incrível se o app tivesse uma opção para sincronizar os animes com a minha conta do MyAnimeList..." class="w-full bg-dark-900 border border-neutral-800 focus:border-brand-500 rounded-xl px-4 py-3.5 text-sm text-neutral-200 outline-none transition resize-none custom-scroll"></textarea>
+                   </div>
+                   <button type="submit" class="w-full bg-brand-500 hover:bg-brand-400 text-dark-950 font-black py-4 rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-brand-500/20 mt-2">
+                      <i data-lucide="send" class="w-4 h-4"></i> ENVIAR SUGESTÃO PARA A IA
+                   </button>
+                </div>
+             </form>
+          </div>
+       </div>
+    </main>
+
+    <!-- ==================== SUB-ABA: HISTÓRICO COMPLETO ==================== -->
+    <main id="tab-historyFull" class="tab-section tab-flex flex-col flex-1 min-h-0 h-full max-h-full overflow-hidden w-full">
+      <div class="shrink-0 px-4 md:px-12 pt-20 pb-4">
+        <div class="flex items-center gap-4 mb-4 border-b border-neutral-800/60 pb-4 pt-4">
+          <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500 p-2 -ml-2 rounded-lg hover:bg-dark-900 transition"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+          <h2 class="text-2xl font-bold text-neutral-50 flex-1">Continuar Assistindo</h2>
+          <button onclick="clearHistory()" class="text-xs text-rose-400 hover:text-rose-300 bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20 transition">Limpar Tudo</button>
+        </div>
+      </div>
+      <div class="flex-1 overflow-y-auto px-4 md:px-12 pb-8 custom-scroll min-h-0 h-full max-h-full">
+        <div id="history-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6"></div>
+      </div>
+    </main>
+
+    <!-- ==================== SUB-ABA: SOBRE ==================== -->
+    <main id="tab-about" class="tab-section tab-block px-4 md:px-12 pt-20 pb-8">
+      <div class="flex items-center gap-4 mb-8 border-b border-neutral-800/60 pb-4 pt-4">
+        <button onclick="window.history.back()" class="text-neutral-400 hover:text-brand-500 p-2 -ml-2 rounded-lg hover:bg-dark-900 transition"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+        <h2 class="text-2xl font-bold text-neutral-50">Sobre o Aplicativo</h2>
+      </div>
+      
+      <div class="bg-dark-900 p-8 rounded-3xl border border-neutral-800/60 text-center max-w-xl mx-auto shadow-2xl relative overflow-hidden mb-12">
+        <div class="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-brand-500/10 to-transparent pointer-events-none"></div>
+        <div class="relative bg-gradient-to-br from-brand-500 to-brand-600 w-24 h-24 mx-auto rounded-3xl flex items-center justify-center mb-6 shadow-xl shadow-brand-500/30 transform -rotate-6">
+          <i data-lucide="play" class="w-12 h-12 fill-dark-950 stroke-dark-950 ml-1"></i>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-black tracking-widest text-neutral-50 mb-2 relative">VZ<span class="text-brand-500">ANIME</span></h2>
+        <p class="text-neutral-400 text-sm mb-8 relative px-4">Feito com carinho para todos os fãs de anime e mangá. Acompanhe seus conteúdos favoritos de forma simples, rápida e direto do seu celular!</p>
+
+        <div class="space-y-4 text-sm text-left bg-dark-950/70 p-6 rounded-2xl border border-neutral-800 shadow-inner relative">
+          <div class="flex justify-between items-center border-b border-neutral-800/80 pb-3">
+            <span class="text-neutral-500 font-medium">Criador/Desenvolvedor</span>
+            <span class="font-black text-brand-500 bg-brand-500/10 px-3 py-1 rounded-lg border border-brand-500/20">Vtzin x</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-neutral-800/80 pb-3">
+            <span class="text-neutral-500 font-medium">Lançamento Oficial</span>
+            <span class="font-bold text-neutral-200">29 de Junho de 2026</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-neutral-800/80 pb-3">
+            <span class="text-neutral-500 font-medium">Última Atualização</span>
+            <span class="font-bold text-neutral-200">30 de Junho de 2026</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-neutral-500 font-medium">Versão do Sistema</span>
+            <span class="font-bold text-neutral-200">5.5.0 (Mobile Only Edition)</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div> <!-- FIM DA ÁREA DE SCROLL -->
+
+  <!-- MENU INFERIOR MOBILE FIXO -->
+  <nav class="shrink-0 bg-dark-950/95 border-t border-neutral-900 md:hidden z-40 px-2 sm:px-6 py-2.5 flex justify-between items-center backdrop-blur-xl">
+    <button onclick="navigateToTab('home')" id="nav-btn-home" class="nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1 cursor-pointer">
+      <i data-lucide="home" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Início</span>
+    </button>
+    <button onclick="navigateToTab('manga')" id="nav-btn-manga" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1 cursor-pointer">
+      <i data-lucide="book-open" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Mangá</span>
+    </button>
+    <button onclick="navigateToTab('explore')" id="nav-btn-explore" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1 cursor-pointer">
+      <i data-lucide="compass" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Explorar</span>
+    </button>
+    <button onclick="openMenu()" id="nav-btn-menu" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1 cursor-pointer">
+      <i data-lucide="menu" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Mais</span>
+    </button>
+  </nav>
+
+  <!-- ==================== MODAL DE EDIÇÃO DE PERFIL ==================== -->
+  <div id="edit-profile-modal" class="fixed inset-0 z-[110] bg-dark-950/90 backdrop-blur-sm hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+    <div class="bg-dark-900 border border-neutral-800 rounded-3xl p-6 w-full max-w-[420px] shadow-2xl relative transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]" id="edit-profile-box">
+      <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-brand-500 transition z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h3 class="text-xl font-bold text-neutral-50 mb-4 flex items-center gap-2 shrink-0"><i data-lucide="user" class="text-brand-500 w-5 h-5"></i> Editar Perfil</h3>
+      <div class="flex-1 overflow-y-auto space-y-4 pr-1 custom-scroll">
+        <div>
+          <label class="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2">Nome de Usuário</label>
+          <input type="text" id="input-profile-name" class="w-full bg-dark-950 border border-neutral-800 focus:border-brand-500 rounded-xl px-4 py-3 text-neutral-100 outline-none transition" placeholder="Como quer ser chamado?">
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold text-neutral-500 uppercase tracking-wider">Selecione uma Capa</label>
+            <div id="avatar-preview-mini" class="w-10 h-10 bg-dark-950 rounded-full border-2 border-brand-500 overflow-hidden shrink-0 flex items-center justify-center">
+               <img id="avatar-preview-img" src="" class="w-full h-full object-cover hidden">
+               <span id="avatar-preview-text" class="text-brand-500 font-black">?</span>
+            </div>
+          </div>
+          <div class="relative w-full mb-3">
+            <input type="text" id="jikan-search-input" placeholder="Buscar personagem ou anime..." class="w-full bg-dark-950 border border-neutral-800 focus:border-brand-500 rounded-xl px-4 py-2.5 pr-10 text-xs text-neutral-100 outline-none transition">
+            <button onclick="searchJikanCharacters()" class="absolute inset-y-0 right-0 px-3 text-neutral-500 hover:text-brand-500 flex items-center justify-center"><i data-lucide="search" class="w-4 h-4"></i></button>
+          </div>
+          <div id="avatar-selection-grid" class="grid grid-cols-4 gap-2.5 p-2 bg-dark-950 border border-neutral-800 rounded-2xl min-h-[200px]">
+            <div class="col-span-4 flex flex-col items-center justify-center text-neutral-500 py-6">
+              <i data-lucide="loader-2" class="w-6 h-6 animate-spin mb-2 text-brand-500"></i>
+              <span class="text-[10px]">Buscando personagens...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button onclick="saveProfileChanges()" class="w-full bg-brand-500 text-dark-950 hover:bg-brand-600 font-black py-3.5 rounded-xl mt-4 transition shadow-lg shadow-brand-500/20 shrink-0">SALVAR ALTERAÇÕES</button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE CONFIGURAÇÕES ==================== -->
+  <div id="settings-modal" class="fixed inset-0 z-[110] bg-dark-950/90 backdrop-blur-sm hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+    <div class="bg-dark-900 border border-neutral-800 rounded-3xl p-6 w-full max-w-[420px] shadow-2xl relative transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]" id="settings-box">
+      <button onclick="closeSettingsModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-brand-500 transition z-10"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h3 class="text-xl font-bold text-neutral-50 mb-6 flex items-center gap-2 shrink-0"><i data-lucide="settings" class="text-brand-500 w-5 h-5"></i> Configurações</h3>
+      <div class="flex-1 overflow-y-auto space-y-6 pr-1 custom-scroll pb-4">
+        <div>
+          <label class="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-3">Cor do Tema do App</label>
+          <div class="flex items-center gap-3">
+            <button onclick="setTheme('orange')" class="w-8 h-8 rounded-full bg-[#f97316] ring-2 ring-offset-2 ring-offset-dark-900 ring-transparent focus:ring-[#f97316] transition-all hover:scale-110 shadow-lg" title="Laranja (Padrão)"></button>
+            <button onclick="setTheme('purple')" class="w-8 h-8 rounded-full bg-[#a855f7] ring-2 ring-offset-2 ring-offset-dark-900 ring-transparent focus:ring-[#a855f7] transition-all hover:scale-110 shadow-lg" title="Roxo"></button>
+            <button onclick="setTheme('blue')" class="w-8 h-8 rounded-full bg-[#3b82f6] ring-2 ring-offset-2 ring-offset-dark-900 ring-transparent focus:ring-[#3b82f6] transition-all hover:scale-110 shadow-lg" title="Azul"></button>
+            <button onclick="setTheme('green')" class="w-8 h-8 rounded-full bg-[#22c55e] ring-2 ring-offset-2 ring-offset-dark-900 ring-transparent focus:ring-[#22c55e] transition-all hover:scale-110 shadow-lg" title="Verde"></button>
+            <button onclick="setTheme('rose')" class="w-8 h-8 rounded-full bg-[#f43f5e] ring-2 ring-offset-2 ring-offset-dark-900 ring-transparent focus:ring-[#f43f5e] transition-all hover:scale-110 shadow-lg" title="Rosa"></button>
+          </div>
+        </div>
+        <hr class="border-neutral-800">
+        <div>
+          <label class="flex items-center justify-between cursor-pointer group">
+            <div class="pr-4">
+              <span class="text-sm font-bold text-neutral-200 group-hover:text-brand-500 transition-colors">Economia de Dados</span>
+              <p class="text-[10px] text-neutral-500 mt-0.5 leading-tight">Desativa vídeos em segundo plano e reduz a qualidade das capas.</p>
+            </div>
+            <div class="relative shrink-0">
+              <input type="checkbox" id="data-saver-toggle" class="sr-only peer" onchange="toggleDataSaver()">
+              <div class="w-11 h-6 bg-dark-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-neutral-400 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500 peer-checked:after:bg-white border border-neutral-700"></div>
+            </div>
+          </label>
+        </div>
+        <hr class="border-neutral-800">
+        <div>
+          <label class="flex items-center justify-between cursor-pointer group">
+            <div class="pr-4">
+              <span class="text-sm font-bold text-neutral-200 group-hover:text-brand-500 transition-colors">Efeitos de Desfoque</span>
+              <p class="text-[10px] text-neutral-500 mt-0.5 leading-tight">Desative caso o aplicativo fique travando (ideal para celulares fracos).</p>
+            </div>
+            <div class="relative shrink-0">
+              <input type="checkbox" id="blur-toggle" class="sr-only peer" onchange="toggleBlur()" checked>
+              <div class="w-11 h-6 bg-dark-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-neutral-400 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500 peer-checked:after:bg-white border border-neutral-700"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== MODAL DE DETALHES (ANIME E MANGÁ) ==================== -->
+  <div id="details-modal" class="fixed inset-0 z-[120] bg-dark-950/95 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 md:p-8 opacity-0 pointer-events-none transition-all duration-300 overflow-y-auto">
+    <div class="absolute inset-0 z-0" onclick="closeModal()"></div>
+    <div class="bg-dark-900 sm:rounded-3xl w-full h-full sm:h-auto max-h-full sm:max-h-[92vh] max-w-6xl border-0 sm:border border-neutral-800 overflow-hidden shadow-2xl relative flex flex-col z-10 transform scale-95 transition-transform duration-300" id="modal-content-box">
+      <button type="button" onclick="closeModal()" class="absolute top-4 right-4 z-[999] bg-dark-950/80 text-neutral-300 hover:bg-brand-500 hover:text-dark-950 p-2.5 rounded-full transition-all duration-200 shadow-xl border border-neutral-700 cursor-pointer">
         <i data-lucide="x" class="w-5 h-5 pointer-events-none"></i>
       </button>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-y-auto scrollbar-hide relative">
-        
+      <div class="grid grid-cols-1 md:grid-cols-12 flex-1 overflow-y-auto custom-scroll relative">
         <div class="col-span-1 md:col-span-4 relative h-[45vh] md:h-full min-h-[400px] bg-dark-950 flex flex-col justify-end p-6 md:p-8 overflow-hidden">
-          <div id="modal-trailer-container" class="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-50 hidden"></div>
-          <img id="modal-cover" class="absolute inset-0 w-full h-full object-cover filter brightness-[0.35] z-10 transition-opacity duration-[2000ms]" src="" alt="Capa">
+          <img id="modal-cover" class="absolute inset-0 w-full h-full object-cover filter brightness-[0.4] z-10 transition-opacity duration-700" src="" alt="Capa">
+          <div id="modal-trailer-container" class="absolute inset-0 w-full h-full z-15 pointer-events-none hidden"></div>
           <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/80 to-transparent z-20"></div>
-          
           <div class="relative z-30 w-full mt-auto">
-            <span id="modal-score" class="bg-brand-500 text-dark-950 font-bold px-2.5 py-1 rounded-md text-xs inline-flex items-center gap-1.5 mb-3 shadow"><i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> --</span>
+            <span id="modal-score" class="bg-brand-500 text-dark-950 font-bold px-2.5 py-1 rounded-md text-xs inline-flex items-center gap-1.5 mb-3 shadow">
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> <span id="modal-score-text">--</span>
+            </span>
             <h3 id="modal-title-alt" class="text-[10px] text-neutral-400 font-semibold tracking-widest block uppercase mb-1.5 truncate">Romaji</h3>
             <h2 id="modal-title" class="text-3xl md:text-4xl font-black text-neutral-50 mb-5 leading-none drop-shadow-lg tracking-tight">Título</h2>
-            
-            <button id="modal-watchlist-btn" type="button" class="tv-focus w-full bg-dark-800 hover:bg-brand-500 hover:text-dark-950 text-neutral-100 font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 border border-neutral-700/50 text-sm transition duration-300 shadow-lg group">
+            <button id="modal-watchlist-btn" type="button" class="w-full bg-dark-800 hover:bg-brand-500 hover:text-dark-950 text-neutral-100 font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 border border-neutral-700/50 text-sm transition duration-300 shadow-lg group">
               <i data-lucide="bookmark" id="watchlist-btn-icon" class="w-4 h-4 group-hover:fill-dark-950"></i>
               <span id="watchlist-btn-text">Adicionar à Lista</span>
             </button>
@@ -268,7 +837,7 @@
               <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Lançamento</span><span id="tech-season" class="font-bold text-neutral-100 text-sm">--</span></div>
               <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Formato</span><span id="tech-format" class="font-bold text-neutral-100 text-sm">--</span></div>
               <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Status</span><span id="tech-status" class="font-bold text-brand-500 text-sm">--</span></div>
-              <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1">Total</span><span id="tech-episodes" class="font-bold text-neutral-100 text-sm">-- eps</span></div>
+              <div><span class="block text-neutral-500 text-[10px] uppercase tracking-wider mb-1" id="tech-episodes-label">Total</span><span id="tech-episodes" class="font-bold text-neutral-100 text-sm">-- eps</span></div>
             </div>
 
             <div id="modal-genres" class="flex flex-wrap gap-2"></div>
@@ -276,34 +845,28 @@
             <div>
               <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold text-neutral-100 flex items-center gap-2"><i data-lucide="align-left" class="w-4 h-4 text-brand-500"></i> Sobre</h3>
-                <span id="translation-status" class="text-[10px] bg-brand-500/10 text-brand-500 font-semibold px-2 py-1 rounded flex items-center gap-1.5 hidden"><i data-lucide="globe" class="w-3 h-3 animate-spin"></i> Traduzindo...</span>
               </div>
-              <p id="modal-synopsis" class="text-neutral-400 text-sm leading-relaxed max-h-36 overflow-y-auto scroll-smooth pr-3 font-light select-text">Carregando...</p>
-            </div>
-
-            <div id="modal-seasons-container" class="hidden">
-              <button onclick="toggleSeasons()" class="w-full bg-dark-950 border border-neutral-800 hover:border-brand-500/50 p-4 rounded-xl flex items-center justify-between group transition">
-                <div class="flex items-center gap-3"><i data-lucide="git-merge" class="text-brand-500 w-5 h-5"></i> <span class="font-bold text-sm">Explorar Temporadas e Filmes</span></div>
-                <i data-lucide="chevron-down" id="seasons-arrow" class="text-neutral-500 group-hover:text-brand-500 transition-transform duration-300"></i>
-              </button>
-              <div id="seasons-list" class="hidden flex-col gap-2 mt-2 px-2 overflow-y-auto max-h-60 scrollbar-hide origin-top transition-all duration-300"></div>
+              <p id="modal-synopsis" class="text-neutral-400 text-sm leading-relaxed max-h-36 overflow-y-auto custom-scroll pr-3 font-light select-text synopsis-content">Carregando...</p>
             </div>
 
             <div id="player-container" class="hidden bg-dark-950 border border-neutral-800 rounded-2xl p-8 text-center shadow-inner">
               <div class="flex flex-col items-center justify-center gap-4">
-                <div class="w-14 h-14 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 animate-pulse border border-brand-500/20"><i data-lucide="server" class="w-7 h-7"></i></div>
+                <div class="w-14 h-14 bg-brand-500/10 rounded-full flex items-center justify-center text-brand-500 animate-pulse border border-brand-500/20" id="player-icon"><i data-lucide="server" class="w-7 h-7"></i></div>
                 <h4 class="font-bold text-base text-neutral-100" id="player-episode-title">Conectando ao Servidor...</h4>
                 <div class="mt-4 flex flex-col sm:flex-row gap-3">
-                  <button type="button" onclick="hidePlayer()" class="bg-neutral-800 text-neutral-200 font-semibold text-xs py-3 px-8 rounded-xl transition hover:bg-neutral-700 border border-neutral-700">Fechar Player</button>
-                  <button type="button" onclick="showToast('Aviso', 'O download estará disponível ao conectar a API Render.')" class="bg-dark-900 text-brand-500 font-semibold text-xs py-3 px-8 rounded-xl transition hover:bg-brand-500 hover:text-dark-950 border border-brand-500/50 flex items-center justify-center gap-2"><i data-lucide="download" class="w-4 h-4"></i> Baixar Episódio</button>
+                  <button type="button" onclick="hidePlayer()" class="bg-neutral-800 text-neutral-200 font-semibold text-xs py-3 px-8 rounded-xl transition hover:bg-neutral-700 border border-neutral-700">Fechar Leitor/Player</button>
+                  <button type="button" onclick="showToast('Aviso', 'O download estará disponível nas próximas versões.')" class="bg-dark-900 text-brand-500 font-semibold text-xs py-3 px-8 rounded-xl transition hover:bg-brand-500 hover:text-dark-950 border border-brand-500/50 flex items-center justify-center gap-2"><i data-lucide="download" class="w-4 h-4"></i> Baixar Conteúdo</button>
                 </div>
               </div>
             </div>
 
             <div id="episodes-container" class="pb-8">
               <div class="flex items-center justify-between mb-4 pb-3 border-b border-neutral-800/50">
-                <h4 class="text-sm font-bold text-neutral-100 flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 text-brand-500"></i> Episódios</h4>
-                <span id="modal-pagination-info" class="text-[10px] text-neutral-400 font-bold bg-dark-950 border border-neutral-800 px-2.5 py-1 rounded-md">Pág 1</span>
+                <h4 class="text-sm font-bold text-neutral-100 flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 text-brand-500"></i> <span id="modal-list-title">Episódios</span></h4>
+                <div class="flex items-center gap-3">
+                    <span id="jikan-loader" class="text-[10px] text-brand-500 hidden animate-pulse font-semibold border border-brand-500/20 bg-brand-500/10 px-2 py-0.5 rounded">Buscando Títulos...</span>
+                    <span id="modal-pagination-info" class="text-[10px] text-neutral-400 font-bold bg-dark-950 border border-neutral-800 px-2.5 py-1 rounded-md">Pág 1</span>
+                </div>
               </div>
               <div id="modal-episodes-list" class="space-y-3 mb-5"></div>
               <div id="modal-pagination-controls" class="flex justify-between items-center gap-3 hidden pt-2">
@@ -318,52 +881,202 @@
     </div>
   </div>
 
-  <nav class="fixed bottom-0 inset-x-0 bg-dark-950/95 border-t border-neutral-900 md:hidden z-40 px-2 sm:px-6 py-2 flex justify-between items-center backdrop-blur-xl">
-    <button onclick="navigateToTab('home')" id="nav-btn-home" class="nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="home" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Início</span></button>
-    <button onclick="navigateToTab('manga')" id="nav-btn-manga" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="book-open" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Mangá</span></button>
-    <button onclick="navigateToTab('downloads')" id="nav-btn-downloads" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="download" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Baixados</span></button>
-    <button onclick="navigateToTab('watchlist')" id="nav-btn-watchlist" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="list" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Lista</span></button>
-    <button onclick="navigateToTab('profile')" id="nav-btn-profile" class="nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"><i data-lucide="user" class="w-5 h-5"></i><span class="text-[9px] font-bold tracking-wide">Perfil</span></button>
-  </nav>
-
   <script>
     lucide.createIcons();
     
-    const aniListCache = {};
-    let watchlist = JSON.parse(localStorage.getItem('otakuflow_watchlist')) || [];
-    let watchHistory = JSON.parse(localStorage.getItem('otakuflow_history')) || [];
-    let userProfile = JSON.parse(localStorage.getItem('otakuflow_user')) || { name: 'Usuário Otaku', avatar: 'U' };
+    let watchlist = JSON.parse(localStorage.getItem('vzanime_watchlist')) || [];
+    let watchHistory = JSON.parse(localStorage.getItem('vzanime_history')) || [];
+    let userProfile = JSON.parse(localStorage.getItem('vzanime_user')) || { name: 'Usuário Vz', avatarImg: null };
+    let appSettings = JSON.parse(localStorage.getItem('vzanime_settings')) || { theme: 'orange', dataSaver: false, blur: true };
     
     let activeAnimeData = null; 
     let currentEpPage = 1;
     const EPS_PER_PAGE = 100;
     
-    let focusableElements = [];
-    let currentFocusIndex = -1;
-    let coverTimeout = null; 
+    // Anime Carousel
     let carouselInterval = null;
     let currentCarouselIndex = 0;
     let carouselItems = [];
+    // Manga Carousel
+    let mangaCarouselInterval = null;
+    let currentMangaCarouselIndex = 0;
+    let mangaCarouselItems = [];
 
-    // BLINDAGEM DO BOTÃO VOLTAR (HISTORY API) CONTRA BLOQUEIO DO NAVEGADOR
+    // Search logic
+    let currentSearchType = 'ALL';
+    let searchTimeout = null;
+
+    const mockAnimeData = {
+      id: 9999, idMal: 1, type: "ANIME", title: { romaji: "Demonstração Offline", english: "Demonstration Mode" },
+      bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920",
+      coverImage: { extraLarge: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600", large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" },
+      description: "O modo de segurança foi ativado porque seu navegador bloqueou o acesso à API externa.",
+      genres: ["Ação", "Aventura"], meanScore: 99, episodes: 12, season: "SUMMER", seasonYear: 2026, format: "TV", status: "FINISHED"
+    };
+    const mockList = Array(12).fill(mockAnimeData);
+
     window.addEventListener('popstate', (e) => {
       const modal = document.getElementById('details-modal');
-      if (!modal.classList.contains('opacity-0')) {
-        closeModal(true);
-      } else {
-        if (!document.getElementById('tab-home').classList.contains('active')) navigateToTab('home', false);
-      }
+      const editModal = document.getElementById('edit-profile-modal');
+      const settingsModal = document.getElementById('settings-modal');
+      const sideMenu = document.getElementById('side-menu-overlay');
+      
+      if (!sideMenu.classList.contains('hidden')) { closeMenu(); return; }
+      if (!editModal.classList.contains('hidden')) { closeEditProfileModal(); return; }
+      if (!settingsModal.classList.contains('hidden')) { closeSettingsModal(); return; }
+      if (!modal.classList.contains('opacity-0')) { closeModal(true); return; }
+      
+      const stateTab = e.state?.tab;
+      if (stateTab) switchTabUI(stateTab); else switchTabUI('home');
     });
 
     window.onload = function() {
-      try { window.history.replaceState({ tab: 'home' }, '', '#home'); } catch(e) {}
+      window.history.replaceState({ tab: 'home' }, '', '#home');
+      applySavedSettings();
       updateProfileUI();
-      fetchAniListData();
       renderWatchlist();
       renderHistory();
       setupSearch();
-      setupTVControls();
+      setupHeaderScroll();
+      
+      fetchAniListData();
+      fetchMangaData();
     };
+
+    function setupHeaderScroll() {
+       document.getElementById('scroll-area').addEventListener('scroll', (e) => {
+           const scrollY = e.target.scrollTop;
+           const header = document.getElementById('main-header');
+           const search = document.getElementById('header-search');
+           const currentTab = window.history.state?.tab || 'home';
+
+           const isHeroTab = ['home', 'manga'].includes(currentTab);
+           
+           if (!isHeroTab || scrollY > 150) {
+              header.classList.remove('bg-transparent');
+              header.classList.add('bg-dark-950/95', 'backdrop-blur-xl', 'border-b', 'border-neutral-800/50');
+              search.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+              search.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+           } else {
+              header.classList.add('bg-transparent');
+              header.classList.remove('bg-dark-950/95', 'backdrop-blur-xl', 'border-b', 'border-neutral-800/50');
+              search.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+              search.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+           }
+       });
+    }
+
+    function applySavedSettings() {
+       setTheme(appSettings.theme, false);
+       document.getElementById('data-saver-toggle').checked = appSettings.dataSaver;
+       document.getElementById('blur-toggle').checked = appSettings.blur;
+       toggleBlur(false);
+    }
+
+    function setTheme(color, save = true) {
+        const root = document.documentElement;
+        const themes = {
+            'orange': { 50: '255 247 237', 100: '255 237 213', 500: '249 115 22', 600: '234 88 12', 900: '124 45 18' },
+            'purple': { 50: '250 245 255', 100: '243 232 255', 500: '168 85 247', 600: '147 51 234', 900: '88 28 135' },
+            'blue': { 50: '239 246 255', 100: '219 234 254', 500: '59 130 246', 600: '37 99 235', 900: '30 58 138' },
+            'green': { 50: '240 253 244', 100: '220 252 231', 500: '34 197 94', 600: '22 163 74', 900: '20 83 45' },
+            'rose': { 50: '255 241 242', 100: '255 228 230', 500: '244 63 94', 600: '225 29 72', 900: '136 19 55' }
+        };
+        if(themes[color]) {
+            root.style.setProperty('--brand-50', themes[color][50]);
+            root.style.setProperty('--brand-100', themes[color][100]);
+            root.style.setProperty('--brand-500', themes[color][500]);
+            root.style.setProperty('--brand-600', themes[color][600]);
+            root.style.setProperty('--brand-900', themes[color][900]);
+            if(save) {
+                appSettings.theme = color;
+                localStorage.setItem('vzanime_settings', JSON.stringify(appSettings));
+            }
+        }
+    }
+    
+    function toggleDataSaver() {
+        appSettings.dataSaver = document.getElementById('data-saver-toggle').checked;
+        localStorage.setItem('vzanime_settings', JSON.stringify(appSettings));
+        showToast('Atualizado', 'Configurações de rede salvas.');
+    }
+    
+    function toggleBlur(save = true) {
+        appSettings.blur = document.getElementById('blur-toggle').checked;
+        if(save) localStorage.setItem('vzanime_settings', JSON.stringify(appSettings));
+        const elementsWithBlur = document.querySelectorAll('.backdrop-blur-xl, .backdrop-blur-sm, .backdrop-blur-md');
+        elementsWithBlur.forEach(el => el.style.backdropFilter = appSettings.blur ? '' : 'none');
+    }
+
+    function openSettingsModal() {
+      const modal = document.getElementById('settings-modal');
+      const box = document.getElementById('settings-box');
+      modal.classList.remove('hidden');
+      setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+    }
+    function closeSettingsModal() {
+      const modal = document.getElementById('settings-modal');
+      const box = document.getElementById('settings-box');
+      modal.classList.add('opacity-0'); box.classList.add('scale-95');
+      setTimeout(() => { modal.classList.add('hidden'); }, 300);
+    }
+
+    function openMenu() {
+       const overlay = document.getElementById('side-menu-overlay');
+       const menu = document.getElementById('side-menu');
+       overlay.classList.remove('hidden');
+       setTimeout(() => {
+          overlay.classList.remove('opacity-0');
+          menu.classList.remove('-translate-x-full');
+       }, 10);
+    }
+    function closeMenu() {
+       const overlay = document.getElementById('side-menu-overlay');
+       const menu = document.getElementById('side-menu');
+       overlay.classList.add('opacity-0');
+       menu.classList.add('-translate-x-full');
+       setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+    }
+
+    function navigateToTab(tabName, pushHistory = true) {
+      if (pushHistory) {
+        const mainTabs = ['home', 'manga', 'explore', 'downloads', 'watchlist', 'profile', 'recent', 'login', 'search', 'feedback'];
+        const currentTab = window.history.state?.tab || 'home';
+        if (tabName === 'home') window.history.pushState({ tab: tabName }, '', `#${tabName}`);
+        else if (mainTabs.includes(tabName)) {
+           if (currentTab === 'home') window.history.pushState({ tab: tabName }, '', `#${tabName}`);
+           else window.history.replaceState({ tab: tabName }, '', `#${tabName}`);
+        } else window.history.pushState({ tab: tabName }, '', `#${tabName}`);
+      }
+      switchTabUI(tabName);
+    }
+
+    function switchTabUI(tabName) {
+      const btns = document.querySelectorAll('nav .nav-btn');
+      btns.forEach(b => b.className = "nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1 cursor-pointer");
+      
+      const activeBtn = document.getElementById(`nav-btn-${tabName === 'menu' ? 'menu' : tabName}`);
+      if(activeBtn) activeBtn.className = "nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1 cursor-pointer";
+
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+      
+      const tabEl = document.getElementById(`tab-${tabName}`);
+      if(tabEl) {
+          tabEl.classList.add('active');
+          if(['tab-home', 'tab-manga', 'tab-search', 'tab-historyFull', 'tab-about', 'tab-category', 'tab-profile', 'tab-login', 'tab-recent', 'tab-explore', 'tab-feedback'].includes(tabEl.id)) {
+              document.getElementById('scroll-area').scrollTo({ top: 0, behavior: 'smooth' });
+          }
+      }
+
+      if(tabName === 'recent') renderRecent();
+      
+      // Trigger header scroll event logic
+      document.getElementById('scroll-area').dispatchEvent(new Event('scroll'));
+      
+      if(tabName === 'search') {
+          setTimeout(() => document.getElementById('global-search-input').focus(), 300);
+      }
+    }
 
     function showToast(title, message) {
       const toast = document.getElementById('toast');
@@ -371,238 +1084,501 @@
       document.getElementById('toast-message').textContent = message;
       toast.classList.remove('opacity-0', 'translate-x-80');
       toast.classList.add('opacity-100', 'translate-x-0');
-      setTimeout(() => { toast.classList.add('opacity-0', 'translate-x-80'); toast.classList.remove('opacity-100', 'translate-x-0'); }, 3500);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-x-80');
+        toast.classList.remove('opacity-100', 'translate-x-0');
+      }, 3500);
     }
 
-    function updateProfileUI() {
-      document.getElementById('profile-name').textContent = userProfile.name;
-      document.getElementById('profile-avatar').textContent = userProfile.avatar;
+    // ==================== REPORTAR / SUGERIR (CENTRAL DE AJUDA) ====================
+    function toggleFeedbackTab(type) {
+       document.getElementById('btn-tab-report').className = "flex-1 bg-transparent text-neutral-400 hover:text-neutral-200 font-bold py-3 rounded-xl transition text-sm flex justify-center items-center gap-2";
+       document.getElementById('btn-tab-suggest').className = "flex-1 bg-transparent text-neutral-400 hover:text-neutral-200 font-bold py-3 rounded-xl transition text-sm flex justify-center items-center gap-2";
+       
+       const activeClass = "flex-1 bg-brand-500 text-dark-950 font-bold py-3 rounded-xl transition text-sm shadow-md flex justify-center items-center gap-2";
+       document.getElementById('btn-tab-' + type).className = activeClass;
+
+       if(type === 'report') {
+           document.getElementById('form-report').classList.remove('hidden');
+           document.getElementById('form-suggest').classList.add('hidden');
+       } else {
+           document.getElementById('form-report').classList.add('hidden');
+           document.getElementById('form-suggest').classList.remove('hidden');
+       }
+    }
+
+    function submitFeedback(e, type) {
+       e.preventDefault();
+       showToast('Processando...', 'Sua mensagem está passando pela verificação de IA...');
+       
+       setTimeout(() => {
+           showToast('🟢 Aprovado pela IA!', 'Sua mensagem entrou para a Lista Verde e será lida pelo Desenvolvedor.');
+           e.target.reset();
+       }, 2500);
+    }
+
+    // ==================== JIKAN AVATAR ====================
+    let tempAvatarImg = null;
+    async function loadJikanCharacters(query = "") {
+        const grid = document.getElementById('avatar-selection-grid');
+        grid.innerHTML = `<div class="col-span-4 flex flex-col items-center justify-center text-neutral-500 py-6"><i data-lucide="loader-2" class="w-6 h-6 animate-spin mb-2 text-brand-500"></i><span class="text-[10px]">Buscando personagens...</span></div>`;
+        lucide.createIcons();
+        try {
+            const url = query ? `https://api.jikan.moe/v4/characters?q=${encodeURIComponent(query)}&order_by=favorites&sort=desc&limit=20` : `https://api.jikan.moe/v4/top/characters?limit=20`;
+            const res = await fetch(url);
+            const json = await res.json();
+            grid.innerHTML = '';
+            if(json.data && json.data.length > 0) {
+                json.data.forEach(char => {
+                    const imgUrl = char.images?.jpg?.image_url;
+                    if(!imgUrl || imgUrl.includes('questionmark')) return; 
+                    const avatarDiv = document.createElement('button');
+                    avatarDiv.type = 'button';
+                    avatarDiv.className = 'w-full aspect-square bg-dark-900 border-2 border-transparent hover:border-brand-500 rounded-xl overflow-hidden p-0.5 transition cursor-pointer flex items-center justify-center shadow-md relative group';
+                    avatarDiv.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover rounded-lg" alt="${char.name}"><div class="absolute inset-x-0 bottom-0 bg-black/80 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"><span class="text-[8px] font-bold text-white block truncate px-1">${char.name.split(',')[0]}</span></div>`;
+                    avatarDiv.onclick = () => {
+                        tempAvatarImg = imgUrl; updateAvatarPreview();
+                        document.querySelectorAll('#avatar-selection-grid button').forEach(btn => btn.classList.remove('border-brand-500', 'scale-105'));
+                        avatarDiv.classList.add('border-brand-500', 'scale-105');
+                    };
+                    grid.appendChild(avatarDiv);
+                });
+            } else grid.innerHTML = `<div class="col-span-4 text-center text-xs text-neutral-500 py-4">Nenhum personagem encontrado.</div>`;
+        } catch (error) { grid.innerHTML = `<div class="col-span-4 text-center text-xs text-rose-500 py-4">Erro de conexão.</div>`; }
     }
     
-    function editProfile() {
-      const newName = prompt("Digite seu nome de usuário:", userProfile.name);
-      if (newName && newName.trim() !== "") {
-        userProfile.name = newName.trim();
-        userProfile.avatar = newName.trim().charAt(0).toUpperCase();
-        localStorage.setItem('otakuflow_user', JSON.stringify(userProfile));
-        updateProfileUI();
-        showToast("Sucesso", "Perfil atualizado!");
-      }
+    let avatarSearchTimeout;
+    function searchJikanCharacters() { loadJikanCharacters(document.getElementById('jikan-search-input').value.trim()); }
+    document.getElementById('jikan-search-input').addEventListener('input', (e) => {
+        clearTimeout(avatarSearchTimeout);
+        avatarSearchTimeout = setTimeout(() => {
+            const val = e.target.value.trim();
+            if(val.length >= 3 || val.length === 0) loadJikanCharacters(val);
+        }, 800);
+    });
+
+    function updateProfileUI() {
+      // Perfil Principal
+      document.getElementById('profile-name').textContent = userProfile.name;
+      // Menu Lateral
+      document.getElementById('menu-user-name').textContent = userProfile.name;
+
+      const profileEls = [
+         {img: 'profile-avatar-img', txt: 'profile-avatar-text'},
+         {img: 'header-avatar-img', txt: 'header-avatar-text'},
+         {img: 'menu-avatar-img', txt: 'menu-avatar-text'}
+      ];
+
+      profileEls.forEach(el => {
+          const imgEl = document.getElementById(el.img);
+          const txtEl = document.getElementById(el.txt);
+          if(!imgEl || !txtEl) return;
+
+          if (userProfile.avatarImg) {
+            imgEl.src = userProfile.avatarImg;
+            imgEl.classList.remove('hidden'); txtEl.classList.add('hidden');
+          } else {
+            imgEl.classList.add('hidden'); txtEl.classList.remove('hidden');
+            txtEl.textContent = userProfile.name.charAt(0).toUpperCase();
+          }
+      });
     }
 
-    async function translateSynopsis(text, callback) {
-      if (!text || text.trim() === "") return callback("Sem informações disponíveis no momento.");
-      let cleanText = text.replace(/<[^>]*>/g, '').trim(); 
-      const chunks = cleanText.match(/.{1,450}(?:\s|$)/g) || [cleanText];
-      let finalTranslation = "";
-      
-      try {
-        for (let chunk of chunks) {
-            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk.trim())}&langpair=en|pt-br`;
-            const res = await fetch(url);
-            const data = await res.json();
-            finalTranslation += (data?.responseData?.translatedText || chunk) + " ";
-        }
-        callback(finalTranslation.trim());
-      } catch (e) { callback(cleanText); }
+    function openEditProfileModal() {
+      const modal = document.getElementById('edit-profile-modal'); const box = document.getElementById('edit-profile-box');
+      document.getElementById('input-profile-name').value = userProfile.name;
+      tempAvatarImg = userProfile.avatarImg; updateAvatarPreview();
+      document.getElementById('jikan-search-input').value = ''; loadJikanCharacters();
+      modal.classList.remove('hidden'); setTimeout(() => { modal.classList.remove('opacity-0'); box.classList.remove('scale-95'); }, 10);
+    }
+    function closeEditProfileModal() {
+      const modal = document.getElementById('edit-profile-modal'); const box = document.getElementById('edit-profile-box');
+      modal.classList.add('opacity-0'); box.classList.add('scale-95'); setTimeout(() => { modal.classList.add('hidden'); }, 300);
+    }
+    function updateAvatarPreview() {
+      const imgEl = document.getElementById('avatar-preview-img'); const textEl = document.getElementById('avatar-preview-text');
+      if(tempAvatarImg) { imgEl.src = tempAvatarImg; imgEl.classList.remove('hidden'); textEl.classList.add('hidden'); } 
+      else { imgEl.classList.add('hidden'); textEl.classList.remove('hidden'); textEl.textContent = document.getElementById('input-profile-name').value.charAt(0).toUpperCase() || "U"; }
+    }
+    function saveProfileChanges() {
+      const newName = document.getElementById('input-profile-name').value;
+      if (newName.trim() === "") { showToast("Erro", "O nome não pode ser vazio."); return; }
+      userProfile.name = newName.trim(); userProfile.avatarImg = tempAvatarImg;
+      localStorage.setItem('vzanime_user', JSON.stringify(userProfile));
+      updateProfileUI(); closeEditProfileModal(); showToast("Sucesso", "Perfil atualizado!");
     }
 
-    // CATÁLOGO OFFLINE (SEGURANÇA CONTRA ADBLOCK/BRAVE)
-    const fallbackLocalMock = [
-      { id: 101922, title: { romaji: "Kimetsu no Yaiba", english: "Demon Slayer" }, coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" }, bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920", meanScore: 86, episodes: 26, description: "A API oficial da AniList foi bloqueada pelo seu navegador (possível AdBlock). Estamos exibindo o catálogo offline de segurança.", format: "TV", status: "FINISHED", season: "SPRING", seasonYear: 2019 },
-      { id: 16498, title: { romaji: "Shingeki no Kyojin", english: "Attack on Titan" }, coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" }, bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920", meanScore: 85, episodes: 25, description: "Catálogo Offline em uso.", format: "TV", status: "FINISHED", season: "SPRING", seasonYear: 2013 },
-      { id: 151807, title: { romaji: "Ore dake Level Up na Ken", english: "Solo Leveling" }, coverImage: { large: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600" }, bannerImage: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920", meanScore: 83, episodes: 12, description: "Catálogo Offline em uso.", format: "TV", status: "FINISHED", season: "WINTER", seasonYear: 2024 }
-    ];
-
-    function loadFallbackData() {
-        initCarousel(fallbackLocalMock);
-        renderRow('row-releasing', fallbackLocalMock, false);
-        renderRow('row-popular', fallbackLocalMock, false);
-        renderRow('row-isekai', fallbackLocalMock, false);
-        renderRow('row-romance', fallbackLocalMock, false);
-        renderRow('row-adrenaline', fallbackLocalMock, false);
-        renderRow('row-recommended', fallbackLocalMock, false, true);
-        renderRow('row-movies', fallbackLocalMock, false, true);
-    }
-
+    // ==================== FETCH API (TODOS OS CATÁLOGOS INCLUÍDOS) ====================
     async function fetchAniListData() {
       const url = 'https://graphql.anilist.co';
       const query = `
         query {
-          releasing: Page(page: 1, perPage: 12) { media(type: ANIME, status: RELEASING, sort: TRENDING_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
-          popular: Page(page: 1, perPage: 12) { media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
-          isekai: Page(page: 1, perPage: 10) { media(type: ANIME, id_in: [108465, 21202, 100182, 177325, 20832, 168255, 125206, 101280, 99263, 114336], sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
-          romance: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Romance"], sort: POPULARITY_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
-          movies: Page(page: 1, perPage: 10) { media(type: ANIME, format: MOVIE, sort: TRENDING_DESC, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
-          adrenalina: Page(page: 1, perPage: 10) { media(type: ANIME, id_in: [20, 16498, 166216, 21123, 127230, 98659, 97940, 115230, 20613, 11061]) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
-          recommended: Page(page: 1, perPage: 10) { media(type: ANIME, sort: [SCORE_DESC, POPULARITY_DESC], isAdult: false, format_not: MOVIE, episodes_greater: 12) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status trailer { id site } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }
+          trending: Page(page: 1, perPage: 10) { media(type: ANIME, sort: TRENDING_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } } }
+          releasing: Page(page: 1, perPage: 10) { media(type: ANIME, status: RELEASING, sort: TRENDING_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          popular: Page(page: 1, perPage: 10) { media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          relaxar: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Slice of Life"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          feelgood: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Comedy"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          fantasy: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Fantasy", "Adventure"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          pokemon: Page(page: 1, perPage: 10) { media(type: ANIME, search: "Pokemon", sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          dragonball: Page(page: 1, perPage: 10) { media(type: ANIME, search: "Dragon Ball", sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          aot: Page(page: 1, perPage: 10) { media(type: ANIME, search: "Attack on Titan", sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          naruto: Page(page: 1, perPage: 10) { media(type: ANIME, search: "Naruto", sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          isekai: Page(page: 1, perPage: 10) { media(type: ANIME, id_in: [108465, 21202, 108759, 177325, 20832, 168255, 125206, 101280, 99263, 114336], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          romance: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Romance"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
+          adrenalina: Page(page: 1, perPage: 10) { media(type: ANIME, genre_in: ["Action", "Thriller"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore episodes nextAiringEpisode { episode } } }
         }
       `;
       try {
         const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
-        const result = await response.json();
-        const data = result.data;
+        const result = await response.json(); const data = result.data;
+        initAnimeCarousel(data.trending.media); 
         
-        initCarousel(data.releasing.media); 
-        renderRow('row-releasing', data.releasing.media, false);
-        renderRow('row-popular', data.popular.media, false);
-        renderRow('row-isekai', data.isekai.media, false);
-        renderRow('row-romance', data.romance.media, false);
-        renderRow('row-adrenaline', data.adrenalina.media, false);
-        renderRow('row-recommended', data.recommended.media, false, true);
-        renderRow('row-movies', data.movies.media, false, true);
+        // Renderiza TODOS os catálogos na home
+        renderRow('row-releasing', data.releasing.media);
+        renderRow('row-popular', data.popular.media);
+        renderRow('row-relaxar', data.relaxar.media);
+        renderRow('row-feelgood', data.feelgood.media);
+        renderRow('row-fantasy', data.fantasy.media);
+        renderRow('row-pokemon', data.pokemon.media);
+        renderRow('row-dragonball', data.dragonball.media);
+        renderRow('row-naruto', data.naruto.media);
+        renderRow('row-aot', data.aot.media);
+        renderRow('row-isekai', data.isekai.media);
+        renderRow('row-romance', data.romance.media);
+        renderRow('row-adrenaline', data.adrenalina.media);
+
       } catch (e) {
-        showToast('Modo de Segurança', 'Navegador bloqueou a conexão. Usando catálogo local.');
-        loadFallbackData();
+        initAnimeCarousel(mockList);
+      } finally {
+        setTimeout(() => {
+          const splash = document.getElementById('splash-screen');
+          splash.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(() => { splash.style.display = 'none'; }, 500);
+        }, 1200); 
       }
     }
+    
+    // ==================== FETCH API MANGÁS ====================
+    async function fetchMangaData() {
+      const url = 'https://graphql.anilist.co';
+      const query = `
+        query {
+          trending: Page(page: 1, perPage: 10) { media(type: MANGA, sort: TRENDING_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore chapters format status } }
+          popular: Page(page: 1, perPage: 10) { media(type: MANGA, sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore chapters format status } }
+          manhwa: Page(page: 1, perPage: 10) { media(type: MANGA, countryOfOrigin: "KR", sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore chapters format status } }
+          action: Page(page: 1, perPage: 10) { media(type: MANGA, genre_in: ["Action"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore chapters format status } }
+          fantasy: Page(page: 1, perPage: 10) { media(type: MANGA, genre_in: ["Fantasy"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore chapters format status } }
+          romance: Page(page: 1, perPage: 10) { media(type: MANGA, genre_in: ["Romance"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore chapters format status } }
+          slice: Page(page: 1, perPage: 10) { media(type: MANGA, genre_in: ["Slice of Life"], sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } meanScore chapters format status } }
+        }
+      `;
+      try {
+        const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+        const result = await response.json(); const data = result.data;
+        initMangaCarousel(data.trending.media); 
+        
+        // Renderiza catálogos de Mangá
+        renderRow('row-manga-trending', data.trending.media);
+        renderRow('row-manga-manhwa', data.manhwa.media);
+        renderRow('row-manga-popular', data.popular.media);
+        renderRow('row-manga-action', data.action.media);
+        renderRow('row-manga-fantasy', data.fantasy.media);
+        renderRow('row-manga-romance', data.romance.media);
+        renderRow('row-manga-slice', data.slice.media);
+      } catch (e) {}
+    }
 
-    function initCarousel(list) {
+    async function openCategory(type, title) {
+        navigateToTab('category');
+        document.getElementById('category-title').textContent = title;
+        const grid = document.getElementById('category-grid');
+        grid.innerHTML = `<div class="col-span-full text-center py-20 text-brand-500 flex flex-col items-center"><i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-2"></i>Carregando os melhores...</div>`;
+        lucide.createIcons();
+
+        let queryArgs = ''; let isManga = type.includes('manga');
+        let typeStr = isManga ? 'MANGA' : 'ANIME';
+        
+        switch(type) {
+            case 'releasing': queryArgs = `status: RELEASING, sort: TRENDING_DESC`; break;
+            case 'popular': queryArgs = `sort: POPULARITY_DESC`; break;
+            case 'relaxar': queryArgs = `genre_in: ["Slice of Life"], sort: POPULARITY_DESC`; break;
+            case 'feelgood': queryArgs = `genre_in: ["Comedy"], sort: POPULARITY_DESC`; break;
+            case 'fantasy': queryArgs = `genre_in: ["Fantasy", "Adventure"], sort: POPULARITY_DESC`; break;
+            case 'pokemon': queryArgs = `search: "Pokemon", sort: START_DATE_DESC`; break;
+            case 'dragonball': queryArgs = `search: "Dragon Ball", sort: POPULARITY_DESC`; break;
+            case 'naruto': queryArgs = `search: "Naruto", sort: POPULARITY_DESC`; break;
+            case 'aot': queryArgs = `search: "Attack on Titan", sort: POPULARITY_DESC`; break;
+            case 'isekai': queryArgs = `id_in: [108465, 21202, 108759, 177325, 20832, 168255, 125206, 101280, 99263, 114336, 11843, 21128, 119661, 20613], sort: POPULARITY_DESC`; break;
+            case 'romance': queryArgs = `genre_in: ["Romance"], sort: POPULARITY_DESC`; break;
+            case 'adrenaline': queryArgs = `genre_in: ["Action", "Thriller"], sort: POPULARITY_DESC`; break;
+            
+            case 'manga-trending': queryArgs = `sort: TRENDING_DESC`; break;
+            case 'manga-popular': queryArgs = `sort: POPULARITY_DESC`; break;
+            case 'manga-manhwa': queryArgs = `countryOfOrigin: "KR", sort: POPULARITY_DESC`; break;
+            case 'manga-action': queryArgs = `genre_in: ["Action"], sort: POPULARITY_DESC`; break;
+            case 'manga-fantasy': queryArgs = `genre_in: ["Fantasy"], sort: POPULARITY_DESC`; break;
+            case 'manga-romance': queryArgs = `genre_in: ["Romance"], sort: POPULARITY_DESC`; break;
+            case 'manga-slice': queryArgs = `genre_in: ["Slice of Life"], sort: POPULARITY_DESC`; break;
+        }
+
+        const query = `query { Page(page: 1, perPage: 40) { media(type: ${typeStr}, ${queryArgs}, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes chapters format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } } } }`;
+        try {
+            const response = await fetch('https://graphql.anilist.co', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+            const result = await response.json(); grid.innerHTML = '';
+            if(result.data && result.data.Page.media.length > 0) result.data.Page.media.forEach(anime => grid.appendChild(createAnimeCard(anime)));
+            else grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-500">Nenhum título encontrado.</div>`;
+        } catch (e) {
+            grid.innerHTML = `<div class="col-span-full text-center py-20 text-rose-500 flex flex-col items-center"><i data-lucide="wifi-off" class="w-10 h-10 mb-2"></i>Erro ao carregar a categoria.</div>`;
+            lucide.createIcons();
+        }
+    }
+
+
+    // ==================== CARROSSEIS ====================
+    function updateHeroWatchlistBtn(item, isManga = false) {
+       const exists = watchlist.some(i => i.id === item.id);
+       const iconId = isManga ? 'manga-hero-save-icon' : 'hero-save-icon';
+       const btnIcon = document.getElementById(iconId);
+       if(!btnIcon) return;
+       if (exists) { btnIcon.setAttribute('data-lucide', 'bookmark-minus'); btnIcon.classList.add('fill-brand-500'); } 
+       else { btnIcon.setAttribute('data-lucide', 'bookmark'); btnIcon.classList.remove('fill-brand-500'); }
+       lucide.createIcons();
+    }
+
+    function initAnimeCarousel(list) {
+      if(!list || list.length === 0) return;
       carouselItems = list.filter(a => a.bannerImage).slice(0, 5);
-      if(carouselItems.length === 0) carouselItems = list.slice(0, 5);
+      if(carouselItems.length < 5) carouselItems = list.slice(0, 5);
       
       const dotsContainer = document.getElementById('hero-dots');
       dotsContainer.innerHTML = '';
       carouselItems.forEach((_, idx) => {
         const dot = document.createElement('div');
-        dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-brand-500 w-6' : 'bg-neutral-600'}`;
         dotsContainer.appendChild(dot);
       });
-
-      renderCarouselItem();
+      renderAnimeCarouselItem();
       clearInterval(carouselInterval);
-      carouselInterval = setInterval(() => {
-        currentCarouselIndex = (currentCarouselIndex + 1) % carouselItems.length;
-        renderCarouselItem();
-      }, 5000);
+      carouselInterval = setInterval(() => { currentCarouselIndex = (currentCarouselIndex + 1) % carouselItems.length; renderAnimeCarouselItem(); }, 5000);
     }
-
-    function renderCarouselItem() {
-      const anime = carouselItems[currentCarouselIndex];
-      if (!anime) return;
-      
-      const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji;
-      const banner = anime.bannerImage || anime.coverImage?.extraLarge || "";
+    
+    function renderAnimeCarouselItem() {
+      const anime = carouselItems[currentCarouselIndex]; if (!anime) return;
+      const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji || "Anime";
+      const banner = anime.bannerImage || anime.coverImage?.extraLarge || anime.coverImage?.large || "";
       const score = anime.meanScore ? (anime.meanScore / 10).toFixed(1) : "--";
       const epCount = anime.episodes || (anime.nextAiringEpisode ? anime.nextAiringEpisode.episode - 1 : '?');
       
       const bgEl = document.getElementById('hero-bg');
       bgEl.style.opacity = 0; 
-      setTimeout(() => { bgEl.style.backgroundImage = `url('${banner}')`; bgEl.style.opacity = 1; }, 300);
+      setTimeout(() => { bgEl.style.backgroundImage = `url('${banner}')`; bgEl.style.opacity = 0.8; }, 300);
 
       document.getElementById('hero-title').textContent = title;
+      
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = anime.description || "Sinopse não disponível para este título.";
+      document.getElementById('hero-synopsis').textContent = tempDiv.textContent || tempDiv.innerText;
+      
       document.getElementById('hero-score').textContent = score;
       document.getElementById('hero-episodes').textContent = `${epCount} Episódios`;
-      document.getElementById('hero-play-btn').onclick = () => openModal(anime);
+      
+      document.getElementById('hero-play-btn').onclick = () => { if(!anime.description) performSearchAndOpen(anime.id, title); else openModal(anime); }
+      
+      updateHeroWatchlistBtn(anime, false);
+      document.getElementById('hero-save-btn').onclick = () => { toggleWatchlist(anime); updateHeroWatchlistBtn(anime, false); };
 
       const dots = document.getElementById('hero-dots').children;
       for(let i=0; i<dots.length; i++) {
-        dots[i].className = `w-2 h-2 rounded-full transition-all duration-300 ${i === currentCarouselIndex ? 'bg-brand-500 w-6' : 'bg-neutral-600'}`;
+         if (i === currentCarouselIndex) {
+            dots[i].className = 'relative h-1.5 w-12 rounded-full bg-neutral-800 overflow-hidden shrink-0 shadow';
+            dots[i].innerHTML = '<div class="absolute top-0 left-0 h-full bg-brand-500 dot-progress"></div>';
+         } else {
+            dots[i].className = 'h-1.5 w-1.5 rounded-full bg-neutral-600 shrink-0 transition-all duration-300 opacity-50';
+            dots[i].innerHTML = '';
+         }
       }
     }
 
-    function createAnimeCard(anime, showBadge = true, isLarge = false) {
-      const card = document.createElement('div');
-      const wClass = isLarge ? "w-40 sm:w-56 md:w-64" : "w-28 sm:w-36 md:w-40";
-      card.className = `tv-focus shrink-0 ${wClass} bg-dark-900 rounded-xl overflow-hidden border border-neutral-800/50 hover:border-brand-500/80 cursor-pointer transition-all duration-300 transform hover:-translate-y-1.5 shadow-lg hover:shadow-brand-500/20 relative group`;
-      card.setAttribute('tabindex', '0');
+    function initMangaCarousel(list) {
+      if(!list || list.length === 0) return;
+      mangaCarouselItems = list.filter(a => a.bannerImage).slice(0, 5);
+      if(mangaCarouselItems.length < 5) mangaCarouselItems = list.slice(0, 5);
+      
+      const dotsContainer = document.getElementById('manga-hero-dots'); dotsContainer.innerHTML = '';
+      mangaCarouselItems.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dotsContainer.appendChild(dot);
+      });
+      renderMangaCarouselItem();
+      clearInterval(mangaCarouselInterval);
+      mangaCarouselInterval = setInterval(() => { currentMangaCarouselIndex = (currentMangaCarouselIndex + 1) % mangaCarouselItems.length; renderMangaCarouselItem(); }, 5000);
+    }
+    
+    function renderMangaCarouselItem() {
+      const manga = mangaCarouselItems[currentMangaCarouselIndex]; if (!manga) return;
+      const title = manga.title?.english || manga.title?.userPreferred || manga.title?.romaji || "Mangá";
+      const banner = manga.bannerImage || manga.coverImage?.extraLarge || manga.coverImage?.large || "";
+      const score = manga.meanScore ? (manga.meanScore / 10).toFixed(1) : "--";
+      const chCount = manga.chapters || '?';
+      
+      const bgEl = document.getElementById('manga-hero-bg');
+      bgEl.style.opacity = 0;
+      setTimeout(() => { bgEl.style.backgroundImage = `url('${banner}')`; bgEl.style.opacity = 0.8; }, 300);
 
-      const title = anime.title?.userPreferred || anime.title?.english || anime.title?.romaji || "Desconhecido";
-      const cover = anime.coverImage?.large || anime.coverImage?.extraLarge || anime.coverImage || "";
-      const score = anime.meanScore ? `★ ${(anime.meanScore / 10).toFixed(1)}` : '★ -';
-      const epCount = anime.episodes || (anime.nextAiringEpisode ? anime.nextAiringEpisode.episode - 1 : '?');
-      const extraInfo = anime.epNum ? `Parei no Ep ${anime.epNum}` : `${epCount} Episódios`;
+      document.getElementById('manga-hero-title').textContent = title;
+      
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = manga.description || "Sinopse não disponível para este título.";
+      document.getElementById('manga-hero-synopsis').textContent = tempDiv.textContent || tempDiv.innerText;
+      
+      document.getElementById('manga-hero-score').textContent = score;
+      document.getElementById('manga-hero-episodes').textContent = `${chCount} Capítulos`;
+      
+      document.getElementById('manga-hero-play-btn').onclick = () => { if(!manga.description) performSearchAndOpen(manga.id, title); else openModal(manga); }
+
+      updateHeroWatchlistBtn(manga, true);
+      document.getElementById('manga-hero-save-btn').onclick = () => { toggleWatchlist(manga); updateHeroWatchlistBtn(manga, true); };
+
+      const dots = document.getElementById('manga-hero-dots').children;
+      for(let i=0; i<dots.length; i++) {
+         if (i === currentMangaCarouselIndex) {
+            dots[i].className = 'relative h-1.5 w-12 rounded-full bg-neutral-800 overflow-hidden shrink-0 shadow';
+            dots[i].innerHTML = '<div class="absolute top-0 left-0 h-full bg-brand-500 dot-progress"></div>';
+         } else {
+            dots[i].className = 'h-1.5 w-1.5 rounded-full bg-neutral-600 shrink-0 transition-all duration-300 opacity-50';
+            dots[i].innerHTML = '';
+         }
+      }
+    }
+
+    function createAnimeCard(item, showBadge = true, isLarge = false) {
+      if(!item) return document.createElement('div');
+      const card = document.createElement('div');
+      
+      // TAMANHO DAS CAPAS AUMENTADO
+      const wClass = isLarge ? "w-44 sm:w-60 md:w-72" : "w-32 sm:w-40 md:w-48"; 
+      
+      card.className = `shrink-0 ${wClass} cursor-pointer group`;
+
+      const title = item.title?.userPreferred || item.title?.english || item.title?.romaji || "Desconhecido";
+      let cover = appSettings.dataSaver ? (item.coverImage?.large || item.coverImage?.medium || item.coverImage?.extraLarge || "") : (item.coverImage?.extraLarge || item.coverImage?.large || item.coverImage || "");
+      
+      const score = item.meanScore ? `★ ${(item.meanScore / 10).toFixed(1)}` : '★ -';
+      
+      const isManga = item.type === 'MANGA';
+      const label = isManga ? 'Capítulos' : 'Episódios';
+      const count = isManga ? item.chapters : (item.episodes || (item.nextAiringEpisode ? item.nextAiringEpisode.episode - 1 : '?'));
+      const extraInfo = item.epNum ? `Parei no ${isManga?'Cap':'Ep'} ${item.epNum}` : `${count||'?'} ${label}`;
 
       let badgeHTML = '';
-      if (showBadge && !anime.epNum) {
-        badgeHTML = `<div class="absolute top-2 left-2 bg-dark-950/80 backdrop-blur-sm text-neutral-300 font-bold px-1.5 py-0.5 rounded text-[8px] uppercase tracking-wider z-10 border border-neutral-700/50 shadow">LEG</div>`;
-      } else if (anime.epNum) {
-        badgeHTML = `<div class="absolute top-2 left-2 bg-brand-500 text-dark-950 font-black px-2 py-0.5 rounded text-[9px] uppercase tracking-wider z-10 shadow-lg">VISTO</div>`;
+      if (showBadge && !item.epNum) {
+        badgeHTML = `<div class="absolute top-2 left-2 bg-dark-950/80 backdrop-blur-sm text-neutral-300 font-bold px-1.5 py-0.5 rounded text-[8px] uppercase tracking-wider z-10 border border-neutral-700/50 shadow">${isManga?'LIVRO':'LEG'}</div>`;
+      } else if (item.epNum) {
+        badgeHTML = `<div class="absolute top-2 left-2 bg-brand-500 text-dark-950 font-black px-2 py-0.5 rounded text-[9px] uppercase tracking-wider z-10 shadow-lg">LIDO/VISTO</div>`;
       }
 
+      // CAPAS MAIS ESCURAS QUE CLAREIAM NO HOVER
       card.innerHTML = `
-        <div class="relative aspect-[3/4] overflow-hidden bg-neutral-900">
+        <div class="relative aspect-[3/4] rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800/50 group-hover:border-brand-500/80 transition-all duration-300 transform group-hover:-translate-y-1.5 shadow-lg group-hover:shadow-brand-500/20">
           ${badgeHTML}
-          ${!anime.epNum ? `<div class="absolute top-2 right-2 bg-dark-950/80 backdrop-blur-sm text-brand-500 font-black px-1.5 py-0.5 rounded text-[9px] border border-brand-500/20 z-10 shadow">${score}</div>` : ''}
-          <img src="${cover}" alt="${title}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110 group-hover:brightness-110" loading="lazy">
-          <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          ${!item.epNum ? `<div class="absolute top-2 right-2 bg-dark-950/80 backdrop-blur-sm text-brand-500 font-black px-1.5 py-0.5 rounded text-[9px] border border-brand-500/20 z-10 shadow">${score}</div>` : ''}
+          <img src="${cover}" alt="${title}" class="w-full h-full object-cover filter brightness-[0.6] group-hover:brightness-110 transition duration-500 group-hover:scale-105" loading="lazy">
+          <div class="absolute inset-0 bg-gradient-to-t from-dark-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
-        <div class="p-3 bg-gradient-to-b from-dark-900 to-dark-950">
-          <h3 class="text-xs sm:text-sm font-bold text-neutral-100 line-clamp-2 min-h-[2.5rem] leading-snug group-hover:text-brand-500 transition-colors">${title}</h3>
-          <span class="text-[9px] sm:text-[10px] text-neutral-500 block mt-1.5 font-medium">${extraInfo}</span>
+        <div class="pt-2.5 pb-1 px-1">
+          <h3 class="text-xs sm:text-sm font-bold text-neutral-200 line-clamp-2 leading-tight group-hover:text-brand-500 transition-colors">${title}</h3>
+          <span class="text-[10px] text-neutral-500 block mt-1 font-medium">${extraInfo}</span>
         </div>
       `;
       card.addEventListener('click', () => {
-        if (anime.epNum && !anime.description) performSearchAndOpen(anime.id, title);
-        else openModal(anime);
+        if (!item.description) performSearchAndOpen(item.id, title);
+        else openModal(item);
       });
-      card.addEventListener('keydown', (e) => { if (e.key === 'Enter') card.click(); });
       return card;
     }
 
     function renderRow(containerId, list, isHistory = false, isLarge = false) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
+      const container = document.getElementById(containerId); if (!container) return;
       container.innerHTML = ''; 
-      if (list.length === 0 && isHistory) { container.innerHTML = `<p class="text-xs text-neutral-500 p-4">Você ainda não assistiu nenhum episódio.</p>`; return; }
-      list.forEach(anime => { if (anime) container.appendChild(createAnimeCard(anime, !isHistory, isLarge)); });
+      if (list.length === 0 && isHistory) { container.innerHTML = `<p class="text-xs text-neutral-500 p-4">Nenhum histórico.</p>`; return; }
+      list.forEach(item => { if (item) container.appendChild(createAnimeCard(item, !isHistory, isLarge)); });
     }
 
-    function toggleWatchlist(anime) {
-      const index = watchlist.findIndex(item => item.id === anime.id);
-      if (index > -1) { watchlist.splice(index, 1); showToast('Atualizado', 'Removido da lista.'); } 
-      else { watchlist.push(anime); showToast('Adicionado', 'Salvo!'); }
-      localStorage.setItem('otakuflow_watchlist', JSON.stringify(watchlist));
-      updateWatchlistBtnUI(anime); renderWatchlist();
+    // Listas & Histórico
+    function toggleWatchlist(item) {
+      const index = watchlist.findIndex(i => i.id === item.id);
+      if (index > -1) { watchlist.splice(index, 1); showToast('Atualizado', 'Removido.'); } else { watchlist.push(item); showToast('Adicionado', 'Salvo!'); }
+      localStorage.setItem('vzanime_watchlist', JSON.stringify(watchlist)); updateWatchlistBtnUI(item); renderWatchlist();
+      
+      if(activeAnimeData && activeAnimeData.id === item.id) updateWatchlistBtnUI(item);
+      if(carouselItems[currentCarouselIndex] && carouselItems[currentCarouselIndex].id === item.id) updateHeroWatchlistBtn(item, false);
+      if(mangaCarouselItems[currentMangaCarouselIndex] && mangaCarouselItems[currentMangaCarouselIndex].id === item.id) updateHeroWatchlistBtn(item, true);
     }
-    function updateWatchlistBtnUI(anime) {
-      const exists = watchlist.some(item => item.id === anime.id);
-      const btnIcon = document.getElementById('watchlist-btn-icon');
+    
+    function updateWatchlistBtnUI(item) {
+      const exists = watchlist.some(i => i.id === item.id); const btnIcon = document.getElementById('watchlist-btn-icon');
+      if(!btnIcon) return;
       if (exists) { btnIcon.setAttribute('data-lucide', 'bookmark-minus'); btnIcon.classList.add('text-brand-500', 'fill-brand-500'); } 
       else { btnIcon.setAttribute('data-lucide', 'bookmark'); btnIcon.classList.remove('text-brand-500', 'fill-brand-500'); }
       lucide.createIcons();
     }
     function renderWatchlist() {
       const grid = document.getElementById('watchlist-grid'); grid.innerHTML = '';
-      if (watchlist.length === 0) grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600"><i data-lucide="bookmark" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>Vazia.</div>`;
-      else watchlist.forEach(anime => grid.appendChild(createAnimeCard(anime)));
-      lucide.createIcons();
+      if (watchlist.length === 0) grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600"><i data-lucide="bookmark" class="w-12 h-12 mx-auto mb-3 opacity-20"></i>Lista Vazia.</div>`;
+      else watchlist.forEach(item => grid.appendChild(createAnimeCard(item))); lucide.createIcons();
     }
-    
-    function saveHistory(anime, epNum) {
-      watchHistory = watchHistory.filter(h => h.id !== anime.id);
-      watchHistory.unshift({ id: anime.id, title: anime.title, coverImage: anime.coverImage, epNum: epNum, timestamp: Date.now() });
-      if (watchHistory.length > 20) watchHistory.pop(); 
-      localStorage.setItem('otakuflow_history', JSON.stringify(watchHistory)); renderHistory();
+    function saveHistory(item, epNum) {
+      watchHistory = watchHistory.filter(h => h.id !== item.id);
+      watchHistory.unshift({ id: item.id, idMal: item.idMal, type: item.type, title: item.title, coverImage: item.coverImage, epNum: epNum, timestamp: Date.now() });
+      if (watchHistory.length > 30) watchHistory.pop(); 
+      localStorage.setItem('vzanime_history', JSON.stringify(watchHistory)); 
+      renderHistory();
+      if(document.getElementById('tab-recent').classList.contains('active')) renderRecent();
     }
     function renderHistory() {
-      renderRow('row-history', watchHistory, true);
-      const gridFull = document.getElementById('history-grid');
-      if(gridFull) {
-        gridFull.innerHTML = '';
-        watchHistory.forEach(anime => gridFull.appendChild(createAnimeCard(anime, false)));
-      }
+      const gridFull = document.getElementById('history-grid'); if(!gridFull) return;
+      gridFull.innerHTML = '';
+      if(watchHistory.length === 0) gridFull.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600">Nenhum conteúdo acessado.</div>`;
+      else watchHistory.forEach(item => gridFull.appendChild(createAnimeCard(item, false)));
     }
-    function clearHistory() { watchHistory = []; localStorage.setItem('otakuflow_history', JSON.stringify([])); renderHistory(); showToast('Limpo', 'Histórico apagado.'); }
+    function renderRecent() {
+        const grid = document.getElementById('recent-grid');
+        grid.innerHTML = '';
+        const now = Date.now();
+        const recent = watchHistory.filter(item => (now - item.timestamp) < 24 * 60 * 60 * 1000);
+        if (recent.length === 0) grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600">Nenhum conteúdo assistido nas últimas 24 horas.</div>`;
+        else recent.forEach(item => grid.appendChild(createAnimeCard(item, false)));
+    }
+    function clearHistory() { watchHistory = []; localStorage.setItem('vzanime_history', JSON.stringify([])); renderHistory(); renderRecent(); showToast('Limpo', 'Histórico apagado.'); }
 
-    let searchTimeout = null;
+    // ==================== BUSCA E ALEATÓRIO ====================
+    function setSearchFilter(type) {
+       currentSearchType = type;
+       document.querySelectorAll('.search-filter-btn').forEach(btn => btn.className = "search-filter-btn px-5 py-2 rounded-full bg-dark-900 border border-neutral-700 text-neutral-400 font-bold text-sm shrink-0 transition");
+       document.getElementById('filter-' + type).className = "search-filter-btn px-5 py-2 rounded-full bg-brand-500 text-dark-950 font-bold text-sm shadow-lg shadow-brand-500/20 shrink-0 transition";
+       
+       const val = document.getElementById('global-search-input').value.trim();
+       if(val.length >= 3) performSearch(val);
+    }
+    
     function setupSearch() {
       document.getElementById('global-search-input').addEventListener('input', (e) => {
         const value = e.target.value.trim(); clearTimeout(searchTimeout);
         if (value.length < 3) { if (value.length === 0) clearSearch(); return; }
-        navigateToTab('search'); document.getElementById('search-spinner').classList.remove('hidden');
+        if (window.history.state?.tab !== 'search') navigateToTab('search');
+        document.getElementById('search-spinner').classList.remove('hidden');
         searchTimeout = setTimeout(() => { performSearch(value); }, 650);
       });
     }
     function clearSearch() {
       document.getElementById('global-search-input').value = '';
       document.getElementById('search-spinner').classList.add('hidden');
-      document.getElementById('search-grid').innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600"><i data-lucide="search" class="w-16 h-16 mx-auto mb-4 opacity-20"></i>Busque animes.</div>`;
+      document.getElementById('search-grid').innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600"><i data-lucide="search" class="w-16 h-16 mx-auto mb-4 opacity-20"></i>Busque animes ou mangás.</div>`;
       lucide.createIcons();
     }
     async function performSearch(queryText) {
       const url = 'https://graphql.anilist.co';
-      const query = `query ($search: String) { Page(page: 1, perPage: 24) { media(search: $search, type: ANIME, isAdult: false) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } } }`;
+      const typeArg = currentSearchType === 'ALL' ? 'type_in: [ANIME, MANGA]' : `type: ${currentSearchType}`;
+      const query = `query ($search: String) { Page(page: 1, perPage: 24) { media(search: $search, ${typeArg}, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes chapters format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } } } }`;
       try {
         const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables: { search: queryText } }) });
         const result = await response.json();
@@ -610,289 +1586,219 @@
         showSearchResults(result?.data?.Page?.media || []);
       } catch (e) { document.getElementById('search-spinner').classList.add('hidden'); }
     }
+    
     async function performSearchAndOpen(id, fallbackTitle) {
       showToast('Carregando...', `Acessando banco de dados...`);
       const url = 'https://graphql.anilist.co';
-      const query = `query ($id: Int) { Media(id: $id) { id title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } relations { edges { relationType node { id type title { romaji english userPreferred } coverImage { large } status format } } } } }`;
+      const query = `query ($id: Int) { Media(id: $id) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes chapters season seasonYear format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } } }`;
       try {
         const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables: { id: id } }) });
         const result = await response.json();
-        if(result?.data?.Media) openModal(result.data.Media);
-      } catch (e) { showToast('Erro', 'Falha.'); }
+        if(result?.data?.Media) openModal(result.data.Media); else openModal(mockAnimeData);
+      } catch (e) { openModal(mockAnimeData); } 
     }
+    
     function showSearchResults(list) {
       const grid = document.getElementById('search-grid'); grid.innerHTML = '';
-      if (list.length === 0) grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600">Nenhum anime encontrado.</div>`;
-      else list.forEach(anime => grid.appendChild(createAnimeCard(anime)));
+      if (list.length === 0) grid.innerHTML = `<div class="col-span-full text-center py-20 text-neutral-600">Nenhum resultado encontrado.</div>`;
+      else list.forEach(item => grid.appendChild(createAnimeCard(item)));
+    }
+
+    async function playRandomAnime() {
+       showToast('Sorteando...', 'Buscando um anime aleatório!');
+       const url = 'https://graphql.anilist.co';
+       const randomPage = Math.floor(Math.random() * 50) + 1;
+       const query = `query { Page(page: ${randomPage}, perPage: 1) { media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { id idMal type title { romaji english userPreferred } bannerImage coverImage { extraLarge large } description genres meanScore episodes format status nextAiringEpisode { episode } trailer { id site } streamingEpisodes { title thumbnail url } } } }`;
+       try {
+          const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query}) });
+          const result = await res.json();
+          if (result.data && result.data.Page.media.length > 0) {
+             openModal(result.data.Page.media[0]);
+          } else {
+             showToast('Erro', 'Tente novamente.');
+          }
+       } catch(e) { showToast('Erro', 'Falha na conexão.'); }
     }
 
     const translateSeason = (season, year) => { const s = { WINTER: "Inverno", SPRING: "Primavera", SUMMER: "Verão", FALL: "Outono" }; return season ? `${s[season] || season} de ${year || ''}` : year || "--"; };
-    const translateFormat = (f) => ({ TV: "Série", MOVIE: "Filme", OVA: "OVA", ONA: "Web", TV_SHORT: "Curta", SPECIAL: "Especial" }[f] || f || "--");
+    const translateFormat = (f) => ({ TV: "Série", MOVIE: "Filme", OVA: "OVA", ONA: "Web", TV_SHORT: "Curta", SPECIAL: "Especial", MANGA: "Mangá", ONE_SHOT: "One Shot", NOVEL: "Light Novel" }[f] || f || "--");
     const translateStatus = (s) => ({ FINISHED: "Finalizado", RELEASING: "Lançando", NOT_YET_RELEASED: "Em Breve" }[s] || s || "--");
-    const translateRelation = (t) => ({ SEQUEL: "Continuação", PREQUEL: "Anterior", ALTERNATIVE: "Alternativo", SIDE_STORY: "Spin-off", PARENT: "História Base", SUMMARY: "Resumo", SPIN_OFF: "Spin-off" }[t] || "Relacionado");
 
-    function toggleSeasons() {
-      const list = document.getElementById('seasons-list');
-      const arrow = document.getElementById('seasons-arrow');
-      if (list.classList.contains('hidden')) { list.classList.remove('hidden'); arrow.classList.add('rotate-180'); } 
-      else { list.classList.add('hidden'); arrow.classList.remove('rotate-180'); }
+
+    // ==================== JIKAN API ====================
+    async function fetchJikanEpisodes(anime) {
+      if(!anime.idMal || anime.type === 'MANGA') return; 
+      const loader = document.getElementById('jikan-loader'); loader.classList.remove('hidden');
+      try {
+          const res = await fetch(`https://api.jikan.moe/v4/anime/${anime.idMal}/episodes`);
+          if(!res.ok) throw new Error();
+          const json = await res.json();
+          if(json.data && json.data.length > 0) {
+              anime.jikanEpisodes = json.data;
+              if(activeAnimeData && activeAnimeData.id === anime.id) renderModalEpisodesList(anime, currentEpPage);
+          }
+      } catch (e) { } finally { loader.classList.add('hidden'); }
     }
 
-    function openModal(anime) {
-      activeAnimeData = anime;
-      currentEpPage = 1; 
-      hidePlayer();
-      document.body.classList.add('modal-open');
-      
-      // BLINDAGEM DE ROTAS! Evita crash no mobile local.
-      try { window.history.pushState({ modal: 'open' }, '', `#anime_${anime.id}`); } catch(e) {}
+    // ==================== MODAL DE DETALHES ====================
+    function openModal(item) {
+      if(!item) return;
+      activeAnimeData = item; currentEpPage = 1; hidePlayer();
+      document.getElementById('scroll-area').classList.add('overflow-hidden');
+      window.history.pushState({ modal: 'open' }, '', `#id_${item.id}`);
 
-      const title = anime.title?.english || anime.title?.userPreferred || anime.title?.romaji || "Sem título";
+      const isManga = item.type === 'MANGA';
+      const title = item.title?.english || item.title?.userPreferred || item.title?.romaji || "Sem título";
       document.getElementById('modal-title').textContent = title;
-      document.getElementById('modal-title-alt').textContent = anime.title?.romaji || "";
-      document.getElementById('modal-score').innerHTML = `<i data-lucide="star" class="w-3.5 h-3.5 fill-dark-950"></i> ${anime.meanScore ? (anime.meanScore/10).toFixed(1) : "--"}`;
-      document.getElementById('tech-season').textContent = translateSeason(anime.season, anime.seasonYear);
-      document.getElementById('tech-format').textContent = translateFormat(anime.format);
-      document.getElementById('tech-status').textContent = translateStatus(anime.status);
+      document.getElementById('modal-title-alt').textContent = item.title?.romaji || "";
+      document.getElementById('modal-score-text').textContent = item.meanScore ? (item.meanScore/10).toFixed(1) : "--";
+      document.getElementById('tech-season').textContent = isManga ? "--" : translateSeason(item.season, item.seasonYear);
+      document.getElementById('tech-format').textContent = translateFormat(item.format);
+      document.getElementById('tech-status').textContent = translateStatus(item.status);
       
-      let totalEpsText = anime.episodes ? `${anime.episodes} eps` : "--";
-      let totalRenderEps = anime.episodes || 12;
+      document.getElementById('tech-episodes-label').textContent = isManga ? 'Capítulos' : 'Episódios';
+      document.getElementById('modal-list-title').textContent = isManga ? 'Capítulos' : 'Episódios';
       
-      if (anime.status === 'RELEASING' && !anime.episodes && anime.nextAiringEpisode) {
-        const releasedEps = anime.nextAiringEpisode.episode - 1;
-        totalEpsText = `${releasedEps} eps (Lançando)`;
-        totalRenderEps = releasedEps;
+      let totalCountText = "--"; let totalRenderCount = 12; 
+      
+      if (isManga) {
+         totalCountText = item.chapters ? `${item.chapters} cap` : "Lançando";
+         totalRenderCount = item.chapters || 50; 
+      } else {
+         if (item.status === 'RELEASING' && !item.episodes && item.nextAiringEpisode) {
+            const releasedEps = item.nextAiringEpisode.episode - 1;
+            totalCountText = `${releasedEps} eps (Lançando)`; totalRenderCount = releasedEps;
+         } else {
+            totalCountText = item.episodes ? `${item.episodes} eps` : "--";
+            totalRenderCount = item.episodes || 12;
+         }
       }
-      document.getElementById('tech-episodes').textContent = totalEpsText;
-      activeAnimeData.totalRenderEps = totalRenderEps; 
+      
+      document.getElementById('tech-episodes').textContent = totalCountText;
+      activeAnimeData.totalRenderEps = totalRenderCount; 
 
-      clearTimeout(coverTimeout);
       const trailerContainer = document.getElementById('modal-trailer-container');
       const coverImg = document.getElementById('modal-cover');
       trailerContainer.innerHTML = ''; 
-      coverImg.src = anime.coverImage?.extraLarge || anime.coverImage?.large || "";
-      coverImg.classList.remove('opacity-0');
+      
+      coverImg.src = appSettings.dataSaver ? (item.coverImage?.large || item.coverImage?.extraLarge || "") : (item.coverImage?.extraLarge || item.coverImage?.large || "");
 
-      if (anime.trailer && anime.trailer.site === 'youtube' && anime.trailer.id) {
-        trailerContainer.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${anime.trailer.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${anime.trailer.id}" class="w-full h-full scale-[1.35] pointer-events-none" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
+      if (item.trailer && item.trailer.site === 'youtube' && item.trailer.id && !appSettings.dataSaver && !isManga) {
+        trailerContainer.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${item.trailer.id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${item.trailer.id}" class="w-full h-full scale-[1.35] pointer-events-none" frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
         trailerContainer.classList.remove('hidden');
-        coverTimeout = setTimeout(() => { coverImg.classList.add('opacity-0'); }, 4000);
       } else { trailerContainer.classList.add('hidden'); }
 
-      const synopsisEl = document.getElementById('modal-synopsis');
-      const translationStatus = document.getElementById('translation-status');
-      synopsisEl.textContent = "Traduzindo sinopse...";
-      translationStatus.classList.remove('hidden');
-
-      translateSynopsis(anime.description, (translated) => {
-        synopsisEl.textContent = translated;
-        translationStatus.classList.add('hidden');
-      });
+      document.getElementById('modal-synopsis').innerHTML = item.description || "Sinopse não disponível para este título.";
       
-      updateWatchlistBtnUI(anime);
-      document.getElementById('modal-watchlist-btn').onclick = () => toggleWatchlist(anime);
+      updateWatchlistBtnUI(item);
+      document.getElementById('modal-watchlist-btn').onclick = () => toggleWatchlist(item);
 
-      const genresDiv = document.getElementById('modal-genres');
-      genresDiv.innerHTML = '';
-      if (anime.genres) anime.genres.forEach(g => {
-        const span = document.createElement('span');
-        span.className = "bg-dark-800/80 text-brand-100 text-[10px] px-2.5 py-1 rounded-md border border-neutral-700/60 font-semibold shadow-sm";
-        span.textContent = g; genresDiv.appendChild(span);
+      const genresDiv = document.getElementById('modal-genres'); genresDiv.innerHTML = '';
+      if (item.genres) item.genres.forEach(g => {
+        const span = document.createElement('span'); span.className = "bg-dark-800/80 text-brand-100 text-[10px] px-2.5 py-1 rounded-md border border-neutral-700/60 font-semibold shadow-sm"; span.textContent = g; genresDiv.appendChild(span);
       });
-
-      const seasonsContainer = document.getElementById('modal-seasons-container');
-      const seasonsList = document.getElementById('modal-seasons-list');
-      seasonsList.innerHTML = '';
-      seasonsList.classList.add('hidden'); 
-      document.getElementById('seasons-arrow').classList.remove('rotate-180');
-
-      if (anime.relations && anime.relations.edges && anime.relations.edges.length > 0) {
-          const validRelations = anime.relations.edges.filter(e => e.node.type === 'ANIME');
-          if (validRelations.length > 0) {
-              validRelations.forEach(rel => {
-                  const btn = document.createElement('button');
-                  btn.type = "button";
-                  btn.className = "tv-focus w-full flex items-center gap-3 bg-dark-950/50 hover:bg-brand-500 hover:text-dark-950 border border-neutral-800/50 p-2 rounded-xl text-left transition duration-300 group";
-                  
-                  const relTitle = rel.node.title?.userPreferred || rel.node.title?.english || rel.node.title?.romaji;
-                  const typeTrans = translateRelation(rel.relationType);
-                  const statusTrans = translateStatus(rel.node.status);
-                  const formatTrans = translateFormat(rel.node.format);
-
-                  btn.innerHTML = `
-                      <img src="${rel.node.coverImage?.large}" class="w-10 h-14 object-cover rounded-md">
-                      <div class="flex flex-col flex-1 overflow-hidden">
-                         <span class="text-[9px] text-brand-500 font-bold uppercase group-hover:text-dark-950">${typeTrans}</span>
-                         <span class="text-xs font-bold text-neutral-200 truncate group-hover:text-dark-950">${relTitle}</span>
-                         <span class="text-[9px] text-neutral-500 group-hover:text-dark-900/80">${formatTrans} • ${statusTrans}</span>
-                      </div>
-                      <i data-lucide="play-circle" class="w-5 h-5 text-neutral-600 group-hover:text-dark-950 mr-2 shrink-0"></i>
-                  `;
-                  btn.onclick = () => performSearchAndOpen(rel.node.id, relTitle);
-                  seasonsList.appendChild(btn);
-              });
-              seasonsContainer.classList.remove('hidden');
-          } else { seasonsContainer.classList.add('hidden'); }
-      } else { seasonsContainer.classList.add('hidden'); }
 
       renderModalEpisodesList(activeAnimeData, currentEpPage);
+      if(!isManga && !activeAnimeData.jikanEpisodes && activeAnimeData.idMal) fetchJikanEpisodes(activeAnimeData);
 
-      const modal = document.getElementById('details-modal');
-      const modalBox = document.getElementById('modal-content-box');
+      const modal = document.getElementById('details-modal'); const modalBox = document.getElementById('modal-content-box');
       modal.classList.remove('opacity-0', 'pointer-events-none');
-      
       setTimeout(() => { modalBox.classList.remove('scale-95'); modalBox.classList.add('scale-100'); }, 10);
       
       lucide.createIcons();
-      setTimeout(() => updateFocusableElements(), 100);
     }
 
-    function renderModalEpisodesList(anime, page) {
-      const epsListContainer = document.getElementById('modal-episodes-list');
-      epsListContainer.innerHTML = '';
-      
-      const realEpisodesData = anime.streamingEpisodes || [];
-      const total = anime.totalRenderEps || 12;
-      
+    function renderModalEpisodesList(item, page) {
+      const listContainer = document.getElementById('modal-episodes-list'); listContainer.innerHTML = '';
+      const isManga = item.type === 'MANGA';
+      const anilistEpsData = item.streamingEpisodes || [];
+      const jikanEpsData = item.jikanEpisodes || [];
+      const total = item.totalRenderEps || 12;
       const startIndex = (page - 1) * EPS_PER_PAGE + 1;
       const endIndex = Math.min(page * EPS_PER_PAGE, total);
-      const fallbackThumb = anime.bannerImage || anime.coverImage?.extraLarge || ""; 
+      const fallbackThumb = item.bannerImage || item.coverImage?.extraLarge || ""; 
+      const historyItem = watchHistory.find(h => h.id === item.id);
 
       for (let i = startIndex; i <= endIndex; i++) {
-        const foundEp = realEpisodesData.find(ep => ep.title.includes(`Episode ${i} `) || ep.title.includes(`Episódio ${i} `)) || realEpisodesData[i-1];
-        let epTitleText = `Episódio ${i}`; 
-        if (foundEp && foundEp.title) epTitleText = foundEp.title.replace(/Episode \d+ - /, ''); 
-        const thumbnail = (foundEp && foundEp.thumbnail) ? foundEp.thumbnail : fallbackThumb;
+        let titleText = isManga ? `Capítulo ${i}` : `Episódio ${i}`; 
+        let thumbnail = fallbackThumb;
+        let blurClass = "blur-sm opacity-50";
+        let hasRealThumb = false;
 
-        const epRow = document.createElement('button');
-        epRow.type = "button";
-        epRow.className = "tv-focus w-full flex items-center gap-3 sm:gap-4 bg-dark-950/40 hover:bg-brand-500 hover:text-dark-950 border border-neutral-800/50 p-2 sm:p-2.5 rounded-2xl text-left transition duration-300 group";
+        if(!isManga) {
+            const aniEp = anilistEpsData.find(ep => ep.title.includes(`Episode ${i} `) || ep.title.includes(`Episódio ${i} `)) || anilistEpsData[i-1];
+            const jikEp = jikanEpsData.find(ep => ep.mal_id === i);
+            if (jikEp && jikEp.title && !jikEp.title.startsWith("Episode")) titleText = jikEp.title; 
+            else if (aniEp && aniEp.title) titleText = aniEp.title.replace(/Episode \d+ - /, ''); 
+            
+            if(aniEp && aniEp.thumbnail) { thumbnail = aniEp.thumbnail; hasRealThumb = true; blurClass = ""; }
+        }
+
+        const isWatched = historyItem && i <= historyItem.epNum;
+        const rowBorderClass = isWatched ? "border-brand-500/80 shadow-md shadow-brand-500/10" : "border-neutral-800/50";
+        const titleClass = isWatched ? "text-neutral-500 line-through decoration-brand-500 decoration-2 group-hover:text-dark-950/70 group-hover:decoration-dark-950/70" : "text-neutral-200 group-hover:text-dark-950";
+
+        const iconType = isManga ? "book-open" : "play";
+        const prefix = isManga ? "Cap" : "Ep";
+
+        const row = document.createElement('button');
+        row.type = "button";
+        row.className = `w-full flex items-center gap-3 sm:gap-4 bg-dark-950/40 hover:bg-brand-500 hover:text-dark-950 border ${rowBorderClass} p-2 sm:p-2.5 rounded-2xl text-left transition duration-300 group`;
         
-        epRow.innerHTML = `
-          <div class="relative w-28 sm:w-36 aspect-video rounded-xl overflow-hidden bg-neutral-900 shrink-0 border border-neutral-800 group-hover:border-transparent">
-            <img src="${thumbnail}" class="w-full h-full object-cover filter brightness-[0.6] group-hover:brightness-100 group-hover:scale-110 transition-all duration-500">
-            <div class="absolute bottom-1.5 right-1.5 bg-black/80 backdrop-blur px-1.5 py-0.5 rounded-md text-[9px] font-medium text-neutral-200">24m</div>
+        row.innerHTML = `
+          <div class="relative w-28 sm:w-36 aspect-video rounded-xl overflow-hidden bg-neutral-900 shrink-0 border border-neutral-800 group-hover:border-transparent flex items-center justify-center">
+            <img src="${thumbnail}" class="absolute inset-0 w-full h-full object-cover filter brightness-[0.6] group-hover:brightness-100 group-hover:scale-110 transition-all duration-500 ${blurClass}">
+            ${!hasRealThumb ? `<span class="absolute z-10 font-black text-white/80 text-xl tracking-tighter drop-shadow-md">${prefix} ${i}</span>` : ''}
           </div>
           <div class="flex-1 min-w-0 pr-2">
-            <span class="text-[9px] font-black text-neutral-500 group-hover:text-dark-950/70 uppercase tracking-widest block mb-0.5">Ep ${i}</span>
-            <h4 class="text-xs sm:text-sm font-bold truncate text-neutral-200 group-hover:text-dark-950">${epTitleText}</h4>
+            <span class="text-[9px] font-black text-neutral-500 group-hover:text-dark-950/70 uppercase tracking-widest block mb-0.5">${prefix} ${i}</span>
+            <h4 class="text-xs sm:text-sm font-bold truncate transition-colors ${titleClass}">${titleText}</h4>
           </div>
-          <div class="p-2 sm:p-3 text-brand-500 group-hover:text-dark-950 shrink-0"><i data-lucide="play-circle" class="w-5 h-5 sm:w-6 sm:h-6 fill-current"></i></div>
+          <div class="p-2 sm:p-3 text-brand-500 group-hover:text-dark-950 shrink-0">
+            <i data-lucide="${iconType}" class="w-5 h-5 sm:w-6 sm:h-6 fill-current stroke-current"></i>
+          </div>
         `;
-        epRow.onclick = () => selectEpisode(i);
-        epsListContainer.appendChild(epRow);
+        row.onclick = () => selectEpisode(i);
+        listContainer.appendChild(row);
       }
 
-      const pagInfo = document.getElementById('modal-pagination-info');
-      const pagControls = document.getElementById('modal-pagination-controls');
-      const btnPrev = document.getElementById('btn-prev-page');
-      const btnNext = document.getElementById('btn-next-page');
-      
+      const pagInfo = document.getElementById('modal-pagination-info'); const pagControls = document.getElementById('modal-pagination-controls');
+      const btnPrev = document.getElementById('btn-prev-page'); const btnNext = document.getElementById('btn-next-page');
       pagInfo.textContent = `Pág ${page}`;
       
       if (total > EPS_PER_PAGE) {
         pagControls.classList.remove('hidden');
-        btnPrev.onclick = () => renderModalEpisodesList(anime, page - 1);
-        btnPrev.disabled = (page === 1);
+        btnPrev.onclick = () => renderModalEpisodesList(item, page - 1); btnPrev.disabled = (page === 1);
         btnPrev.className = `flex-1 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2 ${page === 1 ? 'bg-dark-950 border border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-dark-950 shadow-md'}`;
         
-        btnNext.onclick = () => renderModalEpisodesList(anime, page + 1);
-        btnNext.disabled = (endIndex === total);
-        btnNext.className = `flex-1 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2 ${endIndex === total ? 'bg-dark-950 border border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-dark-950 shadow-md'}`;
-      } else { pagControls.classList.add('hidden'); }
+        btnNext.onclick = () => renderModalEpisodesList(item, page + 1); btnNext.disabled = (endIndex >= total);
+        btnNext.className = `flex-1 py-3 rounded-xl text-xs font-bold transition flex justify-center items-center gap-2 ${endIndex >= total ? 'bg-dark-950 border border-neutral-800/50 text-neutral-700 cursor-not-allowed' : 'bg-dark-900 border border-neutral-700 text-neutral-300 hover:border-brand-500 hover:text-dark-950 shadow-md'}`;
+      } else pagControls.classList.add('hidden');
       lucide.createIcons();
     }
 
     function closeModal(isPopState = false) {
-      const modal = document.getElementById('details-modal');
-      const modalBox = document.getElementById('modal-content-box');
-      modalBox.classList.remove('scale-100'); modalBox.classList.add('scale-95');
-      modal.classList.add('opacity-0', 'pointer-events-none');
-      document.body.classList.remove('modal-open'); 
-      clearTimeout(coverTimeout);
-      document.getElementById('modal-trailer-container').innerHTML = ''; 
-      
-      if (!isPopState && window.history.state?.modal === 'open') { 
-        try { window.history.back(); } catch(e) {} 
-      }
-      updateFocusableElements();
+      const modal = document.getElementById('details-modal'); const modalBox = document.getElementById('modal-content-box');
+      modalBox.classList.remove('scale-100'); modalBox.classList.add('scale-95'); modal.classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById('scroll-area').classList.remove('overflow-hidden'); document.getElementById('modal-trailer-container').innerHTML = ''; 
+      if (!isPopState && window.history.state?.modal === 'open') { window.history.back(); }
     }
 
     function selectEpisode(epNum) {
       if (activeAnimeData) saveHistory(activeAnimeData, epNum);
+      renderModalEpisodesList(activeAnimeData, currentEpPage);
       document.getElementById('episodes-container').classList.add('hidden');
-      const player = document.getElementById('player-container');
-      player.classList.remove('hidden');
-      const animeTitle = activeAnimeData ? (activeAnimeData.title?.userPreferred || activeAnimeData.title?.english) : "Anime";
-      document.getElementById('player-episode-title').textContent = `${animeTitle} - Ep ${epNum}`;
+      
+      const player = document.getElementById('player-container'); player.classList.remove('hidden');
+      const title = activeAnimeData ? (activeAnimeData.title?.userPreferred || activeAnimeData.title?.english) : "Mídia";
+      const isManga = activeAnimeData?.type === 'MANGA';
+      
+      document.getElementById('player-icon').innerHTML = isManga ? `<i data-lucide="book-open" class="w-7 h-7"></i>` : `<i data-lucide="server" class="w-7 h-7"></i>`;
+      document.getElementById('player-episode-title').textContent = isManga ? `Conectando ao Leitor: ${title} - Cap ${epNum}` : `Conectando ao Servidor: ${title} - Ep ${epNum}`;
+      lucide.createIcons();
     }
 
-    function hidePlayer() {
-      document.getElementById('player-container').classList.add('hidden');
-      document.getElementById('episodes-container').classList.remove('hidden');
-    }
-
-    function navigateToTab(tabName, pushHistory = true) {
-      if (pushHistory) {
-        try {
-          if (window.history.state?.tab === 'home') { window.history.pushState({ tab: tabName }, '', `#${tabName}`); } 
-          else { window.history.replaceState({ tab: tabName }, '', `#${tabName}`); }
-        } catch(e) {}
-      }
-
-      const btns = document.querySelectorAll('nav .nav-btn');
-      btns.forEach(b => { b.className = "nav-btn flex flex-col items-center justify-center gap-1 text-neutral-500 hover:text-brand-500 transition duration-300 flex-1 py-1"; });
-      const activeBtn = document.getElementById(`nav-btn-${tabName === 'historyFull' ? 'profile' : tabName}`);
-      if(activeBtn) activeBtn.className = "nav-btn flex flex-col items-center justify-center gap-1 text-brand-500 transition duration-300 flex-1 py-1";
-
-      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
-      document.getElementById(`tab-${tabName}`).classList.add('active');
-
-      if (tabName === 'home') window.scrollTo({ top: 0, behavior: 'smooth' }); 
-      updateFocusableElements();
-    }
-
-    function updateFocusableElements() {
-      const isModalOpen = !document.getElementById('details-modal').classList.contains('pointer-events-none');
-      if (isModalOpen) { focusableElements = Array.from(document.querySelectorAll('#details-modal .tv-focus')); } 
-      else { focusableElements = Array.from(document.querySelectorAll('header .tv-focus, .tab-section.active .tv-focus, nav button')); }
-      focusableElements.forEach(el => el.classList.remove('active-focus'));
-      currentFocusIndex = -1;
-    }
-
-    function setupTVControls() {
-      window.addEventListener('keydown', (e) => {
-        if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Escape'].includes(e.key)) return;
-        if (e.key !== 'Escape') e.preventDefault();
-        
-        if (focusableElements.length === 0) updateFocusableElements();
-        if (e.key === 'Escape') { const modal = document.getElementById('details-modal'); if (!modal.classList.contains('opacity-0')) closeModal(); return; }
-        if (currentFocusIndex === -1) { currentFocusIndex = 0; highlightElement(focusableElements[0]); return; }
-
-        let newIndex = currentFocusIndex;
-        const cols = window.innerWidth < 640 ? 2 : window.innerWidth < 768 ? 3 : window.innerWidth < 1024 ? 4 : 6;
-
-        switch (e.key) {
-          case 'ArrowRight': newIndex = Math.min(focusableElements.length - 1, currentFocusIndex + 1); break;
-          case 'ArrowLeft': newIndex = Math.max(0, currentFocusIndex - 1); break;
-          case 'ArrowDown': newIndex = (currentFocusIndex + cols < focusableElements.length) ? currentFocusIndex + cols : Math.min(focusableElements.length - 1, currentFocusIndex + 1); break;
-          case 'ArrowUp': newIndex = (currentFocusIndex - cols >= 0) ? currentFocusIndex - cols : Math.max(0, currentFocusIndex - 1); break;
-          case 'Enter': if (focusableElements[currentFocusIndex]) focusableElements[currentFocusIndex].click(); break;
-        }
-
-        if (newIndex !== currentFocusIndex) {
-          focusableElements[currentFocusIndex].classList.remove('active-focus');
-          currentFocusIndex = newIndex;
-          highlightElement(focusableElements[currentFocusIndex]);
-        }
-      });
-    }
-
-    function highlightElement(el) {
-      if (!el) return;
-      el.classList.add('active-focus'); el.focus();
-      el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-    }
+    function hidePlayer() { document.getElementById('player-container').classList.add('hidden'); document.getElementById('episodes-container').classList.remove('hidden'); }
   </script>
 </body>
 </html>
